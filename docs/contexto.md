@@ -1,9 +1,11 @@
 # Introdução
 
+O setor de turismo e hotelaria está em constante expansão, e a experiência do hóspede é um fator decisivo para a fidelização. Muitos hotéis fazenda ainda operam com processos manuais para hospedagem, pedidos de restaurante e controle de consumo, o que gera atrasos, falhas e insatisfação.
 O projeto visa oferecer uma solução distribuida com foco no ramo hoteleiro com ênfase num hotel fazenda localizado no município de Capitólio em Minas Gerais.
 
 ## Problema
 Foi observado durante uma estadia num hotel fazenda o processo de hospedagem e venda do restaurante que era feito tudo manualmente, apresentando controle frágeis, erros constantes de pedidos e , consequentemente, insatisfação por parte dos hóspedes.
+
 Nesse momento você deve apresentar o problema que a sua aplicação deve  resolver. No entanto, não é a hora de comentar sobre a aplicação.
 
 Descreva também o contexto em que essa aplicação será usada, se  houver: empresa, tecnologias, etc. Novamente, descreva apenas o que de  fato existir, pois ainda não é a hora de apresentar requisitos  detalhados ou projetos.
@@ -17,9 +19,14 @@ Nesse momento, o grupo pode optar por fazer uso  de ferramentas como Design Thin
 
 ## Objetivos
 
-Aqui você deve descrever os objetivos do trabalho indicando que o objetivo geral é desenvolver um software para solucionar o problema apresentado acima. 
+- Desenvolver uma plataforma distribuída que integre hospedagem e restaurante em tempo real.
+- Reduzir erros de pedidos e aumentar a agilidade no atendimento.
+- Proporcionar ao hóspede uma experiência personalizada e fluida.
+- Oferecer ao hotel uma gestão mais eficiente de consumo, estoque e faturamento.
 
-Apresente também alguns (pelo menos 2) objetivos específicos dependendo de onde você vai querer concentrar a sua prática investigativa, ou como você vai aprofundar no seu trabalho.
+## Objetivos Esécificos
+- Implementar um módulo de pedidos digitais integrado ao quarto do hóspede, permitindo que os consumos feitos no restaurante sejam registrados em tempo real e vinculados à hospedagem.
+- Desenvolver relatórios gerenciais automatizados que consolidem dados de hospedagem, pedidos e estoque, apoiando a administração na tomada de decisões mais ágil e precisa.
  
 > **Links Úteis**:
 > - [Objetivo geral e objetivo específico: como fazer e quais verbos utilizar](https://blog.mettzer.com/diferenca-entre-objetivo-geral-e-objetivo-especifico/)
