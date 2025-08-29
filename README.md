@@ -6,7 +6,7 @@
 
 `SEMESTRE: 6º`
 
-Descrever resumidamente, em um ou dois parágrafos, o projeto que está sendo desenvolvido.
+O projeto visa desenvolver uma solução distribuída para um hotel fazenda localizado no município de Capitólio em Minas Gerais, a solução tem como objetivo oferecer a hospedagem e o controle de consumo dos hóspedes por meio de um sistema que elimine controles manuais dos funcionários, ofereça confiabilidade e disponibilidade das informações aos gestores do hotel para tomada de decisão.
 
 ## Integrantes
 
