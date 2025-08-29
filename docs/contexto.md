@@ -1,8 +1,9 @@
 # Introdução
 
-Texto descritivo com a visão geral do projeto abordado. Inclui o contexto, o problema, os objetivos, a justificativa e o público-alvo do projeto.
+O projeto visa oferecer uma solução distribuida com foco no ramo hoteleiro com ênfase num hotel fazenda localizado no município de Capitólio em Minas Gerais.
 
 ## Problema
+Foi observado durante uma estadia num hotel fazenda o processo de hospedagem e venda do restaurante que era feito tudo manualmente, apresentando controle frágeis, erros constantes de pedidos e , consequentemente, insatisfação por parte dos hóspedes.
 Nesse momento você deve apresentar o problema que a sua aplicação deve  resolver. No entanto, não é a hora de comentar sobre a aplicação.
 
 Descreva também o contexto em que essa aplicação será usada, se  houver: empresa, tecnologias, etc. Novamente, descreva apenas o que de  fato existir, pois ainda não é a hora de apresentar requisitos  detalhados ou projetos.
