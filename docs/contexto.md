@@ -1,10 +1,17 @@
 # Introdução
 
 O setor de turismo e hotelaria está em constante expansão, e a experiência do hóspede é um fator decisivo para a fidelização. Muitos hotéis fazenda ainda operam com processos manuais para hospedagem, pedidos de restaurante e controle de consumo, o que gera atrasos, falhas e insatisfação.
+
 O projeto visa oferecer uma solução distribuida com foco no ramo hoteleiro com ênfase num hotel fazenda localizado no município de Capitólio em Minas Gerais.
 
 ## Problema
-Foi observado durante uma estadia num hotel fazenda o processo de hospedagem e venda do restaurante que era feito tudo manualmente, apresentando controle frágeis, erros constantes de pedidos e , consequentemente, insatisfação por parte dos hóspedes.
+O processo manual de hospedagem e de vendas do restaurante do hotel gera:
+- Erros frequentes nos pedidos.
+- Falta de controle sobre consumo e estoque.
+- Dificuldade no fechamento da conta do hóspede.
+- Experiência negativa e insatisfação do cliente.
+
+
 
 Nesse momento você deve apresentar o problema que a sua aplicação deve  resolver. No entanto, não é a hora de comentar sobre a aplicação.
 
@@ -33,14 +40,43 @@ Nesse momento, o grupo pode optar por fazer uso  de ferramentas como Design Thin
 
 ## Justificativa
 
-Descreva a importância ou a motivação para trabalhar com esta aplicação que você escolheu. Indique as razões pelas quais você escolheu seus objetivos específicos ou as razões para aprofundar em certos aspectos do software.
-
-O grupo de trabalho pode fazer uso de questionários, entrevistas e dados estatísticos, que podem ser apresentados, com o objetivo de esclarecer detalhes do problema que será abordado pelo grupo.
+A automatização do processo traz benefícios diretos para o hóspede (rapidez, conforto e confiança) e para o hotel (controle, redução de custos e aumento de receita). Um sistema distribuído garante escalabilidade e confiabilidade, podendo ser utilizado em diversos pontos (recepção, restaurante, dispositivos móveis de garçons, aplicação do cliente etc.).
 
 > **Links Úteis**:
 > - [Como montar a justificativa](https://guiadamonografia.com.br/como-montar-justificativa-do-tcc/)
 
 ## Público-Alvo
+
+O sistema será utilizado por diferentes perfis de usuários dentro do contexto do hotel fazenda, cada um com características, conhecimentos prévios e necessidades específicas:
+
+Hóspedes (Público Primário):
+- Perfil variado (famílias, casais, grupos de amigos, turistas).
+- Nível de conhecimento tecnológico diverso: alguns com alta familiaridade com aplicativos móveis e outros com dificuldade em usar recursos digitais.
+- Relação hierárquica: cliente final, foco principal do serviço.
+- Necessidade: praticidade no check-in, pedidos rápidos no restaurante, integração de consumo e conta final sem erros.
+
+Equipe Operacional (Público Secundário):
+- Recepcionistas: normalmente com conhecimento intermediário em sistemas de gestão, precisam de agilidade para check-in/out.
+- Garçons: muitas vezes com pouca familiaridade tecnológica, exigindo interfaces simples e intuitivas para registrar pedidos.
+- Gerentes/Administração: com maior experiência em relatórios e sistemas, necessitam de dashboards e indicadores para tomada de decisão.
+- Relação hierárquica: subordinados à gerência → administração → diretoria.
+
+Personas
+1- Maria, 34 anos – Hóspede:
+- Turista que viaja com a família.
+- Usa smartphone diariamente, mas não gosta de sistemas complexos.
+- Quer evitar retrabalho (pedidos errados ou demora no atendimento).
+
+2- João, 25 anos – Garçom:
+- Atua no restaurante do hotel.
+- Tem pouco tempo para aprender tecnologias novas.
+- Precisa registrar pedidos de forma simples, rápida e sem erros.
+
+3- Carlos, 45 anos – Gerente do Hotel:
+- Responsável pelo controle do hotel fazenda.
+- Habituado a planilhas e relatórios.
+- Busca indicadores confiáveis e em tempo real para melhorar a gestão.
+
 
 Descreva quem serão as pessoas que usarão a sua aplicação indicando os diferentes perfis. O objetivo aqui não é definir quem serão os clientes ou quais serão os papéis dos usuários na aplicação. A ideia é, dentro do possível, conhecer um pouco mais sobre o perfil dos usuários: conhecimentos prévios, relação com a tecnologia, relações
 hierárquicas, etc.
