@@ -101,6 +101,10 @@ As tabelas que se seguem apresentam os requisitos funcionais e não funcionais q
 |------|-----------------------------------------|----|
 |RF-001| Permitir que o usuário cadastre tarefas | ALTA | 
 |RF-002| Emitir um relatório de tarefas no mês   | MÉDIA |
+|RF-003| Permitir que o usuário tenha acesso aos gastos já realizados | MÉDIA |
+|RF-004| Permitir que o usuário se acompanhado consiga ver os gastos de acordo com o usuário | MÉDIA |
+
+
 
 ### Requisitos não Funcionais
 
@@ -108,6 +112,11 @@ As tabelas que se seguem apresentam os requisitos funcionais e não funcionais q
 |-------|-------------------------|----|
 |RNF-001| O sistema deve ser responsivo para rodar em um dispositivos móvel | MÉDIA | 
 |RNF-002| Deve processar requisições do usuário em no máximo 3s |  BAIXA | 
+|RF-003| Deve lançar a comanda por quarto | ALTA |
+|RF-004| Gerar relatórios em PDF | MÉDIA |
+
+
+
 
 Com base nas Histórias de Usuário, enumere os requisitos da sua solução. Classifique esses requisitos em dois grupos:
 
