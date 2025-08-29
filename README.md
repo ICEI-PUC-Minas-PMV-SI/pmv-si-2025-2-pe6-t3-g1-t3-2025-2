@@ -1,4 +1,4 @@
-# Hotel Fazenda de Capitólio
+# Hotel Fazenda Capitólio
 
 `CURSO: Sistemas de Informação`
 
@@ -10,16 +10,16 @@ Descrever resumidamente, em um ou dois parágrafos, o projeto que está sendo de
 
 ## Integrantes
 
-* Nome completo do aluno 1
-* Nome completo do aluno 2
-* Nome completo do aluno 3
-* Nome completo do aluno 4
-* Nome completo do aluno 5
-* Nome completo do aluno 6
+* Junio dos Reis Firmino
+* Déborah Thaís de Matos
+* Raphael Lucas Oliveira dos Santos
+* Andre Murilo Neves Vasconcelos
+* Carlos Eduardo de Lima Assis
+
 
 ## Orientador
 
-* Nome completo do professor 1
+* Kleber Jacques Ferreira de Souza
 
 # Planejamento
 
