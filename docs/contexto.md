@@ -1,11 +1,17 @@
 # Introdução
 
-O setor de turismo e hotelaria está em constante expansão, e a experiência do hóspede é um fator decisivo para a fidelização. Muitos hotéis fazenda ainda operam com processos manuais para hospedagem, pedidos de restaurante e controle de consumo, o que gera atrasos, falhas e insatisfação.
-
-O projeto visa oferecer uma solução distribuida com foco no ramo hoteleiro com ênfase num hotel fazenda localizado no município de Capitólio em Minas Gerais.
+O setor de turismo, no qual se inclui o segmento de hotelaria, ocupa hoje papel relevante na economia mundial, sendo
+uma das atividades com maior representatividade econômica, ao lado da indústria do petróleo. Segundo informações do Instituto Brasileiro de Turismo (Embratur), o turismo se configura como uma atividade que gera anualmente US$ 4 trilhões e aproximadamente 280 milhões de empregos em todo o mundo.
+A indústria da hospitalidade, termo amplo, inclui uma variedade de organizações e negócios interdependentes, como hotéis,
+restaurantes, atrativos turísticos, meios de transporte, agências de viagem, entretenimento e serviços voltados para o atendimento ao turista.
+O Censo de Serviços do IBGE de 2002 aponta a existência de 23.366 empresas de “serviços de alojamento” no Brasil, o que
+incluiria não apenas hotéis, mas também pousadas, hotéis-fazenda, pensões, motéis etc., com 244 mil pessoas ocupadas nesses estabelecimentos.
+O Guia Quatro Rodas de 2005 (informações atualizadas até agosto de 2004) faz uma lista 5.557 hotéis, pousadas e hotéis fazenda, esclarecendo que ela não abrange a totalidade dos empreendimentos existentes, mas apenas aqueles considerados acima de determinado ponto de corte, estabelecido pelos editores. Por sua vez, a publicação eletrônica Onde Hospedar (www.ondehospedar.com.br), o mais completo diretório da hotelaria brasileira, aponta 14.914 meios de hospedagem no Brasil: 9.943 hotéis, 4.094 pousadas, 532 hotéis-fazenda e 345 apart-hotéis, com seus respectivos endereços. Outra fonte de dados do setor, a Hotel Investment Advisors (HIA), estima que cerca de 70% das UHs (Unidades Habitacionais) existentes no país são operados por hotéis independentes das redes.
+Com este contexto, o projeto aborda uma solução tecnológica para um hotel fazenda no município de Capitólio que se tornou um importante destino turístico de Minas Gerais, muito procurado nos últimos anos por conta de suas belas cachoeiras e rios de águas transparentes. O Cânion de Furnas é uma das diversas belezas naturais na região, soma-se a isso a proximidade  com a Serra da Canastra, formação rochosa no formato de mesa, onde se encontra a nascente do rio São Francisco e da cachoeira Casca d'Anta, dentro da área do Parque Nacional da Serra da Canastra, habitat do lobo guará, veado-campeiro, onça parda, tatu-canastra, ema, pato-mergulhão, perdiz, perdiz do cerrado, inhambu e uma infinidade de aves. De frente à Serra da Canastra, sua vizinha e gêmea Serra da Babilônia é explorada, inclusive, pelo balonismo.
 
 ## Problema
-O processo manual de hospedagem e de vendas do restaurante do hotel gera:
+O projeto visa oferecer uma solução distribuida com foco no ramo hoteleiro com ênfase num hotel fazenda localizado no município de Capitólio em Minas Gerais. Percebeu-se que é muito comum em empreendimentos de pequeno e médio porte deste ramo o controle da hospedagem e consumo dos hóspedes por meio de processos manuais que se mostram ineficientes, morosos e inseguros prejudicando assim a experiência dos hóspedes.
+
 - Erros frequentes nos pedidos.
 - Falta de controle sobre consumo e estoque.
 - Dificuldade no fechamento da conta do hóspede.
@@ -31,7 +37,7 @@ Nesse momento, o grupo pode optar por fazer uso  de ferramentas como Design Thin
 - Proporcionar ao hóspede uma experiência personalizada e fluida.
 - Oferecer ao hotel uma gestão mais eficiente de consumo, estoque e faturamento.
 
-## Objetivos Esécificos
+## Objetivos Específicos
 - Implementar um módulo de pedidos digitais integrado ao quarto do hóspede, permitindo que os consumos feitos no restaurante sejam registrados em tempo real e vinculados à hospedagem.
 - Desenvolver relatórios gerenciais automatizados que consolidem dados de hospedagem, pedidos e estoque, apoiando a administração na tomada de decisões mais ágil e precisa.
  
