@@ -160,7 +160,7 @@ Editor de Código: Visual Studio.
 Versionamento
 Para o controle de versão do código, o Git é utilizado.
 
-![Arquitetura do sistema](docs/img/Arquitetura.png)
+![Arquitetura do sistema](img/Arquitetura.png)
 
 ## Hospedagem
 
