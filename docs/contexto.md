@@ -139,7 +139,7 @@ Este projeto consiste em um sistema com duas interfaces de usuário principais: 
 
 **Frontend**
 
-Aplicação Web: Desenvolvida em React usando TypeScript.
+Aplicação Web: Desenvolvida em React usando TypeScript, HTML5 e CSS3 Para estruturação e estilização das páginas web.
 
 Aplicação Mobile: Criado com o React Native usando TypeScript.
 
