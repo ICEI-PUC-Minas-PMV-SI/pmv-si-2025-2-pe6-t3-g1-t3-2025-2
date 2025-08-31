@@ -91,8 +91,12 @@ As tabelas a seguir detalham os **requisitos funcionais e não funcionais** da s
 
 |ID     | Descrição do Requisito  |Prioridade |
 |-------|-------------------------|----|
-|RNF-001| O sistema deve ser responsivo para rodar em um dispositivos móvel | MÉDIA | 
-|RNF-002| Deve processar requisições do usuário em no máximo 3s |  BAIXA | 
+|RNF-001| O sistema deve ser responsivo para rodar em um dispositivos móvel | Essencial | 
+|RNF-002| O tempo de resposta para operações críticas (lançar pedido, vincular consumo) ≤ 2s | Importante |
+|RNF-003| Garantir *segurança dos dados*, com autenticação, controle de acesso e criptografia | Essencial |
+|RNF-004| O sistema deve estar disponível com *uptime mínimo de 99%* no horário comercial | Importante |
+|RNF-005| Manter *trilhas de auditoria* para pedidos, movimentação de estoque e fechamento | Importante |
+|RNF-006| Interfaces devem ser *intuitivas*, exigindo no máximo três cliques para registrar um pedido | Desejável |
 
 
 ## Restrições
@@ -129,11 +133,33 @@ Por fim, o **Serviço de Notificações**, considerado desejável, possibilitar�
 # Arquitetura da Solução
 
 
-## Tecnologias Utilizadas
+## Tecnologias Utilizadas  
 
-Descreva aqui qual(is) tecnologias você vai usar para resolver o seu problema, ou seja, implementar a sua solução. Liste todas as tecnologias envolvidas, linguagens a serem utilizadas, serviços web, frameworks, bibliotecas, IDEs de desenvolvimento, e ferramentas.
+Este projeto consiste em um sistema com duas interfaces de usuário principais: uma aplicação web e um aplicativo móvel. Ambas as interfaces se comunicam com a mesma API, garantindo uma experiência prática e consistente, seja no navegador ou no celular.
 
-Apresente também uma figura explicando como as tecnologias estão relacionadas ou como uma interação do usuário com o sistema vai ser conduzida, por onde ela passa até retornar uma resposta ao usuário.
+Tecnologias Utilizadas
+Frontend
+Aplicação Web: Desenvolvida em React usando TypeScript.
+
+Aplicação Mobile: Criado com o React Native usando TypeScript.
+
+Comunicação: Utiliza a biblioteca Axios para requisições HTTP.
+
+Editor de Código: Visual Studio Code.
+
+Backend
+API: Desenvolvida em ASP.NET usando C#. Concentra as regras de negócio e a lógica do sistema.
+
+Banco de Dados: SQL Server, responsável por armazenar dados de hospedagem, pedidos, estoque e faturamento.
+
+Acesso ao Banco: Utiliza o Entity Framework Core.
+
+Editor de Código: Visual Studio.
+
+Versionamento
+Para o controle de versão do código, o Git é utilizado.
+
+Apresente também uma figura explicando como as tecnologias estão relacionadas ou como uma interação do usuário com o sistema vai ser conduzida, por onde ela passa até retornar uma resposta ao usuário. 
 
 ## Hospedagem
 
