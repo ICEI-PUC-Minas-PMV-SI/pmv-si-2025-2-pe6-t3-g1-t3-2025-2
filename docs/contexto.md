@@ -77,14 +77,21 @@ As tabelas a seguir detalham os **requisitos funcionais e não funcionais** da s
 
 |ID    | Descrição do Requisito  | Prioridade |
 |------|-----------------------------------------|----|
-|RF-001| Permitir que o usuário peça tarefas | ALTA | 
-|RF-002| Emitir um relatório de produtos vendidos no mês em formato PDF  | MÉDIA |
+|RF-001| Permitir que o usuário peça tarefas | MÉDIA | 
+|RF-002| Emitir relatórios gerenciais de consumo, estoque, ocupação e faturamento em PDF| ALTA |
 |RF-003| Permitir que o usuário tenha acesso aos gastos já realizados | MÉDIA |
 |RF-004| Permitir que o usuário se acompanhado consiga ver os gastos de acordo com as contas vinculadas | MÉDIA |
 |RF-005| Permitir gestão de usuário | ALTA |
 |RF-006| Permitir gestão de produtos | ALTA |
 |RF-007| Permitir ao usuário a gestão de contas vinculadas | ALTA |
 |RF-008| Permitir ao gerente ober as tarefas pendentes | MÉDIA |
+|RF-009| Realizar check-in e check-out, registrando automaticamente os consumos vinculados | ALTA |
+|RF-010| Disponibilizar cardápio digital para consulta pelo hóspede ou lançamento de pedidos | ALTA |
+|RF-011| Permitir ao garçom registrar pedidos diretamente no sistema via dispositivo móvel | ALTA |
+|RF-012| Vincular os pedidos realizados no restaurante ao quarto do hóspede em tempo real | ALTA |
+|RF-013| Permitir funcionamento offline para lançamento de pedidos com sincronização posterior | BAIXA |
+|RF-014| Emitir comprovantes e notas no fechamento da conta do hóspede | ALTA |
+
 
 
 ### Requisitos não Funcionais
