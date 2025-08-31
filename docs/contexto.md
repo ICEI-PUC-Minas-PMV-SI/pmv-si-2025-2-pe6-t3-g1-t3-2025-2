@@ -148,6 +148,7 @@ Comunicação: Utiliza a biblioteca Axios para requisições HTTP.
 Editor de Código: Visual Studio Code.
 
 **Backend**
+
 API: Desenvolvida em ASP.NET usando C#. Concentra as regras de negócio e a lógica do sistema.
 
 Banco de Dados: SQL Server, responsável por armazenar dados de hospedagem, pedidos, estoque e faturamento.
