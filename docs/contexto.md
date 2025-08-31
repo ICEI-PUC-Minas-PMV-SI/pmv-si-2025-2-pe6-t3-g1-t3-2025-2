@@ -14,46 +14,28 @@ O Guia Quatro Rodas de 2005 (informações atualizadas até agosto de 2004) faz 
 Com este contexto, o projeto aborda uma solução tecnológica para um hotel fazenda no município de Capitólio que se tornou um importante destino turístico de Minas Gerais, muito procurado nos últimos anos por conta de suas belas cachoeiras e rios de águas transparentes. O Cânion de Furnas é uma das diversas belezas naturais na região, soma-se a isso a proximidade  com a Serra da Canastra, formação rochosa no formato de mesa, onde se encontra a nascente do rio São Francisco e da cachoeira Casca d'Anta, dentro da área do Parque Nacional da Serra da Canastra, habitat do lobo guará, veado-campeiro, onça parda, tatu-canastra, ema, pato-mergulhão, perdiz, perdiz do cerrado, inhambu e uma infinidade de aves. De frente à Serra da Canastra, sua vizinha e gêmea Serra da Babilônia é explorada, inclusive, pelo balonismo.
 
 ## Problema
-O projeto visa oferecer uma solução distribuida com foco no ramo hoteleiro com ênfase num hotel fazenda localizado no município de Capitólio em Minas Gerais. Percebeu-se que é muito comum em empreendimentos de pequeno e médio porte deste ramo o controle da hospedagem e consumo dos hóspedes por meio de processos manuais que se mostram ineficientes, morosos e inseguros prejudicando assim a experiência dos hóspedes.
+Durante a observação de um hotel-fazenda localizado em Capitólio/MG, foi identificado que os processos de hospedagem e de consumo no restaurante são realizados de forma manual. Essa prática, comum em empreendimentos de pequeno e médio porte, mostra-se ineficiente, morosa e pouco segura, prejudicando a experiência dos hóspedes e a organização do estabelecimento.
 
-- Erros frequentes nos pedidos.
-- Falta de controle sobre consumo e estoque.
-- Dificuldade no fechamento da conta do hóspede.
-- Experiência negativa e insatisfação do cliente.
+Entre os principais problemas encontrados estão:
+- erros frequentes no registro de pedidos;
+- ausência de controle efetivo sobre consumo e estoque;
+- dificuldade no fechamento das contas no momento do check-out;
+- experiência negativa e insatisfação dos clientes.
 
-
-
-Nesse momento você deve apresentar o problema que a sua aplicação deve  resolver. No entanto, não é a hora de comentar sobre a aplicação.
-
-Descreva também o contexto em que essa aplicação será usada, se  houver: empresa, tecnologias, etc. Novamente, descreva apenas o que de  fato existir, pois ainda não é a hora de apresentar requisitos  detalhados ou projetos.
-
-Nesse momento, o grupo pode optar por fazer uso  de ferramentas como Design Thinking, que permite um olhar de ponta a ponta para o problema.
-
-> **Links Úteis**:
-> - [Objetivos, Problema de pesquisa e Justificativa](https://medium.com/@versioparole/objetivos-problema-de-pesquisa-e-justificativa-c98c8233b9c3)
-> - [Matriz Certezas, Suposições e Dúvidas](https://medium.com/educa%C3%A7%C3%A3o-fora-da-caixa/matriz-certezas-suposi%C3%A7%C3%B5es-e-d%C3%BAvidas-fa2263633655)
-> - [Brainstorming](https://www.euax.com.br/2018/09/brainstorming/)
+Esse cenário demonstra a necessidade de modernização na forma como o hotel conduz suas atividades, de modo a oferecer maior eficiência operacional e uma experiência mais satisfatória ao hóspede.
 
 ## Objetivos
 
-- Desenvolver uma plataforma distribuída que integre hospedagem e restaurante em tempo real.
-- Reduzir erros de pedidos e aumentar a agilidade no atendimento.
-- Proporcionar ao hóspede uma experiência personalizada e fluida.
-- Oferecer ao hotel uma gestão mais eficiente de consumo, estoque e faturamento.
+O objetivo geral deste projeto é desenvolver uma plataforma distribuída que integre os processos de hospedagem e restaurante em tempo real, reduzindo erros nos pedidos, aumentando a agilidade no atendimento, proporcionando ao hóspede uma experiência mais personalizada e fluida, além de oferecer ao hotel uma gestão eficiente de consumo, estoque e faturamento.
 
 ## Objetivos Específicos
 - Implementar um módulo de pedidos digitais integrado ao quarto do hóspede, permitindo que os consumos feitos no restaurante sejam registrados em tempo real e vinculados à hospedagem.
 - Desenvolver relatórios gerenciais automatizados que consolidem dados de hospedagem, pedidos e estoque, apoiando a administração na tomada de decisões mais ágil e precisa.
  
-> **Links Úteis**:
-> - [Objetivo geral e objetivo específico: como fazer e quais verbos utilizar](https://blog.mettzer.com/diferenca-entre-objetivo-geral-e-objetivo-especifico/)
-
 ## Justificativa
 
 A automatização do processo traz benefícios diretos para o hóspede (rapidez, conforto e confiança) e para o hotel (controle, redução de custos e aumento de receita). Um sistema distribuído garante escalabilidade e confiabilidade, podendo ser utilizado em diversos pontos (recepção, restaurante, dispositivos móveis de garçons, aplicação do cliente etc.).
 
-> **Links Úteis**:
-> - [Como montar a justificativa](https://guiadamonografia.com.br/como-montar-justificativa-do-tcc/)
 
 ## Público-Alvo
 
