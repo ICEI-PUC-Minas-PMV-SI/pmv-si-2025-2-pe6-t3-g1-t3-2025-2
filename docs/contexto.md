@@ -160,7 +160,7 @@ Editor de Código: Visual Studio.
 Versionamento
 Para o controle de versão do código, o Git é utilizado.
 
-Apresente também uma figura explicando como as tecnologias estão relacionadas ou como uma interação do usuário com o sistema vai ser conduzida, por onde ela passa até retornar uma resposta ao usuário. 
+![Arquitetura do sistema](docs/img/Arquitetura.png)
 
 ## Hospedagem
 
