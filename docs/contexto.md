@@ -109,61 +109,23 @@ O projeto está restrito pelos itens apresentados na tabela a seguir.
 
 # Catálogo de Serviços
 
-O sistema proposto será composto por um conjunto de serviços que refletem as principais operações do hotel fazenda, contemplando hospedagem, restaurante, gestão interna e relatórios. A seguir, detalha-se cada serviço e suas funcionalidades.
+O sistema proposto será composto por um conjunto de serviços que refletem as principais operações do hotel fazenda, abrangendo hospedagem, restaurante, estoque, finanças, relatórios e autenticação.
 
----
+O **Serviço de Hospedagem** permitirá o cadastro de hóspedes com dados pessoais e documentos, o registro de check-in e check-out, a associação de consumos e pedidos ao quarto do hóspede e a emissão de comprovantes detalhados no momento do fechamento da conta.  
 
-## Serviço de Hospedagem
-- Cadastro de hóspedes com dados pessoais e documentos.  
-- Registro de check-in e check-out.  
-- Associação de consumos e pedidos ao quarto do hóspede.  
-- Emissão de comprovante detalhado no fechamento da conta.  
+O **Serviço de Restaurante** será responsável pela disponibilização de um cardápio digital tanto para hóspedes quanto para a equipe, pelo registro de pedidos via dispositivos móveis pelos garçons ou diretamente pelo hóspede, pelo acompanhamento do status dos pedidos (em preparo, entregue) e pela integração automática das solicitações com a hospedagem e o controle de estoque.  
 
----
+O **Serviço de Estoque** possibilitará o cadastro de insumos e produtos, a baixa automática de itens a cada pedido realizado, a geração de alertas para reposição quando o nível mínimo for atingido e a emissão de relatórios de movimentação de insumos e produtos.  
 
-## Serviço de Restaurante
-- Disponibilização de cardápio digital para hóspedes e equipe.  
-- Registro de pedidos via dispositivos móveis (garçom) ou pelo próprio hóspede.  
-- Acompanhamento de status do pedido (em preparo, entregue).  
-- Integração automática de pedidos com a hospedagem e com o estoque.  
+O **Serviço Financeiro** contemplará o registro de gastos vinculados ao quarto, a emissão de notas e recibos no momento do check-out, a integração com diferentes meios de pagamento (PIX, cartão, boleto) e o controle consolidado do faturamento.  
 
----
+O **Serviço de Relatórios** reunirá informações essenciais para a gestão, como relatórios de ocupação e taxa de utilização de quartos, consumo por hóspede, produto e período, além de dados de estoque e vendas. Este serviço também permitirá a visualização de dashboards em tempo real pela gerência.  
 
-## Serviço de Estoque
-- Cadastro de insumos e produtos.  
-- Baixa automática de itens a cada pedido realizado.  
-- Alertas para reposição de estoque em níveis mínimos.  
-- Relatórios de movimentação de produtos e insumos.  
+O **Serviço de Autenticação e Perfis** será responsável pelo cadastro e gerenciamento de usuários do sistema, pelo controle de permissões de acordo com os perfis (recepção, garçom, gerente, administrador) e pela auditoria de acessos e atividades realizadas.  
 
----
+Por fim, o **Serviço de Notificações**, considerado desejável, possibilitará o envio de mensagens aos hóspedes informando sobre pedidos concluídos, o disparo de alertas para a gerência em situações de baixa de estoque e o envio de confirmações de check-in e check-out por e-mail ou aplicativo.  
 
-## Serviço Financeiro
-- Registro de gastos vinculados ao quarto.  
-- Emissão de notas e recibos no check-out.  
-- Integração com meios de pagamento (PIX, cartão, boleto).  
-- Controle consolidado de faturamento.  
 
----
-
-## Serviço de Relatórios
-- Relatórios de ocupação e taxa de utilização de quartos.  
-- Relatórios de consumo por hóspede, produto e período.  
-- Relatórios de estoque e vendas.  
-- Dashboards para a gerência em tempo real.  
-
----
-
-## Serviço de Autenticação e Perfis
-- Cadastro e gerenciamento de usuários do sistema.  
-- Controle de permissões por perfil (recepção, garçom, gerente, administrador).  
-- Auditoria de acessos e atividades no sistema.  
-
----
-
-## Serviço de Notificações (Desejável)
-- Envio de notificações para hóspedes sobre pedidos concluídos.  
-- Alerta para gerência em casos de baixa de estoque.  
-- Confirmações de check-in e check-out via e-mail ou aplicativo.  
 # Arquitetura da Solução
 
 
@@ -179,34 +141,68 @@ Explique como a hospedagem e o lançamento da plataforma foi feita.
 
 # Planejamento
 
-##  Quadro de tarefas
+## Quadro de Tarefas
 
-> Apresente a divisão de tarefas entre os membros do grupo e o acompanhamento da execução, conforme o exemplo abaixo.
+O grupo foi organizado em etapas semanais para desenvolver os artefatos da **Etapa 1 – Planejamento de um Sistema Distribuído**. Abaixo está a divisão de tarefas, prazos e status de acompanhamento.
 
-### Semana 1
+---
 
-Atualizado em: 21/04/2024
+### Semana 1 – Contexto do Projeto
 
-| Responsável   | Tarefa/Requisito | Iniciado em    | Prazo      | Status | Terminado em    |
-| :----         |    :----         |      :----:    | :----:     | :----: | :----:          |
-| AlunaX        | Introdução | 01/02/2024     | 07/02/2024 | ✔️    | 05/02/2024      |
-| AlunaZ        | Objetivos    | 03/02/2024     | 10/02/2024 | 📝    |                 |
-| AlunoY        | Histórias de usuário  | 01/01/2024     | 07/01/2005 | ⌛     |                 |
-| AlunoK        | Personas 1  |    01/01/2024        | 12/02/2005 | ❌    |       |
+Atualizado em: 15/08/2025
 
-#### Semana 2
+| Responsável                  | Tarefa/Requisito                  | Iniciado em | Prazo     | Status | Terminado em |
+|------------------------------|------------------------------------|:-----------:|:---------:|:------:|:------------:|
+| Júnio dos Reis Firmino       | Redigir Introdução e Contexto      | 05/08/2025  | 10/08/2025| ✔️     | 09/08/2025   |
+| Júnio dos Reis Firmino       | Definir Problema                   | 05/08/2025  | 10/08/2025| ✔️     | 09/08/2025   |
+| Déborah Thaís de Matos       | Elaborar Justificativa             | 06/08/2025  | 11/08/2025| ✔️     | 11/08/2025   |
+| Carlos Eduardo de Lima Assis | Definir Objetivos (geral e específicos) | 06/08/2025  | 12/08/2025| ✔️     | 12/08/2025   |
+| Andre Murilo Neves Vasconcelos | Criar Público-Alvo e Personas    | 07/08/2025  | 13/08/2025| ✔️     | 13/08/2025   |
+| Todos os alunos              | Revisar Documentação da Semana 1   | 08/08/2025  | 14/08/2025| ✔️     | 14/08/2025   |
 
-Atualizado em: 21/04/2024
+---
 
-| Responsável   | Tarefa/Requisito | Iniciado em    | Prazo      | Status | Terminado em    |
-| :----         |    :----         |      :----:    | :----:     | :----: | :----:          |
-| AlunaX        | Página inicial   | 01/02/2024     | 07/03/2024 | ✔️    | 05/02/2024      |
-| AlunaZ        | CSS unificado    | 03/02/2024     | 10/03/2024 | 📝    |                 |
-| AlunoY        | Página de login  | 01/02/2024     | 07/03/2024 | ⌛     |                 |
-| AlunoK        | Script de login  |  01/01/2024    | 12/03/2024 | ❌    |       |
+### Semana 2 – Especificações e Catálogo
 
-Legenda:
-- ✔️: terminado
-- 📝: em execução
-- ⌛: atrasado
-- ❌: não iniciado
+Atualizado em: 22/08/2025
+
+| Responsável                  | Tarefa/Requisito                        | Iniciado em | Prazo     | Status | Terminado em |
+|------------------------------|------------------------------------------|:-----------:|:---------:|:------:|:------------:|
+| Déborah Thaís de Matos       | Levantar Requisitos Funcionais           | 15/08/2025  | 19/08/2025| ✔️     | 19/08/2025   |
+| Carlos Eduardo de Lima Assis | Levantar Requisitos Não Funcionais       | 15/08/2025  | 19/08/2025| ✔️     | 19/08/2025   |
+| Andre Murilo Neves Vasconcelos | Elaborar Catálogo de Serviços          | 16/08/2025  | 20/08/2025| ✔️     | 20/08/2025   |
+| Raphael Lucas Oliveira dos Santos | Definir Restrições do Projeto       | 16/08/2025  | 20/08/2025| ✔️     | 20/08/2025   |
+| Todos os alunos              | Revisar Entregas da Semana 1             | 17/08/2025  | 21/08/2025| ✔️     | 21/08/2025   |
+
+---
+
+### Semana 3 – Arquitetura e Consolidação
+
+Atualizado em: 29/08/2025
+
+| Responsável                  | Tarefa/Requisito                      | Iniciado em | Prazo     | Status | Terminado em |
+|------------------------------|----------------------------------------|:-----------:|:---------:|:------:|:------------:|
+| Carlos Eduardo de Lima Assis | Documentar Arquitetura da Solução      | 22/08/2025  | 26/08/2025| ✔️     | 26/08/2025   |
+| Déborah Thaís de Matos       | Definir Tecnologias Utilizadas         | 22/08/2025  | 26/08/2025| ✔️     | 26/08/2025   |
+| Andre Murilo Neves Vasconcelos | Descrever Estratégia de Hospedagem   | 23/08/2025  | 27/08/2025| ✔️     | 27/08/2025   |
+| Raphael Lucas Oliveira dos Santos | Consolidar Documento Final da Etapa 1 | 24/08/2025  | 28/08/2025| ✔️     | 28/08/2025   |
+| Todos os alunos              | Revisar Arquitetura da Solução         | 24/08/2025  | 28/08/2025| ✔️     | 28/08/2025   |
+
+---
+
+### Semana 4 – Revisão Geral
+
+Atualizado em: 31/08/2025
+
+| Responsável   | Tarefa/Requisito             | Iniciado em | Prazo     | Status | Terminado em |
+|---------------|-------------------------------|:-----------:|:---------:|:------:|:------------:|
+| Todos os alunos | Revisão Geral da Documentação | 29/08/2025  | 31/08/2025| ✔️     | 31/08/2025   |
+
+---
+
+### Legenda de Status
+
+- ✔️: Terminado  
+- 📝: Em execução  
+- ⌛: Atrasado  
+- ❌: Não iniciado  
