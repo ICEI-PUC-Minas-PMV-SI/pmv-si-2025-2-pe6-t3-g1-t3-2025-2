@@ -26,7 +26,7 @@ Esse cenário demonstra a necessidade de modernização na forma como o hotel co
 
 ## Objetivos
 
-O objetivo geral deste projeto é desenvolver uma plataforma distribuída que integre os processos de hospedagem e restaurante em tempo real, reduzindo erros nos pedidos, aumentando a agilidade no atendimento, proporcionando ao hóspede uma experiência mais personalizada e fluida, além de oferecer ao hotel uma gestão eficiente de consumo, estoque e faturamento.
+O objetivo geral deste projeto é desenvolver uma plataforma distribuída capaz de integrar, em tempo real, os processos de hospedagem e restaurante de um hotel-fazenda em Capitólio/MG, com vistas a reduzir erros operacionais, agilizar o atendimento, proporcionar ao hóspede uma experiência personalizada e oferecer ao hotel mecanismos mais eficientes de gestão de consumo, estoque e faturamento.
 
 ## Objetivos Específicos
 - Implementar um módulo de pedidos digitais integrado ao quarto do hóspede, permitindo que os consumos feitos no restaurante sejam registrados em tempo real e vinculados à hospedagem.
@@ -34,52 +34,32 @@ O objetivo geral deste projeto é desenvolver uma plataforma distribuída que in
  
 ## Justificativa
 
-A automatização do processo traz benefícios diretos para o hóspede (rapidez, conforto e confiança) e para o hotel (controle, redução de custos e aumento de receita). Um sistema distribuído garante escalabilidade e confiabilidade, podendo ser utilizado em diversos pontos (recepção, restaurante, dispositivos móveis de garçons, aplicação do cliente etc.).
+A automatização dos processos de hospedagem e de consumo representa uma estratégia essencial para elevar a qualidade do serviço prestado e a satisfação dos clientes. Do ponto de vista do hóspede, a inovação oferece maior comodidade, rapidez no atendimento e segurança no registro de consumos. Para o hotel, o ganho está no controle mais rigoroso de estoque, na redução de falhas humanas e no aumento da confiabilidade das informações financeiras.
+
+A escolha por uma solução distribuída é relevante porque possibilita escalabilidade, confiabilidade e acesso simultâneo em diferentes pontos do hotel, como recepção, restaurante, dispositivos móveis dos garçons e até mesmo aplicações voltadas ao cliente. Dessa forma, a proposta não apenas resolve problemas operacionais imediatos, mas também posiciona o empreendimento em alinhamento com as práticas mais modernas de gestão hoteleira.
 
 
 ## Público-Alvo
 
-O sistema será utilizado por diferentes perfis de usuários dentro do contexto do hotel fazenda, cada um com características, conhecimentos prévios e necessidades específicas:
+O sistema será utilizado por diferentes perfis de usuários no ambiente do hotel-fazenda, cada qual com características, níveis de familiaridade tecnológica e necessidades distintas.
 
-Hóspedes (Público Primário):
-- Perfil variado (famílias, casais, grupos de amigos, turistas).
-- Nível de conhecimento tecnológico diverso: alguns com alta familiaridade com aplicativos móveis e outros com dificuldade em usar recursos digitais.
-- Relação hierárquica: cliente final, foco principal do serviço.
-- Necessidade: praticidade no check-in, pedidos rápidos no restaurante, integração de consumo e conta final sem erros.
+Hóspedes (público primário):
+Os hóspedes representam um público heterogêneo, composto por famílias, casais e grupos de amigos que buscam lazer em Capitólio. A familiaridade com tecnologia é variada, indo de pessoas altamente habituadas ao uso de aplicativos móveis até aquelas que encontram dificuldades em lidar com recursos digitais. Suas principais necessidades envolvem praticidade no check-in, agilidade no atendimento, pedidos corretos no restaurante e integração transparente dos consumos ao fechamento da conta.
 
-Equipe Operacional (Público Secundário):
-- Recepcionistas: normalmente com conhecimento intermediário em sistemas de gestão, precisam de agilidade para check-in/out.
-- Garçons: muitas vezes com pouca familiaridade tecnológica, exigindo interfaces simples e intuitivas para registrar pedidos.
-- Gerentes/Administração: com maior experiência em relatórios e sistemas, necessitam de dashboards e indicadores para tomada de decisão.
-- Relação hierárquica: subordinados à gerência → administração → diretoria.
+Equipe operacional (público secundário):
+- Recepcionistas: possuem conhecimento intermediário em sistemas de gestão, necessitando de ferramentas ágeis para check-in e check-out.
+- Garçons: em geral, apresentam pouca familiaridade com tecnologias mais avançadas, o que exige interfaces simples, objetivas e rápidas para registro de pedidos.
+- Gerentes e administradores: possuem maior experiência em relatórios e indicadores e precisam de dashboards claros e confiáveis para apoiar a gestão estratégica do hotel.
+Hierarquicamente, esses grupos se organizam de forma subordinada: funcionários → gerência → administração/diretoria.
 
 Personas
-1- Maria, 34 anos – Hóspede:
-- Turista que viaja com a família.
-- Usa smartphone diariamente, mas não gosta de sistemas complexos.
-- Quer evitar retrabalho (pedidos errados ou demora no atendimento).
+1- Maria, 34 anos – Hóspede: turista que viaja com a família, utiliza smartphone diariamente, prefere sistemas simples e deseja rapidez no atendimento.
 
-2- João, 25 anos – Garçom:
-- Atua no restaurante do hotel.
-- Tem pouco tempo para aprender tecnologias novas.
-- Precisa registrar pedidos de forma simples, rápida e sem erros.
+2- João, 25 anos – Garçom: funcionário do restaurante, tem pouco tempo para treinar em novas tecnologias e precisa registrar pedidos com agilidade e sem falhas.
 
-3- Carlos, 45 anos – Gerente do Hotel:
-- Responsável pelo controle do hotel fazenda.
-- Habituado a planilhas e relatórios.
-- Busca indicadores confiáveis e em tempo real para melhorar a gestão.
+3- Carlos, 45 anos – Gerente: responsável pelo controle operacional, habituado a planilhas, busca relatórios confiáveis e em tempo real para tomada de decisão.
 
-
-Descreva quem serão as pessoas que usarão a sua aplicação indicando os diferentes perfis. O objetivo aqui não é definir quem serão os clientes ou quais serão os papéis dos usuários na aplicação. A ideia é, dentro do possível, conhecer um pouco mais sobre o perfil dos usuários: conhecimentos prévios, relação com a tecnologia, relações
-hierárquicas, etc.
-
-Adicione informações sobre o público-alvo por meio de uma descrição textual, diagramas de personas e mapa de stakeholders.
-
-> **Links Úteis**:
-> - [Público-alvo](https://blog.hotmart.com/pt-br/publico-alvo/)
-> - [Como definir o público alvo](https://exame.com/pme/5-dicas-essenciais-para-definir-o-publico-alvo-do-seu-negocio/)
-> - [Público-alvo: o que é, tipos, como definir seu público e exemplos](https://klickpages.com.br/blog/publico-alvo-o-que-e/)
-> - [Qual a diferença entre público-alvo e persona?](https://rockcontent.com/blog/diferenca-publico-alvo-e-persona/)
+Esse conjunto de perfis e suas necessidades evidencia a importância de um sistema que seja, ao mesmo tempo, acessível, intuitivo e robusto, atendendo tanto às expectativas dos hóspedes quanto às demandas internas da gestão hoteleira.
 
 # Especificações do Projeto
 
