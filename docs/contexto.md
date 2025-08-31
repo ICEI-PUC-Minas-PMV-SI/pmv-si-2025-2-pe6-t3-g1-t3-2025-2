@@ -53,6 +53,7 @@ Equipe operacional (público secundário):
 Hierarquicamente, esses grupos se organizam de forma subordinada: funcionários → gerência → administração/diretoria.
 
 Personas
+
 1- Maria, 34 anos – Hóspede: turista que viaja com a família, utiliza smartphone diariamente, prefere sistemas simples e deseja rapidez no atendimento.
 
 2- João, 25 anos – Garçom: funcionário do restaurante, tem pouco tempo para treinar em novas tecnologias e precisa registrar pedidos com agilidade e sem falhas.
@@ -65,7 +66,12 @@ Esse conjunto de perfis e suas necessidades evidencia a importância de um siste
 
 ## Requisitos
 
-As tabelas que se seguem apresentam os requisitos funcionais e não funcionais que detalham o escopo do projeto. Para determinar a prioridade de requisitos, aplicar uma técnica de priorização de requisitos e detalhar como a técnica foi aplicada.
+As tabelas a seguir detalham os **requisitos funcionais e não funcionais** da solução, organizados de acordo com as necessidades levantadas no contexto do hotel fazenda em Capitólio. Para definição de prioridades, foi utilizada a técnica **MoSCoW**, adaptada para português:
+
+- **Essencial**: requisito obrigatório para o funcionamento do sistema.  
+- **Importante**: relevante, mas pode ser entregue após os essenciais.  
+- **Desejável**: agrega valor, mas não é prioritário.  
+- **Não será implementado**: está fora do escopo atual.
 
 ### Requisitos Funcionais
 
@@ -89,24 +95,6 @@ As tabelas que se seguem apresentam os requisitos funcionais e não funcionais q
 |RNF-002| Deve processar requisições do usuário em no máximo 3s |  BAIXA | 
 
 
-
-
-
-Com base nas Histórias de Usuário, enumere os requisitos da sua solução. Classifique esses requisitos em dois grupos:
-
-- [Requisitos Funcionais
- (RF)](https://pt.wikipedia.org/wiki/Requisito_funcional):
- correspondem a uma funcionalidade que deve estar presente na
-  plataforma (ex: cadastro de usuário).
-- [Requisitos Não Funcionais
-  (RNF)](https://pt.wikipedia.org/wiki/Requisito_n%C3%A3o_funcional):
-  correspondem a uma característica técnica, seja de usabilidade,
-  desempenho, confiabilidade, segurança ou outro (ex: suporte a
-  dispositivos iOS e Android).
-Lembre-se que cada requisito deve corresponder à uma e somente uma
-característica alvo da sua solução. Além disso, certifique-se de que
-todos os aspectos capturados nas Histórias de Usuário foram cobertos.
-
 ## Restrições
 
 O projeto está restrito pelos itens apresentados na tabela a seguir.
@@ -115,22 +103,68 @@ O projeto está restrito pelos itens apresentados na tabela a seguir.
 |--|-------------------------------------------------------|
 |01| O projeto deverá ser entregue até o final do semestre |
 |02| Não pode ser desenvolvido um módulo de backend        |
+| 03 | O projeto contará apenas com a equipe de 6 alunos, sem contratação externa |
+| 04 | Não serão utilizados dados reais de hóspedes, apenas massa fictícia de teste |
 
-Enumere as restrições à sua solução. Lembre-se de que as restrições geralmente limitam a solução candidata.
-
-> **Links Úteis**:
-> - [O que são Requisitos Funcionais e Requisitos Não Funcionais?](https://codificar.com.br/requisitos-funcionais-nao-funcionais/)
-> - [O que são requisitos funcionais e requisitos não funcionais?](https://analisederequisitos.com.br/requisitos-funcionais-e-requisitos-nao-funcionais-o-que-sao/)
 
 # Catálogo de Serviços
 
-Descreva aqui todos os serviços que serão disponibilizados pelo seu projeto, detalhando suas características e funcionalidades.
+O sistema proposto será composto por um conjunto de serviços que refletem as principais operações do hotel fazenda, contemplando hospedagem, restaurante, gestão interna e relatórios. A seguir, detalha-se cada serviço e suas funcionalidades.
 
+---
+
+## Serviço de Hospedagem
+- Cadastro de hóspedes com dados pessoais e documentos.  
+- Registro de check-in e check-out.  
+- Associação de consumos e pedidos ao quarto do hóspede.  
+- Emissão de comprovante detalhado no fechamento da conta.  
+
+---
+
+## Serviço de Restaurante
+- Disponibilização de cardápio digital para hóspedes e equipe.  
+- Registro de pedidos via dispositivos móveis (garçom) ou pelo próprio hóspede.  
+- Acompanhamento de status do pedido (em preparo, entregue).  
+- Integração automática de pedidos com a hospedagem e com o estoque.  
+
+---
+
+## Serviço de Estoque
+- Cadastro de insumos e produtos.  
+- Baixa automática de itens a cada pedido realizado.  
+- Alertas para reposição de estoque em níveis mínimos.  
+- Relatórios de movimentação de produtos e insumos.  
+
+---
+
+## Serviço Financeiro
+- Registro de gastos vinculados ao quarto.  
+- Emissão de notas e recibos no check-out.  
+- Integração com meios de pagamento (PIX, cartão, boleto).  
+- Controle consolidado de faturamento.  
+
+---
+
+## Serviço de Relatórios
+- Relatórios de ocupação e taxa de utilização de quartos.  
+- Relatórios de consumo por hóspede, produto e período.  
+- Relatórios de estoque e vendas.  
+- Dashboards para a gerência em tempo real.  
+
+---
+
+## Serviço de Autenticação e Perfis
+- Cadastro e gerenciamento de usuários do sistema.  
+- Controle de permissões por perfil (recepção, garçom, gerente, administrador).  
+- Auditoria de acessos e atividades no sistema.  
+
+---
+
+## Serviço de Notificações (Desejável)
+- Envio de notificações para hóspedes sobre pedidos concluídos.  
+- Alerta para gerência em casos de baixa de estoque.  
+- Confirmações de check-in e check-out via e-mail ou aplicativo.  
 # Arquitetura da Solução
-
-Definição de como o software é estruturado em termos dos componentes que fazem parte da solução e do ambiente de hospedagem da aplicação.
-
-![arq](https://github.com/user-attachments/assets/b9402e05-8445-47c3-9d47-f11696e38a3d)
 
 
 ## Tecnologias Utilizadas
