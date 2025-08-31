@@ -137,8 +137,8 @@ Por fim, o **Serviço de Notificações**, considerado desejável, possibilitar�
 
 Este projeto consiste em um sistema com duas interfaces de usuário principais: uma aplicação web e um aplicativo móvel. Ambas as interfaces se comunicam com a mesma API, garantindo uma experiência prática e consistente, seja no navegador ou no celular.
 
-Tecnologias Utilizadas
-Frontend
+**Frontend**
+
 Aplicação Web: Desenvolvida em React usando TypeScript.
 
 Aplicação Mobile: Criado com o React Native usando TypeScript.
@@ -147,7 +147,7 @@ Comunicação: Utiliza a biblioteca Axios para requisições HTTP.
 
 Editor de Código: Visual Studio Code.
 
-Backend
+**Backend**
 API: Desenvolvida em ASP.NET usando C#. Concentra as regras de negócio e a lógica do sistema.
 
 Banco de Dados: SQL Server, responsável por armazenar dados de hospedagem, pedidos, estoque e faturamento.
