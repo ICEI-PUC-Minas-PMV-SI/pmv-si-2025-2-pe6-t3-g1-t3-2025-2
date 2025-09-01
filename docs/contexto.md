@@ -17,8 +17,9 @@ Com este contexto, o projeto aborda uma solução tecnológica para um hotel faz
 Durante a observação de um hotel-fazenda localizado em Capitólio/MG, foi identificado que os processos de hospedagem e de consumo no restaurante são realizados de forma manual. Essa prática, comum em empreendimentos de pequeno e médio porte, mostra-se ineficiente, morosa e pouco segura, prejudicando a experiência dos hóspedes e a organização do estabelecimento.
 
 Entre os principais problemas encontrados estão:
-- erros frequentes no registro de pedidos;
-- ausência de controle efetivo sobre consumo e estoque;
+- Utilização de blocos de papel pelos funcionarios para registrar e controlar os pedidos;
+- erros frequentes no registro de pedido feito pelos funcionários, havendo espaço para registros em outras hospedagem por erros ou corrupção;
+- ausência de controle efetivo sobre consumo e estoque pois os dados estão em cadernos ou blocos de papel;
 - dificuldade no fechamento das contas no momento do check-out;
 - experiência negativa e insatisfação dos clientes.
 
