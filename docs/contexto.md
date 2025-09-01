@@ -171,7 +171,9 @@ Para o controle de versão do código, o Git é utilizado.
 
 ## Hospedagem
 
-Explique como a hospedagem e o lançamento da plataforma foi feita.
+A aplicação web será hospedada em uma VPS (Servidor Virtual Privado) fornecida pela OVH, uma das maiores provedoras de infraestrutura em nuvem. A escolha por uma VPS garante maior controle sobre o ambiente de hospedagem, possibilitando a configuração personalizada dos serviços, maior desempenho e segurança.
+
+A VPS contará com um sistema operacional Linux (Ubuntu Server), com as dependências necessárias instaladas para rodar ambos os ambientes (Node.js para o build do React, .NET SDK e runtime para a aplicação ASP.NET)
 
 # Planejamento
 
