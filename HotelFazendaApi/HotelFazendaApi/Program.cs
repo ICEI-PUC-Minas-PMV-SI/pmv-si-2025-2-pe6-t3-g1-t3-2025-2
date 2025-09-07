@@ -1,4 +1,8 @@
 using HotelFazendaApi.Data;
+using HotelFazendaApi.Repositories;
+using HotelFazendaApi.Repositories.Interfaces;
+using HotelFazendaApi.Services;
+using HotelFazendaApi.Services.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -12,6 +16,9 @@ builder.Services.AddOpenApi();
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlServer(connectionString));
+
+builder.Services.AddScoped<IUserRepository, UserRepository>();
+builder.Services.AddScoped<IUserService, UserService>();
 
 var app = builder.Build();
 

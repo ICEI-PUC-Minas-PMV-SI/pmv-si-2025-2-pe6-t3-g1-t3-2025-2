@@ -1,6 +1,13 @@
-﻿namespace HotelFazendaApi.Services.Interfaces
+﻿using HotelFazendaApi.Entities;
+
+namespace HotelFazendaApi.Services.Interfaces
 {
-    public class IUserService
+    public interface IUserService
     {
+        Task<User> CreateUserAsync(User user);
+        Task<User?> GetUserByIdAsync(int id);
+        Task<IEnumerable<User>> GetAllUsersAsync();
+        Task<User> UpdateUserAsync(User user);
+        Task<bool> DeleteUserAsync(int id);
     }
 }
