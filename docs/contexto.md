@@ -120,7 +120,7 @@ O **Serviço de Estoque** possibilitará o cadastro de insumos e produtos, a bai
   
 O **Serviço de Autenticação e Perfis** será responsável pelo cadastro e gerenciamento de usuários do sistema, pelo controle de permissões de acordo com os perfis (recepção, garçom, gerente, administrador) e pela auditoria de acessos e atividades realizadas.  
 
-Por fim, o **Serviço de Notificações**, considerado desejável, possibilitará o envio de mensagens aos hóspedes informando sobre pedidos concluídos, o disparo de alertas para a gerência em situações de baixa de estoque e o envio de confirmações de check-in e check-out por e-mail ou aplicativo.  
+Por fim, o **Serviço de Notificações**, considerado desejável, possibilitará o envio de mensagens aos hóspedes informando sobre pedidos concluídos, o disparo de alertas para a gerência em situações de baixa de estoque.  
 
 
 # Arquitetura da Solução
