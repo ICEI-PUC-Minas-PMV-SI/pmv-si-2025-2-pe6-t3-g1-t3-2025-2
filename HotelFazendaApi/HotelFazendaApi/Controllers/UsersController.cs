@@ -1,12 +1,14 @@
 ﻿using HotelFazendaApi.DTOs;
 using HotelFazendaApi.Entities;
 using HotelFazendaApi.Services.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace HotelFazendaApi.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
+    [Authorize]
     public class UsersController : ControllerBase
     {
         private readonly IUserService _userService;
@@ -17,6 +19,7 @@ namespace HotelFazendaApi.Controllers
         }
 
         [HttpGet]
+        [Authorize(Roles = "Admin,Gerente")]
         public async Task<ActionResult<IEnumerable<UserViewDto>>> GetUsers()
         {
             var users = await _userService.GetAllUsersAsync();
@@ -25,6 +28,7 @@ namespace HotelFazendaApi.Controllers
         }
 
         [HttpGet("{id}")]
+        [Authorize(Roles = "Admin,Gerente")]
         public async Task<ActionResult<UserViewDto>> GetUser(int id)
         {
             var user = await _userService.GetUserByIdAsync(id);
@@ -39,6 +43,7 @@ namespace HotelFazendaApi.Controllers
         }
 
         [HttpPost]
+        [AllowAnonymous]
         public async Task<ActionResult<UserViewDto>> PostUser(CreateUserDto createUserDto)
         {
             var user = new User
@@ -57,6 +62,7 @@ namespace HotelFazendaApi.Controllers
         }
 
         [HttpPut("{id}")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> PutUser(int id, UpdateUserDto updateUserDto)
         {
             var user = await _userService.GetUserByIdAsync(id);
@@ -74,6 +80,7 @@ namespace HotelFazendaApi.Controllers
         }
 
         [HttpDelete("{id}")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> DeleteUser(int id)
         {
             var success = await _userService.DeleteUserAsync(id);
