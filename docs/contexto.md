@@ -106,9 +106,8 @@ O projeto está restrito pelos itens apresentados na tabela a seguir.
 |ID| Restrição                                             |
 |--|-------------------------------------------------------|
 |01| O projeto deverá ser entregue até o final do semestre |
-|02| Não pode ser desenvolvido um módulo de backend        |
-| 03 | O projeto contará apenas com a equipe de 6 alunos, sem contratação externa |
-| 04 | Não serão utilizados dados reais de hóspedes, apenas massa fictícia de teste |
+|02| O projeto contará apenas com a equipe de 6 alunos, sem contratação externa |
+|03| Não serão utilizados dados reais de hóspedes, apenas massa fictícia de teste |
 
 
 # Catálogo de Serviços
