@@ -113,17 +113,11 @@ O projeto está restrito pelos itens apresentados na tabela a seguir.
 # Catálogo de Serviços
 
 O sistema proposto será composto por um conjunto de serviços que refletem as principais operações do hotel fazenda, abrangendo hospedagem, restaurante, estoque, finanças, relatórios e autenticação.
-
-O **Serviço de Hospedagem** permitirá o cadastro de hóspedes com dados pessoais e documentos, o registro de check-in e check-out, a associação de consumos e pedidos ao quarto do hóspede, com possibilidade de acompanhamento de acordo com as contas vinculadas e a emissão de comprovantes detalhados no momento do fechamento da conta.  
-
+  
 O **Serviço de Restaurante** será responsável pela disponibilização de um cardápio digital tanto para hóspedes quanto para a equipe, pelo registro de pedidos via dispositivos móveis pelos garçons ou diretamente pelo hóspede, pelo acompanhamento do status dos pedidos (em preparo, entregue) e pela integração automática das solicitações com a hospedagem e o controle de estoque.  
 
 O **Serviço de Estoque** possibilitará o cadastro de insumos e produtos, a baixa automática de itens a cada pedido realizado, a geração de alertas para reposição quando o nível mínimo for atingido e a emissão de relatórios de movimentação de insumos e produtos.
-
-O **Serviço Financeiro** contemplará o registro de gastos vinculados ao quarto, a emissão de notas e recibos no momento do check-out, a integração com diferentes meios de pagamento (PIX, cartão, boleto) e o controle consolidado do faturamento.  
-
-O **Serviço de Relatórios** reunirá informações essenciais para a gestão, como relatórios de ocupação e taxa de utilização de quartos, consumo por hóspede, produto e período, além de dados de estoque e vendas. Este serviço também permitirá a visualização de dashboards em tempo real pela gerência.  
-
+  
 O **Serviço de Autenticação e Perfis** será responsável pelo cadastro e gerenciamento de usuários do sistema, pelo controle de permissões de acordo com os perfis (recepção, garçom, gerente, administrador) e pela auditoria de acessos e atividades realizadas.  
 
 Por fim, o **Serviço de Notificações**, considerado desejável, possibilitará o envio de mensagens aos hóspedes informando sobre pedidos concluídos, o disparo de alertas para a gerência em situações de baixa de estoque e o envio de confirmações de check-in e check-out por e-mail ou aplicativo.  
