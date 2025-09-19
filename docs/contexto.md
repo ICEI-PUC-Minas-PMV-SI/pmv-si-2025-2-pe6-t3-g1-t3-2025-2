@@ -232,9 +232,10 @@ Atualizado em: 31/08/2025
 # APIs e Web Services
 
 Para este projeto, foi desenvolvida uma API RESTful robusta que atua como o componente central do sistema de gestão do hotel-fazenda. A API centraliza todas as regras de negócio e o acesso aos dados, fornecendo uma interface segura e bem definida para que as aplicações cliente (como o frontend web e o aplicativo móvel) possam consumir e manipular as informações do sistema.
+
 ---
 
-# Objetivos da API
+## Objetivos da API
 
 O objetivo principal da API é fornecer um conjunto de **endpoints seguros e performáticos** para gerenciar as entidades centrais do sistema.  
 
