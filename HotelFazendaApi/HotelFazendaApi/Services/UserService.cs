@@ -15,6 +15,13 @@ namespace HotelFazendaApi.Services
 
         public async Task<User> CreateUserAsync(User user)
         {
+            User? existsUserEmail = await this.GetUserByEmailAsync(user.Email);
+            if(existsUserEmail != null)
+            {
+                throw new InvalidOperationException("Já existe um usuário com esse E-Mail.");
+            }
+
+
             user.PasswordHash = BCrypt.Net.BCrypt.HashPassword(user.PasswordHash);
             return await _userRepository.CreateAsync(user);
         }
@@ -22,6 +29,11 @@ namespace HotelFazendaApi.Services
         public async Task<User?> GetUserByIdAsync(int id)
         {
             return await _userRepository.GetByIdAsync(id);
+        }
+
+        public async Task<User?> GetUserByEmailAsync(string email)
+        {
+            return await _userRepository.GetByEmailAsync(email);
         }
 
         public async Task<IEnumerable<User>> GetAllUsersAsync()

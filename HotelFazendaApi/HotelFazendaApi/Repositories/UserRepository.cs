@@ -26,6 +26,12 @@ namespace HotelFazendaApi.Repositories
             return await _context.Users.FindAsync(id);
         }
 
+        public async Task<User?> GetByEmailAsync(string email)
+        {
+            return await _context.Users
+                .FirstOrDefaultAsync(x => x.Email == email);
+        }
+
         public async Task<IEnumerable<User>> GetAllAsync()
         {
             return await _context.Users.ToListAsync();
