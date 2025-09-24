@@ -23,8 +23,7 @@ namespace HotelFazendaApi.Services
         public async Task<string?> LoginAsync(LoginDto loginDto)
         {
             //Refatorar, criar um GetByEmail
-            var users = await _userRepository.GetAllAsync();
-            var user = users.FirstOrDefault(u => u.Email == loginDto.Email);
+            var user = await _userRepository.GetByEmailAsync(loginDto.Email);
 
             if (user == null || !BCrypt.Net.BCrypt.Verify(loginDto.Password, user.PasswordHash))
             {
