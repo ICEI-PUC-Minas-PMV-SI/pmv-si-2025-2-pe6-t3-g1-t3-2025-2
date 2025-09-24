@@ -1,4 +1,5 @@
 using HotelFazendaApi.Data;
+using HotelFazendaApi.Middlewares;
 using HotelFazendaApi.Repositories;
 using HotelFazendaApi.Repositories.Interfaces;
 using HotelFazendaApi.Services;
@@ -87,5 +88,7 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
+
+app.UseMiddleware<ExceptionMiddleware>();
 
 app.Run();
