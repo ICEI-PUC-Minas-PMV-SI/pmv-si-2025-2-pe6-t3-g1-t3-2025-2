@@ -14,7 +14,9 @@ O primeiro passo é definir os objetivos da sua API. O que você espera alcança
 
 
 ## Modelagem da Aplicação
-[Descreva a modelagem da aplicação, incluindo a estrutura de dados, diagramas de classes ou entidades, e outras representações visuais relevantes.]
+O projeto constará com 3 entidades: Clientes, produtos e quarto [Descreva a modelagem da aplicação, incluindo a estrutura de dados, diagramas de classes ou entidades, e outras representações visuais relevantes.]
+
+[Hotel Fazenda Capitólio.pdf](https://github.com/user-attachments/files/22585762/Hotel.Fazenda.Capitolio.pdf)
 
 
 ## Tecnologias Utilizadas
