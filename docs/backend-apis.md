@@ -14,7 +14,25 @@ O primeiro passo é definir os objetivos da sua API. O que você espera alcança
 
 
 ## Modelagem da Aplicação
-O projeto constará com 3 entidades: Clientes, produtos e quarto [Descreva a modelagem da aplicação, incluindo a estrutura de dados, diagramas de classes ou entidades, e outras representações visuais relevantes.]
+O projeto constará com 3 entidades: clientes, produtos e quarto. 
+A entidade cliente terá os seguintes atributos:
+- Id_cliente
+- CPF
+- Name
+- Email
+- Password
+
+A entidade produto terá os seguintes atributos:
+- Id_produto
+- Nome_produto
+- Tipo_produto
+- Preço
+
+A entidade quarto terá os seguintes atributos:
+- Id_quarto
+- Tipo_quarto
+
+[Descreva a modelagem da aplicação, incluindo a estrutura de dados, diagramas de classes ou entidades, e outras representações visuais relevantes.]
 
 [Hotel Fazenda Capitólio.pdf](https://github.com/user-attachments/files/22585762/Hotel.Fazenda.Capitolio.pdf)
 
