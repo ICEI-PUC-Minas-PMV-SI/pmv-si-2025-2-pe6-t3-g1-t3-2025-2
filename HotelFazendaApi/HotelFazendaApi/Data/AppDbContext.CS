@@ -9,6 +9,8 @@ namespace HotelFazendaApi.Data
 
         public DbSet<User> Users { get; set; } = null!;
         public DbSet<Order> Orders { get; set; } = null!;
+        public DbSet<Produto> Produtos { get; set; } = null!;
+
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
