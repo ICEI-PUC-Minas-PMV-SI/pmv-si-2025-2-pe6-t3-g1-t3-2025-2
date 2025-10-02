@@ -1,6 +1,0 @@
-@HotelFazendaApi_HostAddress = http://localhost:5210
-
-GET {{HotelFazendaApi_HostAddress}}/weatherforecast/
-Accept: application/json
-
-###
