@@ -353,22 +353,36 @@ Os endpoints são organizados por recursos. Atualmente:
 
 ### Semana 1
 
-Atualizado em: 21/04/2024
-
 | Responsável   | Tarefa/Requisito | Iniciado em    | Prazo      | Status | Terminado em    |
 | :----         |    :----         |      :----:    | :----:     | :----: | :----:          |
-| AlunaX        | Introdução | 01/02/2024     | 07/02/2024 | ✔️    | 05/02/2024      |
+| Carlos        | Criar estrutura Api | 04/09/2025     | 07/09/2025 | ✔️    | 05/09/2025      |
 | AlunaZ        | Objetivos    | 03/02/2024     | 10/02/2024 | 📝    |                 |
 | AlunoY        | Histórias de usuário  | 01/01/2024     | 07/01/2005 | ⌛     |                 |
 | AlunoK        | Personas 1  |    01/01/2024        | 12/02/2005 | ❌    |       |
 
 #### Semana 2
 
-Atualizado em: 21/04/2024
+| Responsável   | Tarefa/Requisito | Iniciado em    | Prazo      | Status | Terminado em    |
+| :----         |    :----         |      :----:    | :----:     | :----: | :----:          |
+| Carlos        | Crud de usuários | 08/09/2025     | 10/09/2025 | ✔️    | 09/09/2025      |
+| AlunaZ        | CSS unificado    | 03/02/2024     | 10/03/2024 | 📝    |                 |
+| AlunoY        | Página de login  | 01/02/2024     | 07/03/2024 | ⌛     |                 |
+| AlunoK        | Script de login  |  01/01/2024    | 12/03/2024 | ❌    |       |
+
+#### Semana 3
 
 | Responsável   | Tarefa/Requisito | Iniciado em    | Prazo      | Status | Terminado em    |
 | :----         |    :----         |      :----:    | :----:     | :----: | :----:          |
-| AlunaX        | Página inicial   | 01/02/2024     | 07/03/2024 | ✔️    | 05/02/2024      |
+| Carlos        | Login com Autenticação| 17/09/2025     | 20/09/2025 | ✔️    | 17/09/2025      |
+| AlunaZ        | CSS unificado    | 03/02/2024     | 10/03/2024 | 📝    |                 |
+| AlunoY        | Página de login  | 01/02/2024     | 07/03/2024 | ⌛     |                 |
+| AlunoK        | Script de login  |  01/01/2024    | 12/03/2024 | ❌    |       |
+
+#### Semana 4
+
+| Responsável   | Tarefa/Requisito | Iniciado em    | Prazo      | Status | Terminado em    |
+| :----         |    :----         |      :----:    | :----:     | :----: | :----:          |
+| Carlos        | Documentação e testes| 28/09/2025     | 05/10/2025 | ✔️    | 30/09/2025      |
 | AlunaZ        | CSS unificado    | 03/02/2024     | 10/03/2024 | 📝    |                 |
 | AlunoY        | Página de login  | 01/02/2024     | 07/03/2024 | ⌛     |                 |
 | AlunoK        | Script de login  |  01/01/2024    | 12/03/2024 | ❌    |       |
