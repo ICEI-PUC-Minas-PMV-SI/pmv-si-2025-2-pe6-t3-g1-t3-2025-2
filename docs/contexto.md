@@ -316,6 +316,29 @@ Os endpoints são organizados por recursos. Atualmente:
 
 ### Implantação
 
+A implantação da API será realizada em um ambiente de produção configurado para garantir disponibilidade, segurança e performance.
+
+A plataforma de hospedagem escolhida é um Servidor Virtual Privado (VPS), que oferece um bom equilíbrio entre custo e controle sobre o ambiente. A utilização de um VPS permite a configuração personalizada do servidor para atender aos requisitos específicos da aplicação.
+
+Requisitos Mínimos do Ambiente de Produção:
+
+Hardware (VPS):
+
+CPU: 2 vCores
+
+RAM: 4 GB
+
+Armazenamento: 50 GB SSD
+
+Software:
+
+Sistema Operacional: Linux (Ubuntu 22.04 LTS ou superior).
+
+Servidor Web: Nginx, configurado como proxy reverso para a aplicação Kestrel.
+
+Runtime: .NET 9.
+
+Banco de Dados: Instância do SQL Server para Linux ou um serviço de banco de dados gerenciado.
 
 
 ---
