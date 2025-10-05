@@ -48,30 +48,10 @@ Existem muitas tecnologias diferentes que podem ser usadas para desenvolver APIs
 
 [Liste os principais endpoints da API, incluindo as operações disponíveis, os parâmetros esperados e as respostas retornadas.]
 
-### Endpoint 1
-- Método: GET
-- URL: /endpoint1
-- Parâmetros:
-  - param1: [descrição]
-- Resposta:
-  - Sucesso (200 OK)
-    ```
-    {
-      "message": "Success",
-      "data": {
-        ...
-      }
-    }
-    ```
-  - Erro (4XX, 5XX)
-    ```
-    {
-      "message": "Error",
-      "error": {
-        ...
-      }
-    }
-    ```
+### Documentação Cardápio Digital
+Documentação realizada via Postman de acordo com a URL abaixo:
+- https://documenter.getpostman.com/view/49021780/2sB3QGvCMA
+
 
 ## Considerações de Segurança
 
