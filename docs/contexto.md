@@ -307,9 +307,7 @@ Os endpoints são organizados por recursos. Atualmente:
 
 ### Testes
 
-- **Swagger UI** → Testes interativos rápidos   
-- **xUnit** → Testes unitários da camada de serviços  
-
+- **Swagger UI** → Testes interativos rápidos, com a [documentação e evidências dos testes disponível aqui](https://sgapucminasbr-my.sharepoint.com/personal/1473720_sga_pucminas_br/_layouts/15/guestaccess.aspx?share=ETOvDMKM81tBv46wyxfZB_AB6CZnFM1sv2n0wfzCfWRZvg&rtime=E8VQDycE3kg).
 ---
 
 # Referências
