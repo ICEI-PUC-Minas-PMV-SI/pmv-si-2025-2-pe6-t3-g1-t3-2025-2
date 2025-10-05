@@ -261,6 +261,13 @@ A principal entidade definida até o momento é a de **User**, que contém infor
 
 Para a comunicação com o cliente, foram criados **DTOs** como `CreateUserDto` e `UserViewDto`, garantindo que apenas os dados necessários e seguros sejam expostos pela API.
 
+Para a entidade **Produtos** temos as seguintes informções:
+
+- `Id`
+- `Name`
+- `Preco`
+- `Estoque`
+
 ---
 
 ### Tecnologias Utilizadas
@@ -286,7 +293,15 @@ Os endpoints são organizados por recursos. Atualmente:
 - **GET** `/api/users/{id}` → Retorna usuário específico (**Admin/Gerente**)  
 - **POST** `/api/users` → Cria novo usuário (**Público**)  
 - **PUT** `/api/users/{id}` → Atualiza usuário (**Admin**)  
-- **DELETE** `/api/users/{id}` → Remove usuário (**Admin**)  
+- **DELETE** `/api/users/{id}` → Remove usuário (**Admin**)
+
+#### Produtos
+
+- **GET** `/api/produto` → Retorna todos os produtos (**Admin**)  
+- **GET** `/api/produto/{id}` → Retorna produto específico (**Admin**)  
+- **POST** `/api/produto` → Cria novo produto (**Admin**)  
+- **PUT** `/api/produto/{id}` → Atualiza produto (**Admin**)  
+- **DELETE** `/api/produto/{id}` → Remove produto (**Admin**)
 
 ---
 
