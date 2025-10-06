@@ -285,6 +285,10 @@ Para a entidade **Produtos** temos as seguintes informções:
 
 Os endpoints são organizados por recursos. Atualmente:
 
+### Documentação Cardápio Digital
+Documentação realizada via Postman de acordo com a URL abaixo:
+- https://documenter.getpostman.com/view/49021780/2sB3QGvCMA
+
 #### Autenticação
 - **POST** `/api/auth/login` → Recebe e-mail e senha e retorna um **JWT** válido.
 
