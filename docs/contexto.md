@@ -410,7 +410,7 @@ Banco de Dados: Instância do SQL Server para Linux ou um serviço de banco de d
 | Responsável   | Tarefa/Requisito | Iniciado em    | Prazo      | Status | Terminado em    |
 | :----         |    :----         |      :----:    | :----:     | :----: | :----:          |
 | Carlos        | Documentação e testes| 28/09/2025     | 05/10/2025 | ✔️    | 30/09/2025      |
-| AlunaZ        | CSS unificado    | 03/02/2024     | 10/03/2024 | 📝    |                 |
+| Junio Firmino | Criação cardápio Digital API | 28/09/2025 | 05/10/2025 |  ✔️   |                 |
 | AlunoY        | Página de login  | 01/02/2024     | 07/03/2024 | ⌛     |                 |
 | AlunoK        | Script de login  |  01/01/2024    | 12/03/2024 | ❌    |       |
 
