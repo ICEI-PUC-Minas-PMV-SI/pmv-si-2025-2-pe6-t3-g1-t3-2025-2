@@ -383,7 +383,7 @@ Banco de Dados: Instância do SQL Server para Linux ou um serviço de banco de d
 | Responsável   | Tarefa/Requisito | Iniciado em    | Prazo      | Status | Terminado em    |
 | :----         |    :----         |      :----:    | :----:     | :----: | :----:          |
 | Carlos        | Criar estrutura Api | 04/09/2025     | 07/09/2025 | ✔️    | 05/09/2025      |
-| Raphael        | Criar requisitos funcionais  | 08/09/2025    | 02/09/2025 | ✔️    |                 |
+| Raphael        | Criar requisitos funcionais  | 08/09/2025    | 02/09/2025 | ✔️    |        02/09/2025         |
 | AlunoY        | Histórias de usuário  | 01/01/2024     | 07/01/2005 | ⌛     |                 |
 | AlunoK        | Personas 1  |    01/01/2024        | 12/02/2005 | ❌    |       |
 
@@ -392,7 +392,7 @@ Banco de Dados: Instância do SQL Server para Linux ou um serviço de banco de d
 | Responsável   | Tarefa/Requisito | Iniciado em    | Prazo      | Status | Terminado em    |
 | :----         |    :----         |      :----:    | :----:     | :----: | :----:          |
 | Carlos        | Crud de usuários | 08/09/2025     | 10/09/2025 | ✔️    | 09/09/2025      |
-| Raphael        | Retificação de documentação | 12/09/2025     | 08/09/2025 | ✔️    |                 |
+| Raphael        | Retificação de documentação | 12/09/2025     | 08/09/2025 | ✔️    |        08/09/2025         |
 | AlunoY        | Página de login  | 01/02/2024     | 07/03/2024 | ⌛     |                 |
 | AlunoK        | Script de login  |  01/01/2024    | 12/03/2024 | ❌    |       |
 
@@ -401,7 +401,7 @@ Banco de Dados: Instância do SQL Server para Linux ou um serviço de banco de d
 | Responsável   | Tarefa/Requisito | Iniciado em    | Prazo      | Status | Terminado em    |
 | :----         |    :----         |      :----:    | :----:     | :----: | :----:          |
 | Carlos        | Login com Autenticação| 17/09/2025     | 20/09/2025 | ✔️    | 17/09/2025      |
-| Raphael        | Crud de produtos    | 19/09/2025     | 18/09/2025 | ✔️    |                 |
+| Raphael        | Crud de produtos    | 19/09/2025     | 18/09/2025 | ✔️    |        18/09/2025         |
 | AlunoY        | Página de login  | 01/02/2024     | 07/03/2024 | ⌛     |                 |
 | AlunoK        | Script de login  |  01/01/2024    | 12/03/2024 | ❌    |       |
 
@@ -411,7 +411,7 @@ Banco de Dados: Instância do SQL Server para Linux ou um serviço de banco de d
 | :----         |    :----         |      :----:    | :----:     | :----: | :----:          |
 | Carlos        | Documentação e testes| 28/09/2025     | 05/10/2025 | ✔️    | 30/09/2025      |
 | Junio Firmino | Criação cardápio Digital API | 28/09/2025 | 05/10/2025 |  ✔️   |                 |
-| Raphael        | Documentação de testes | 27/09/2025     | 05/10/2025 | ✔️     |                 |
+| Raphael        | Documentação de testes | 27/09/2025     | 05/10/2025 | ✔️     |        05/10/2025         |
 | AlunoK        | Script de login  |  01/01/2024    | 12/03/2024 | ❌    |       |
 
 Legenda:
