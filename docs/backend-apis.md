@@ -48,9 +48,7 @@ Existem muitas tecnologias diferentes que podem ser usadas para desenvolver APIs
 
 [Liste os principais endpoints da API, incluindo as operações disponíveis, os parâmetros esperados e as respostas retornadas.]
 
-### Documentação Cardápio Digital
-Documentação realizada via Postman de acordo com a URL abaixo:
-- https://documenter.getpostman.com/view/49021780/2sB3QGvCMA
+
 
 
 ## Considerações de Segurança
