@@ -92,6 +92,14 @@ Documentação realizada via Postman de acordo com a URL abaixo:
 - **PUT** `/api/produto/{id}` → Atualiza produto (**Admin**)  
 - **DELETE** `/api/produto/{id}` → Remove produto (**Admin**)
 
+#### Orders
+- **GET** `/api/order` → Retorna todos os pedidos (**Admin/Gerente**)  
+- **GET** `/api/order/{id}` → Retorna um pedido específico (**Admin/Gerente**)  
+- **GET** `/api/order/user/{userId}` → Retorna todos os pedidos realizados por um usuário específico (**Hospede**)  
+- **POST** `/api/order` → Cria um novo pedido (**Hospede**)  
+- **PUT** `/api/order/{id}` → Atualiza o status de um pedido existente (**Gerente/Admin**)  
+- **DELETE** `/api/order/{id}` → Cancela um pedido (**Gerente/Admin**)  
+
 ---
 
 ### Considerações de Segurança
