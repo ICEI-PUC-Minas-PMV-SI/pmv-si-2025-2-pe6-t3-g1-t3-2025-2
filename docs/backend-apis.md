@@ -20,22 +20,38 @@ Padrão **Controller–Service–Repository** com separação clara de responsab
 - **Services**: regras de negócio (ex.: cálculo de total do pedido, hash de senha).  
 - **Repositories**: acesso ao banco com **Entity Framework Core**.
 
-A principal entidade definida até o momento é a de **User**, que contém informações como:
+---
 
-- `Id`
-- `Name`
-- `Email`
-- `PasswordHash`
+### Entidades
+
+#### User
+- `Id` (int)  
+- `Name` (string)  
+- `Email` (string)  
+- `PasswordHash` (string)  
 - `Role` (enum: `Admin`, `Gerente`, `Hospede`)
 
-Para a comunicação com o cliente, foram criados **DTOs** como `CreateUserDto` e `UserViewDto`, garantindo que apenas os dados necessários e seguros sejam expostos pela API.
+DTOs: `CreateUserDto`, `UserViewDto`
 
-Para a entidade **Produtos** temos as seguintes informções:
+#### Produto
+- `Id` (int)  
+- `Name` (string)  
+- `Preco` (decimal)  
+- `Estoque` (int)
 
-- `Id`
-- `Name`
-- `Preco`
-- `Estoque`
+#### Order (Pedido)
+- `Id` (int)  
+- `UserId` (int) – quem faz o pedido  
+- `ProdutoId` (int) – item do cardápio  
+- `Quantidade` (int)  
+- `Total` (decimal) – **calculado** (`Preco × Quantidade`)  
+- `Status` (enum: `Pendente`, `Em Preparo`, `Entregue`, `Cancelado`)  
+- `DataPedido` (datetime)
+
+**Regras principais (Order):**
+- `Total` calculado no **Service** com base no preço vigente do produto.
+- Apenas **Admin/Gerente** podem alterar `Status`.
+- **Hospede** pode **criar** pedidos e **listar** os seus.
 
 ---
 
