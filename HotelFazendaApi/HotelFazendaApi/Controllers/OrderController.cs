@@ -2,77 +2,101 @@ using HotelFazendaApi.DTOs;
 using HotelFazendaApi.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace HotelFazendaApi.Controllers
 {
     [ApiController]
-    [Route("api/[controller]")]
-    [Authorize] // 🔒 exige autenticação para todos os endpoints deste controller
+    [Route("api/order")]
+    [Produces("application/json")]
+    [ResponseCache(NoStore = true, Location = ResponseCacheLocation.None)]
+    [Authorize] // exige autenticação em todos os endpoints
     public class OrderController : ControllerBase
     {
         private readonly IOrderService _service;
-        2
+
         public OrderController(IOrderService service)
         {
             _service = service;
         }
 
-        // GET: api/order
-        // Somente Admin, Gerente e Recepção podem visualizar todos os pedidos
+        // ==============================================
+        // GET: /api/order?page=1&pageSize=20
+        // Permite que Admin, Gerente e Recepção listem pedidos com paginação
+        // ==============================================
         [HttpGet]
         [Authorize(Roles = "Admin,Gerente,Recepcao")]
-        public async Task<IActionResult> GetAll()
+        [ProducesResponseType(typeof(IEnumerable<OrderReadDto>), 200)]
+        public async Task<ActionResult<IEnumerable<OrderReadDto>>> GetAll(
+            [FromQuery] int page = 1,
+            [FromQuery] int pageSize = 20,
+            CancellationToken ct = default)
         {
-            var orders = await _service.GetAllAsync();
+            var orders = await _service.GetAllAsync(page, pageSize, ct);
             return Ok(orders);
         }
 
-        // GET: api/order/{id}
-        // Qualquer usuário autenticado pode consultar um pedido específico
-        // 🔖 Nomeamos a rota para usar no CreatedAtRoute
+        // ==============================================
+        // GET: /api/order/{id}
+        // Retorna um pedido específico — qualquer usuário autenticado pode consultar
+        // ==============================================
         [HttpGet("{id:int}", Name = "GetOrderById")]
-        [Authorize]
-        public async Task<IActionResult> GetById([FromRoute] int id)
+        [ProducesResponseType(typeof(OrderReadDto), 200)]
+        [ProducesResponseType(404)]
+        public async Task<ActionResult<OrderReadDto>> GetById(int id, CancellationToken ct = default)
         {
-            var data = await _service.GetByIdAsync(id);
+            var data = await _service.GetByIdAsync(id, ct);
             return data is null ? NotFound() : Ok(data);
         }
 
-        // POST: api/order
-        // Admin, Gerente e Garçom podem criar pedidos
+        // ==============================================
+        // POST: /api/order
+        // Cria um novo pedido — permitido para Admin, Gerente e Garçom
+        // ==============================================
         [HttpPost]
         [Authorize(Roles = "Admin,Gerente,Garcom")]
-        public async Task<IActionResult> Create([FromBody] OrderCreateDto dto)
+        [Consumes("application/json")]
+        [ProducesResponseType(typeof(OrderReadDto), 201)]
+        [ProducesResponseType(409)]
+        public async Task<ActionResult<OrderReadDto>> Create(
+            [FromBody] OrderCreateDto dto,
+            CancellationToken ct = default)
         {
-            if (!ModelState.IsValid) return ValidationProblem(ModelState);
+            var created = await _service.CreateAsync(dto, ct);
+            if (created is null)
+                return Conflict("Não foi possível criar o pedido.");
 
-            var created = await _service.CreateAsync(dto);
-            if (created is null) return BadRequest("Não foi possível criar o pedido.");
-
-            // ✅ Retorna 201 e o Location apontando para GET api/order/{id}
             return CreatedAtRoute("GetOrderById", new { id = created.Id }, created);
         }
 
-        // PUT: api/order/{id}
-        // Somente Admin e Gerente podem atualizar pedidos
+        // ==============================================
+        // PUT: /api/order/{id}
+        // Atualiza um pedido existente — somente Admin e Gerente
+        // ==============================================
         [HttpPut("{id:int}")]
         [Authorize(Roles = "Admin,Gerente")]
-        public async Task<IActionResult> Update([FromRoute] int id, [FromBody] OrderUpdateDto dto)
+        [Consumes("application/json")]
+        [ProducesResponseType(204)]
+        [ProducesResponseType(404)]
+        public async Task<IActionResult> Update(int id, [FromBody] OrderUpdateDto dto, CancellationToken ct = default)
         {
-            if (!ModelState.IsValid) return ValidationProblem(ModelState);
-
-            var ok = await _service.UpdateAsync(id, dto);
+            var ok = await _service.UpdateAsync(id, dto, ct);
             return ok ? NoContent() : NotFound();
         }
 
-        // DELETE: api/order/{id}
-        // Exclusivo para Administradores
+        // ==============================================
+        // DELETE: /api/order/{id}
+        // Exclui um pedido — exclusivo para Administrador
+        // ==============================================
         [HttpDelete("{id:int}")]
         [Authorize(Roles = "Admin")]
-        public async Task<IActionResult> Delete([FromRoute] int id)
+        [ProducesResponseType(204)]
+        [ProducesResponseType(404)]
+        public async Task<IActionResult> Delete(int id, CancellationToken ct = default)
         {
-            var ok = await _service.DeleteAsync(id);
+            var ok = await _service.DeleteAsync(id, ct);
             return ok ? NoContent() : NotFound();
         }
     }
