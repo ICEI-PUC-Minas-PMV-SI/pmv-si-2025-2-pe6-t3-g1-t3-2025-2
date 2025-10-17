@@ -1,9 +1,9 @@
 using HotelFazendaApi.DTOs;
 using HotelFazendaApi.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http; // StatusCodes
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
-using System.Threading;
 using System.Threading.Tasks;
 
 namespace HotelFazendaApi.Controllers
@@ -23,18 +23,32 @@ namespace HotelFazendaApi.Controllers
         }
 
         // ==============================================
-        // GET: /api/order?page=1&pageSize=20
-        // Permite que Admin, Gerente e Recepção listem pedidos com paginação
+        // GET: /api/order
+        // Lista todos os pedidos. Mensagem customizada se o papel não tiver acesso.
         // ==============================================
         [HttpGet]
-        [Authorize(Roles = "Admin,Gerente,Recepcao")]
+        [Authorize] // mantém só a autenticação; a regra de papel é checada manualmente
         [ProducesResponseType(typeof(IEnumerable<OrderReadDto>), 200)]
-        public async Task<ActionResult<IEnumerable<OrderReadDto>>> GetAll(
-            [FromQuery] int page = 1,
-            [FromQuery] int pageSize = 20,
-            CancellationToken ct = default)
+        [ProducesResponseType(401)]
+        [ProducesResponseType(403)]
+        public async Task<ActionResult<IEnumerable<OrderReadDto>>> GetAll()
         {
-            var orders = await _service.GetAllAsync(page, pageSize, ct);
+            // Checagem manual para permitir mensagem amigável de 403
+            var autorizado =
+                User.IsInRole("Admin") ||
+                User.IsInRole("Gerente") ||
+                User.IsInRole("Recepcao");
+
+            if (!autorizado)
+            {
+                return StatusCode(StatusCodes.Status403Forbidden, new
+                {
+                    status = 403,
+                    message = "Acesso negado. O seu perfil não possui permissão para listar pedidos."
+                });
+            }
+
+            var orders = await _service.GetAllAsync();
             return Ok(orders);
         }
 
@@ -45,9 +59,9 @@ namespace HotelFazendaApi.Controllers
         [HttpGet("{id:int}", Name = "GetOrderById")]
         [ProducesResponseType(typeof(OrderReadDto), 200)]
         [ProducesResponseType(404)]
-        public async Task<ActionResult<OrderReadDto>> GetById(int id, CancellationToken ct = default)
+        public async Task<ActionResult<OrderReadDto>> GetById(int id)
         {
-            var data = await _service.GetByIdAsync(id, ct);
+            var data = await _service.GetByIdAsync(id);
             return data is null ? NotFound() : Ok(data);
         }
 
@@ -60,11 +74,9 @@ namespace HotelFazendaApi.Controllers
         [Consumes("application/json")]
         [ProducesResponseType(typeof(OrderReadDto), 201)]
         [ProducesResponseType(409)]
-        public async Task<ActionResult<OrderReadDto>> Create(
-            [FromBody] OrderCreateDto dto,
-            CancellationToken ct = default)
+        public async Task<ActionResult<OrderReadDto>> Create([FromBody] OrderCreateDto dto)
         {
-            var created = await _service.CreateAsync(dto, ct);
+            var created = await _service.CreateAsync(dto);
             if (created is null)
                 return Conflict("Não foi possível criar o pedido.");
 
@@ -80,9 +92,9 @@ namespace HotelFazendaApi.Controllers
         [Consumes("application/json")]
         [ProducesResponseType(204)]
         [ProducesResponseType(404)]
-        public async Task<IActionResult> Update(int id, [FromBody] OrderUpdateDto dto, CancellationToken ct = default)
+        public async Task<IActionResult> Update(int id, [FromBody] OrderUpdateDto dto)
         {
-            var ok = await _service.UpdateAsync(id, dto, ct);
+            var ok = await _service.UpdateAsync(id, dto);
             return ok ? NoContent() : NotFound();
         }
 
@@ -94,9 +106,9 @@ namespace HotelFazendaApi.Controllers
         [Authorize(Roles = "Admin")]
         [ProducesResponseType(204)]
         [ProducesResponseType(404)]
-        public async Task<IActionResult> Delete(int id, CancellationToken ct = default)
+        public async Task<IActionResult> Delete(int id)
         {
-            var ok = await _service.DeleteAsync(id, ct);
+            var ok = await _service.DeleteAsync(id);
             return ok ? NoContent() : NotFound();
         }
     }
