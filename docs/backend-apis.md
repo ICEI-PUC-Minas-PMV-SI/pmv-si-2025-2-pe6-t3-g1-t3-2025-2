@@ -1,24 +1,24 @@
 # APIs e Web Services
 
-Para este projeto, foi desenvolvida uma API RESTful robusta que atua como o componente central do sistema de gestão do hotel-fazenda. A API centraliza todas as regras de negócio e o acesso aos dados, fornecendo uma interface segura e bem definida para que as aplicações cliente (como o frontend web e o aplicativo móvel) possam consumir e manipular as informações do sistema.
+Para este projeto, foi desenvolvida uma **API RESTful robusta** que atua como o componente central do sistema de gestão do hotel-fazenda.  
+A API centraliza regras de negócio e acesso a dados, fornecendo uma interface **segura** e **bem definida** para frontend web e aplicativo móvel.
 
 ---
 
 ## Objetivos da API
 
-O objetivo principal da API é fornecer um conjunto de **endpoints seguros e performáticos** para gerenciar as entidades centrais do sistema.  
-
-Os objetivos da API abrangem desde a gestão completa de usuários e autenticação, que servirá como pilar de segurança para o sistema, até as funcionalidades essenciais do hotel, como o controle de hospedagens, o gerenciamento de produtos e o registro de pedidos do restaurante.
+Disponibilizar **endpoints seguros e performáticos** para gerenciar:
+- Usuários e autenticação (pilar de segurança).
+- Funcionalidades do hotel: produtos/cardápio e pedidos (orders).
 
 ---
 
-### Modelagem da Aplicação
+## Modelagem da Aplicação
+Padrão **Controller–Service–Repository** com separação clara de responsabilidades.
 
-A arquitetura da API foi estruturada seguindo o padrão **Controller-Service-Repository**, visando uma clara separação de responsabilidades e facilitando a manutenção e a testabilidade do código.
-
-- **Controllers**: Camada mais externa, responsável por receber as requisições HTTP, validar os dados de entrada e orquestrar as respostas.  
-- **Services**: Onde residem as regras de negócio. Exemplo: criptografia da senha antes de salvar no banco.  
-- **Repositories**: Camada de acesso a dados, responsável pela comunicação com o banco via **Entity Framework Core**.
+- **Controllers**: recebem requisições HTTP, validam dados e retornam respostas.  
+- **Services**: regras de negócio (ex.: cálculo de total do pedido, hash de senha).  
+- **Repositories**: acesso ao banco com **Entity Framework Core**.
 
 A principal entidade definida até o momento é a de **User**, que contém informações como:
 
@@ -39,14 +39,14 @@ Para a entidade **Produtos** temos as seguintes informções:
 
 ---
 
-### Tecnologias Utilizadas
+## Tecnologias
 
-- **.NET 9 / ASP.NET Core** → Criação dos endpoints RESTful  
-- **Entity Framework Core** → Persistência de dados (SQL Server)  
-- **EF Core Migrations** → Versionamento do esquema do banco  
-- **JWT** → Autenticação  
-- **BCrypt.Net-Next** → Hash de senhas  
-- **Swagger (OpenAPI)** → Documentação e testes interativos  
+- **.NET 9 / ASP.NET Core** (endpoints REST)
+- **Entity Framework Core** (SQL Server)
+- **EF Core Migrations** (versionamento)
+- **JWT** (autenticação)
+- **BCrypt.Net-Next** (hash de senha)
+- **Swagger (OpenAPI)** (documentação/testes)
 
 ---
 
