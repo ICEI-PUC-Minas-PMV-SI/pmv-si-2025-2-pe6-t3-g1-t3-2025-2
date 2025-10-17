@@ -106,37 +106,39 @@ Documentação realizada via Postman de acordo com a URL abaixo:
 
 - **Autenticação** via login que gera **JWT** assinado.  
 - **Autorização** baseada em **Role-Based Access Control (RBAC)**.  
-- Uso do atributo `[Authorize]` nos endpoints para restrição de acesso.  
+- Uso do atributo **`[Authorize]`** nos endpoints para restrição de acesso por papel.  
 - **Senhas nunca em texto plano**: sempre hash com **BCrypt**.  
+- **Boas práticas adicionais**: HTTPS obrigatório, CORS configurado, logs centralizados, rate limiting e validação de payloads.
 
 ---
 
 ### Implantação
 
-A implantação da API será realizada em um ambiente de produção configurado para garantir disponibilidade, segurança e performance.
+A implantação da API será realizada em um ambiente de produção configurado para garantir **disponibilidade, segurança e performance**.
 
-A plataforma de hospedagem escolhida é um Servidor Virtual Privado (VPS), que oferece um bom equilíbrio entre custo e controle sobre o ambiente. A utilização de um VPS permite a configuração personalizada do servidor para atender aos requisitos específicos da aplicação.
+A plataforma escolhida é um **Servidor Virtual Privado (VPS)**, proporcionando equilíbrio entre custo e controle do ambiente, com configuração personalizada para os requisitos da aplicação.
 
-Requisitos Mínimos do Ambiente de Produção:
+**Requisitos mínimos do ambiente de produção**
 
-Hardware (VPS):
+**Hardware (VPS):**
+- **CPU:** 2 vCores  
+- **RAM:** 4 GB  
+- **Armazenamento:** 50 GB SSD
 
-CPU: 2 vCores
+**Software:**
+- **Sistema Operacional:** Linux (Ubuntu 22.04 LTS ou superior)  
+- **Servidor Web:** Nginx, configurado como **proxy reverso** para a aplicação **Kestrel**  
+- **Runtime:** .NET 9  
+- **Banco de Dados:** Instância do **SQL Server para Linux** ou serviço de banco gerenciado
 
-RAM: 4 GB
-
-Armazenamento: 50 GB SSD
-
-Software:
-
-Sistema Operacional: Linux (Ubuntu 22.04 LTS ou superior).
-
-Servidor Web: Nginx, configurado como proxy reverso para a aplicação Kestrel.
-
-Runtime: .NET 9.
-
-Banco de Dados: Instância do SQL Server para Linux ou um serviço de banco de dados gerenciado.
-
+**Fluxo de publicação:**
+1. Build `Release` da API (.NET 9).  
+2. Publicação com `dotnet publish` (self-contained opcional).  
+3. Configuração do **systemd** para o serviço Kestrel.  
+4. Nginx como proxy (TLS/HTTPS, compressão, cache estático).  
+5. Variáveis de ambiente seguras (connection strings, JWT secret).  
+6. Backup/restore do banco e **migrations** do EF Core.  
+7. Monitoramento (health-checks, logs, métricas).
 
 ---
 
@@ -167,48 +169,53 @@ Banco de Dados: Instância do SQL Server para Linux ou um serviço de banco de d
 
 # Planejamento
 
-##  Quadro de tarefas
+## Quadro de tarefas
 
-> Apresente a divisão de tarefas entre os membros do grupo e o acompanhamento da execução, conforme o exemplo abaixo.
+> Divisão de tarefas entre os membros do grupo e acompanhamento da execução.
 
 ### Semana 1
 
-| Responsável   | Tarefa/Requisito | Iniciado em    | Prazo      | Status | Terminado em    |
-| :----         |    :----         |      :----:    | :----:     | :----: | :----:          |
-| Carlos        | Criar estrutura Api | 04/09/2025     | 07/09/2025 | ✔️    | 05/09/2025      |
-| Raphael        | Criar requisitos funcionais  | 08/09/2025    | 02/09/2025 | ✔️    |        02/09/2025         |
-| AlunoY        | Histórias de usuário  | 01/01/2024     | 07/01/2005 | ⌛     |                 |
-| AlunoK        | Personas 1  |    01/01/2024        | 12/02/2005 | ❌    |       |
+| Responsável | Tarefa/Requisito                                | Iniciado em | Prazo      | Status | Terminado em |
+|:-------------|:-----------------------------------------------|:-----------:|:----------:|:------:|:------------:|
+| Carlos       | Criar estrutura API                            | 04/09/2025  | 07/09/2025 | ✔️     | 05/09/2025   |
+| Raphael      | Criar requisitos funcionais                    | 08/09/2025  | 02/09/2025 | ✔️     | 02/09/2025   |
+| Déborah      | Definição da entidade Order e mapeamento inicial no banco | 05/09/2025  | 09/09/2025 | ✔️     | 08/09/2025   |
+| AlunoK       | Personas 1                                     | 01/01/2024  | 12/02/2005 | ❌     |              |
 
-#### Semana 2
+---
 
-| Responsável   | Tarefa/Requisito | Iniciado em    | Prazo      | Status | Terminado em    |
-| :----         |    :----         |      :----:    | :----:     | :----: | :----:          |
-| Carlos        | Crud de usuários | 08/09/2025     | 10/09/2025 | ✔️    | 09/09/2025      |
-| Raphael        | Retificação de documentação | 12/09/2025     | 08/09/2025 | ✔️    |        08/09/2025         |
-| AlunoY        | Página de login  | 01/02/2024     | 07/03/2024 | ⌛     |                 |
-| AlunoK        | Script de login  |  01/01/2024    | 12/03/2024 | ❌    |       |
+### Semana 2
 
-#### Semana 3
+| Responsável | Tarefa/Requisito                                   | Iniciado em | Prazo      | Status | Terminado em |
+|:-------------|:---------------------------------------------------|:-----------:|:----------:|:------:|:------------:|
+| Carlos       | CRUD de usuários                                   | 08/09/2025  | 10/09/2025 | ✔️     | 09/09/2025   |
+| Raphael      | Retificação de documentação                        | 12/09/2025  | 08/09/2025 | ✔️     | 08/09/2025   |
+| Déborah      | Implementar camada Repository e Service de Order    | 10/09/2025  | 15/09/2025 | ✔️     | 15/09/2025   |
+| AlunoK       | Script de login                                    | 01/01/2024  | 12/03/2024 | ❌     |              |
 
-| Responsável   | Tarefa/Requisito | Iniciado em    | Prazo      | Status | Terminado em    |
-| :----         |    :----         |      :----:    | :----:     | :----: | :----:          |
-| Carlos        | Login com Autenticação| 17/09/2025     | 20/09/2025 | ✔️    | 17/09/2025      |
-| Raphael        | Crud de produtos    | 19/09/2025     | 18/09/2025 | ✔️    |        18/09/2025         |
-| AlunoY        | Página de login  | 01/02/2024     | 07/03/2024 | ⌛     |                 |
-| AlunoK        | Script de login  |  01/01/2024    | 12/03/2024 | ❌    |       |
+---
 
-#### Semana 4
+### Semana 3
 
-| Responsável   | Tarefa/Requisito | Iniciado em    | Prazo      | Status | Terminado em    |
-| :----         |    :----         |      :----:    | :----:     | :----: | :----:          |
-| Carlos        | Documentação e testes| 28/09/2025     | 05/10/2025 | ✔️    | 30/09/2025      |
-| Junio Firmino | Criação cardápio Digital API | 28/09/2025 | 05/10/2025 |  ✔️   |                 |
-| Raphael        | Documentação de testes | 27/09/2025     | 05/10/2025 | ✔️     |        05/10/2025         |
-| AlunoK        | Script de login  |  01/01/2024    | 12/03/2024 | ❌    |       |
+| Responsável | Tarefa/Requisito                                         | Iniciado em | Prazo      | Status | Terminado em |
+|:-------------|:---------------------------------------------------------|:-----------:|:----------:|:------:|:------------:|
+| Carlos       | Login com autenticação                                   | 17/09/2025  | 20/09/2025 | ✔️     | 17/09/2025   |
+| Raphael      | CRUD de produtos                                         | 19/09/2025  | 18/09/2025 | ✔️     | 18/09/2025   |
+| Déborah      | Criação do OrderController e endpoints RESTful           | 18/09/2025  | 24/09/2025 | 📝     |              |
+| AlunoK       | Ajustes no script de login                               | 01/01/2024  | 12/03/2024 | ❌     |              |
 
-Legenda:
-- ✔️: terminado
-- 📝: em execução
-- ⌛: atrasado
-- ❌: não iniciado
+---
+
+### Semana 4
+
+| Responsável  | Tarefa/Requisito                           | Iniciado em | Prazo      | Status | Terminado em |
+|:--------------|:------------------------------------------|:-----------:|:----------:|:------:|:------------:|
+| Carlos        | Documentação e testes                     | 28/09/2025  | 05/10/2025 | ✔️     | 30/09/2025   |
+| Junio Firmino | Criação Cardápio Digital API              | 28/09/2025  | 05/10/2025 | ✔️     |              |
+| Raphael       | Documentação de testes                    | 27/09/2025  | 05/10/2025 | ✔️     | 05/10/2025   |
+| Déborah       | Testes e documentação do módulo Order     | 29/09/2025  | 05/10/2025 | ✔️     | 05/10/2025   |
+
+---
+
+**Legenda:**  
+✔️ terminado · 📝 em execução · ⌛ atrasado · ❌ não iniciado
