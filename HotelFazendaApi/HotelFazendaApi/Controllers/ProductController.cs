@@ -23,6 +23,7 @@ namespace HotelFazendaApi.Controllers
         }
 
         [HttpGet]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> GetAll()
         {
             var produtos = await _produtoService.GetAllAsync();
@@ -30,6 +31,7 @@ namespace HotelFazendaApi.Controllers
         }
 
         [HttpGet("{id}")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> GetById(int id)
         {
             var produto = await _produtoService.GetByIdAsync(id);
@@ -38,6 +40,7 @@ namespace HotelFazendaApi.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Create(Produto produto)
         {
             await _produtoService.AddAsync(produto);
@@ -45,6 +48,7 @@ namespace HotelFazendaApi.Controllers
         }
 
         [HttpPut("{id}")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Update(int id, Produto produto)
         {
             if (id != produto.Id) return BadRequest();
@@ -53,6 +57,7 @@ namespace HotelFazendaApi.Controllers
         }
 
         [HttpDelete("{id}")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Delete(int id)
         {
             await _produtoService.DeleteAsync(id);
