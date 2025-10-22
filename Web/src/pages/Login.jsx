@@ -14,7 +14,7 @@ export default function Login() {
     setError("");
     if (!email || !senha) return setError("Informe e-mail e senha.");
     const res = await login(email, senha);
-    if (res.ok) navigate("/");
+    if (res.ok) navigate("/", { replace: true });
     else setError(res.message);
   }
 

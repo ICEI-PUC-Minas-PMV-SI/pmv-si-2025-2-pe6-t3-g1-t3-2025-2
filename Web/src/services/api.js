@@ -1,7 +1,7 @@
 // src/services/api.js
 import axios from "axios";
 
-const baseURL = import.meta.env.VITE_API_BASE_URL || "https://localhost:5001"; // ajuste p/ sua API
+const baseURL = import.meta.env.VITE_API_BASE_URL || "https://localhost:5000"; // ajuste p/ sua API
 
 export const api = axios.create({
   baseURL,
