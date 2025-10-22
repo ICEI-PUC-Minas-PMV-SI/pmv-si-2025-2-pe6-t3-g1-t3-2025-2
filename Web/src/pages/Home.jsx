@@ -1,114 +1,81 @@
 import { Link } from "react-router-dom";
 import logoHF from "../assets/logoHF.png";
+import pedidoIcon from "../assets/pedido.png";
+import addUsuario from "../assets/addUsuario.png";
+import produtoIcon from "../assets/produto.png";
+import "./Home.css"; // ⬅️ importe o CSS
 
 export default function Home() {
   const usuario = JSON.parse(localStorage.getItem("user"));
 
   return (
-    <div
-      style={{
-        minHeight: "100vh",
-        background: "#f5f6f8",
-        display: "grid",
-        placeItems: "center",
-        padding: 16,
-      }}
-    >
-      <div
-        style={{
-          width: 720,
-          background: "#fff",
-          padding: 24,
-          borderRadius: 12,
-          boxShadow: "0 8px 24px rgba(0,0,0,.08)",
-        }}
-      >
-        {/* 🏨 Logo e título */}
-        <div style={{ textAlign: "center", marginBottom: 20 }}>
+    <div className="hf-root">
+      <div className="hf-card">
+        {/* Header / Hero */}
+        <div className="hf-hero">
           <img
             src={logoHF}
             alt="Logo do Hotel Fazenda"
-            style={{
-              width: 140,
-              objectFit: "contain",
-              marginBottom: 8,
-            }}
+            className="hf-logo"
           />
-          <h1 style={{ margin: 0, fontSize: 22, color: "#1a1a1a" }}>
-            Sistema de Gestão - Hotel Fazenda
-          </h1>
+          <div className="hf-hero-text">
+            <h1>Sistema de Gestão — Hotel Fazenda</h1>
+            <p>
+              Bem-vindo(a), <strong>{usuario?.nome || "usuário"}</strong> 👋
+            </p>
+            <p className="hf-hero-sub">Gerencie usuários, pedidos e produtos num só lugar.</p>
+          </div>
         </div>
 
-        <hr style={{ border: "none", borderTop: "1px solid #eee", margin: "16px 0" }} />
+        {/* Corpo */}
+        <div className="hf-body">
+          <p className="hf-intro">Escolha uma opção para começar:</p>
 
-        {/* 👋 Saudação */}
-        <h2 style={{ marginTop: 0, color: "#333" }}>
-          Bem-vindo(a), {usuario?.nome || "usuário"} 👋
-        </h2>
-        <p style={{ color: "#666", marginTop: 4 }}>
-          Escolha uma opção para começar:
-        </p>
+          {/* Grid de cards */}
+          <nav className="hf-grid">
+            <Link to="/usuarios/novo" className="hf-cardlink">
+              <span className="hf-iconbox">
+                <img src={addUsuario} alt="" className="hf-icon" />
+              </span>
+              <div className="hf-cardtext">
+                <span className="hf-cardtitle">Cadastrar usuário</span>
+                <small className="hf-cardsub">Crie acessos para gerente e garçom</small>
+              </div>
+              <span className="hf-arrow">›</span>
+            </Link>
 
-        {/* 🔗 Navegação principal */}
-        <nav
-          style={{
-            display: "grid",
-            gap: 8,
-            marginTop: 16,
-          }}
-        >
-          <Link
-            to="/usuarios/novo"
-            style={{
-              textDecoration: "none",
-              color: "#0b5ed7",
-              fontWeight: "500",
-            }}
-          >
-            ➕ Cadastrar usuário
-          </Link>
+            <Link to="/pedidos" className="hf-cardlink">
+              <span className="hf-iconbox">
+                <img src={pedidoIcon} alt="" className="hf-icon" />
+              </span>
+              <div className="hf-cardtext">
+                <span className="hf-cardtitle">Pedidos</span>
+                <small className="hf-cardsub">Acompanhe e gerencie pedidos</small>
+              </div>
+              <span className="hf-arrow">›</span>
+            </Link>
 
-          <Link
-            to="/pedidos"
-            style={{
-              textDecoration: "none",
-              color: "#0b5ed7",
-              fontWeight: "500",
-            }}
-          >
-            📋 Pedidos
-          </Link>
+            <Link to="/produtos" className="hf-cardlink">
+              <span className="hf-iconbox">
+                <img src={produtoIcon} alt="" className="hf-icon" />
+              </span>
+              <div className="hf-cardtext">
+                <span className="hf-cardtitle">Produtos</span>
+                <small className="hf-cardsub">Cadastre e organize o catálogo</small>
+              </div>
+              <span className="hf-arrow">›</span>
+            </Link>
+          </nav>
 
-          <Link
-            to="/produtos"
-            style={{
-              textDecoration: "none",
-              color: "#0b5ed7",
-              fontWeight: "500",
-            }}
-          >
-            🛒 Produtos
-          </Link>
-        </nav>
-
-        {/* 🔐 Esqueci minha senha */}
-        <div
-          style={{
-            display: "flex",
-            justifyContent: "flex-end",
-            marginTop: 24,
-          }}
-        >
-          <a
-            href="/esqueci-senha"
-            style={{
-              fontSize: 13,
-              color: "#0b5ed7",
-              textDecoration: "none",
-            }}
-          >
-            Esqueci minha senha
-          </a>
+          {/* Rodapé mini */}
+          <div className="hf-footer">
+            <a href="/esqueci-senha" className="hf-link">
+              Esqueci minha senha
+            </a>
+            <span className="hf-copy">
+              © {new Date().getFullYear()} Hotel Fazenda — Todos os direitos reservados
+            </span>
+          </div>
         </div>
       </div>
     </div>
