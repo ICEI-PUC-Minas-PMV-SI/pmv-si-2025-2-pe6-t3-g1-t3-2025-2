@@ -3,7 +3,9 @@ import Login from "./pages/Login.jsx";
 import UsuarioCreate from "./pages/UsuarioCreate.jsx";
 import Home from "./pages/Home.jsx";
 import EsqueciSenha from "./pages/EsqueciSenha.jsx";
+import Produtos from "./pages/Produtos.jsx";
 import RotaPrivada from "./routes/RotaPrivada.jsx";
+import ProdutoCreate from "./pages/ProdutoCreate.jsx";
 
 export default function App() {
   return (
@@ -22,7 +24,7 @@ export default function App() {
       <Route path="/login" element={<Login />} />
       <Route path="/esqueci-senha" element={<EsqueciSenha />} />
 
-      {/* Exemplo de rota privada adicional */}
+      {/* Usuários */}
       <Route
         path="/usuarios/novo"
         element={
@@ -32,7 +34,26 @@ export default function App() {
         }
       />
 
-      {/* fallback */}
+      {/* Produtos */}
+      <Route
+        path="/produtos"
+        element={
+          <RotaPrivada>
+            <Produtos />
+          </RotaPrivada>
+        }
+      />
+
+      <Route
+        path="/produtos/novo"
+        element={
+          <RotaPrivada>
+            <ProdutoCreate />
+          </RotaPrivada>
+        }
+      />
+
+      {/* Fallback */}
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
   );
