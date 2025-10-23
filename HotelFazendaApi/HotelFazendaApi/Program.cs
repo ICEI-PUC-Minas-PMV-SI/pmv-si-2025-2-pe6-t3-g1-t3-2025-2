@@ -13,8 +13,7 @@ using HotelFazendaApi.Services.Interfaces;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// -----------------------------
-// Controllers + JSON (Enums como string)
+// Controllers (Enums como string)
 builder.Services.AddControllers()
     .AddJsonOptions(o =>
     {
@@ -23,20 +22,15 @@ builder.Services.AddControllers()
         );
     });
 
-// -----------------------------
-// Swagger/OpenAPI + JWT Bearer
+// Swagger + JWT
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(c =>
 {
-    c.SwaggerDoc("v1", new OpenApiInfo
-    {
-        Title = "Hotel Fazenda API",
-        Version = "v1"
-    });
+    c.SwaggerDoc("v1", new OpenApiInfo { Title = "Hotel Fazenda API", Version = "v1" });
 
     c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
     {
-        Description = "Insira o token JWT no cabeçalho: **Bearer {seu_token}**",
+        Description = "Bearer {seu_token}",
         Name = "Authorization",
         In = ParameterLocation.Header,
         Type = SecuritySchemeType.ApiKey,
@@ -49,26 +43,18 @@ builder.Services.AddSwaggerGen(c =>
         {
             new OpenApiSecurityScheme
             {
-                Reference = new OpenApiReference
-                {
-                    Type  = ReferenceType.SecurityScheme,
-                    Id    = "Bearer"
-                }
+                Reference = new OpenApiReference { Type = ReferenceType.SecurityScheme, Id = "Bearer" }
             },
             Array.Empty<string>()
         }
     });
 });
 
-// -----------------------------
-// DB Context
+// DbContext
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
-builder.Services.AddDbContext<AppDbContext>(opt =>
-    opt.UseSqlServer(connectionString));
+builder.Services.AddDbContext<AppDbContext>(opt => opt.UseSqlServer(connectionString));
 
-// -----------------------------
-// CORS
-// Lê da configuração (appsettings.json -> "Cors:AllowedOrigins") ou usa defaults de DEV.
+// CORS (frontend local)
 var allowedOrigins = builder.Configuration
     .GetSection("Cors:AllowedOrigins")
     .Get<string[]>() ?? new[] { "http://localhost:5173", "http://localhost:3000" };
@@ -77,16 +63,13 @@ builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowFrontend", policy =>
     {
-        policy
-            .WithOrigins(allowedOrigins)
-            .AllowAnyHeader()
-            .AllowAnyMethod();
-        // .AllowCredentials(); // habilite somente se usar cookies; para JWT via header NÃO é necessário
+        policy.WithOrigins(allowedOrigins)
+              .AllowAnyHeader()
+              .AllowAnyMethod();
     });
 });
 
-// -----------------------------
-// DI - Repositórios e Serviços
+// DI
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IAuthService, AuthService>();
@@ -97,11 +80,10 @@ builder.Services.AddScoped<IOrderService, OrderService>();
 builder.Services.AddScoped<IProdutoRepository, ProdutoRepository>();
 builder.Services.AddScoped<IProdutoService, ProdutoService>();
 
-// -----------------------------
-// Autenticação JWT
-var issuer = builder.Configuration["Jwt:Issuer"];
+// JWT
+var issuer   = builder.Configuration["Jwt:Issuer"];
 var audience = builder.Configuration["Jwt:Audience"];
-var key = builder.Configuration["Jwt:Key"];
+var key      = builder.Configuration["Jwt:Key"];
 
 builder.Services
     .AddAuthentication(options =>
@@ -111,7 +93,7 @@ builder.Services
     })
     .AddJwtBearer(options =>
     {
-        options.RequireHttpsMetadata = false; // em produção, prefira true
+        options.RequireHttpsMetadata = false; // em produção, prefira true (com HTTPS)
         options.SaveToken = true;
         options.TokenValidationParameters = new TokenValidationParameters
         {
@@ -121,20 +103,20 @@ builder.Services
             ValidateIssuerSigningKey = true,
             ValidIssuer   = issuer,
             ValidAudience = audience,
-            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(key))
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(key!))
         };
     });
 
 var app = builder.Build();
 
-// -----------------------------
-// Pipeline de Middleware (ordem importa!)
+// Pipeline
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
 }
 
+// **Mantém HTTPS redirection (ok)**
 app.UseHttpsRedirection();
 
 // CORS antes de Auth
@@ -143,9 +125,10 @@ app.UseCors("AllowFrontend");
 app.UseAuthentication();
 app.UseAuthorization();
 
-// Middleware global de exceções (captura erros da pipeline inteira)
+// middleware global de exceções
 app.UseMiddleware<ExceptionMiddleware>();
 
 app.MapControllers();
 
+// Mantém a porta 5210 via launchSettings.json
 app.Run();

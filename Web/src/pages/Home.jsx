@@ -5,15 +5,23 @@ import addUsuario from "../assets/addUsuario.png";
 import produto from "../assets/produto.png";
 import pedido from "../assets/pedido.png";
 import quarto from "../assets/quarto.png";
-import "../pages/Home.css"; // usa o CSS local
+import "../pages/Home.css";
+
+function getUsuario() {
+  try {
+    // se não existir, cai no "null" (string) e vira null de verdade
+    return JSON.parse(localStorage.getItem("user") || "null");
+  } catch {
+    return null;
+  }
+}
 
 export default function Home() {
-  const usuario = JSON.parse(localStorage.getItem("user"));
+  const usuario = getUsuario();
 
   return (
     <div className="hf-root">
       <div className="hf-card">
-        {/* HERO */}
         <div className="hf-hero">
           <img src={logoHF} alt="Logo Hotel Fazenda" className="hf-logo" />
           <div className="hf-hero-text">
@@ -28,55 +36,68 @@ export default function Home() {
         <div className="hf-body">
           <p className="hf-intro">Escolha uma opção para começar:</p>
 
-          <div className="hf-grid">
+          <nav className="hf-grid" aria-label="Atalhos do sistema">
             {/* Quartos */}
             <Link to="/quartos" className="hf-cardlink">
               <span className="hf-iconbox">
-                <img src={quarto} alt="Ícone de quartos" className="hf-icon" />
+                <img src={quarto} alt="" width={22} height={22} className="hf-icon" loading="lazy" />
               </span>
               <span className="hf-cardtext">
                 <span className="hf-cardtitle">Quartos</span>
                 <span className="hf-cardsub">Acomodar hóspedes e visualizar status</span>
               </span>
-              <span className="hf-arrow">→</span>
+              <span className="hf-arrow" aria-hidden>→</span>
+            </Link>
+
+            {/* Reservas (novo atalho útil) */}
+            <Link to="/reservas" className="hf-cardlink">
+              <span className="hf-iconbox">
+                {/* Reaproveita o ícone de pedido/quarto se não tiver um específico */}
+                <img src={pedido} alt="" width={22} height={22} className="hf-icon" loading="lazy" />
+              </span>
+              <span className="hf-cardtext">
+                <span className="hf-cardtitle">Reservas</span>
+                <span className="hf-cardsub">Criar, consultar e confirmar hospedagens</span>
+              </span>
+              <span className="hf-arrow" aria-hidden>→</span>
             </Link>
 
             {/* Usuários */}
             <Link to="/usuarios/novo" className="hf-cardlink">
               <span className="hf-iconbox">
-                <img src={addUsuario} alt="Ícone de usuários" className="hf-icon" />
+                <img src={addUsuario} alt="" width={22} height={22} className="hf-icon" loading="lazy" />
               </span>
               <span className="hf-cardtext">
                 <span className="hf-cardtitle">Cadastrar usuário</span>
                 <span className="hf-cardsub">Criar acesso para a equipe</span>
               </span>
-              <span className="hf-arrow">→</span>
+              <span className="hf-arrow" aria-hidden>→</span>
             </Link>
 
             {/* Produtos */}
             <Link to="/produtos" className="hf-cardlink">
               <span className="hf-iconbox">
-                <img src={produto} alt="Ícone de produtos" className="hf-icon" />
+                <img src={produto} alt="" width={22} height={22} className="hf-icon" loading="lazy" />
               </span>
               <span className="hf-cardtext">
                 <span className="hf-cardtitle">Produtos</span>
                 <span className="hf-cardsub">Gerenciar cardápio e itens do restaurante</span>
               </span>
-              <span className="hf-arrow">→</span>
+              <span className="hf-arrow" aria-hidden>→</span>
             </Link>
 
             {/* Pedidos */}
             <Link to="/pedidos" className="hf-cardlink">
               <span className="hf-iconbox">
-                <img src={pedido} alt="Ícone de pedidos" className="hf-icon" />
+                <img src={pedido} alt="" width={22} height={22} className="hf-icon" loading="lazy" />
               </span>
               <span className="hf-cardtext">
                 <span className="hf-cardtitle">Pedidos</span>
                 <span className="hf-cardsub">Registrar consumos e entregas</span>
               </span>
-              <span className="hf-arrow">→</span>
+              <span className="hf-arrow" aria-hidden>→</span>
             </Link>
-          </div>
+          </nav>
 
           {/* FOOTER */}
           <div className="hf-footer">

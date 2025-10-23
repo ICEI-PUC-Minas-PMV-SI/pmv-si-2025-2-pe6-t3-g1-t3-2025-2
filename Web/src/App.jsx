@@ -8,6 +8,10 @@ import RotaPrivada from "./routes/RotaPrivada.jsx";
 import ProdutoCreate from "./pages/ProdutoCreate.jsx";
 import Quartos from "./pages/Quartos.jsx";
 import QuartosCheckin from "./pages/QuartosCheckin.jsx";
+import Reservas from "./pages/Reservas.jsx";
+import ReservaNova from "./pages/ReservaNova.jsx";
+import ContaHospedagem from "./pages/ContaHospedagem.jsx";
+
 
 export default function App() {
   return (
@@ -72,6 +76,33 @@ export default function App() {
           </RotaPrivada>
         }
       />
+
+      <Route
+        path="/reservas"
+        element={
+          <RotaPrivada>
+            <Reservas />
+          </RotaPrivada>
+        }
+      />
+      <Route
+        path="/reservas/nova"
+        element={
+          <RotaPrivada>
+            <ReservaNova />
+          </RotaPrivada>
+        }
+      />
+
+      <Route
+        path="/conta/:hospedagemId"
+        element={
+          <RotaPrivada>
+            <ContaHospedagem />
+          </RotaPrivada>
+        }
+      />
+
 
       {/* Fallback */}
       <Route path="*" element={<Navigate to="/" replace />} />
