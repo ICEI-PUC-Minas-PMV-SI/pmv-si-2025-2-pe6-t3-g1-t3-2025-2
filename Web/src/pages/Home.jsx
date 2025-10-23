@@ -1,9 +1,11 @@
+// src/pages/Home.jsx
 import { Link } from "react-router-dom";
 import logoHF from "../assets/logoHF.png";
-import pedidoIcon from "../assets/pedido.png";
 import addUsuario from "../assets/addUsuario.png";
-import produtoIcon from "../assets/produto.png";
-import "./Home.css"; // ⬅️ importe o CSS
+import produto from "../assets/produto.png";
+import pedido from "../assets/pedido.png";
+import quarto from "../assets/quarto.png";
+import "../pages/Home.css"; // usa o CSS local
 
 export default function Home() {
   const usuario = JSON.parse(localStorage.getItem("user"));
@@ -11,69 +13,78 @@ export default function Home() {
   return (
     <div className="hf-root">
       <div className="hf-card">
-        {/* Header / Hero */}
+        {/* HERO */}
         <div className="hf-hero">
-          <img
-            src={logoHF}
-            alt="Logo do Hotel Fazenda"
-            className="hf-logo"
-          />
+          <img src={logoHF} alt="Logo Hotel Fazenda" className="hf-logo" />
           <div className="hf-hero-text">
             <h1>Sistema de Gestão — Hotel Fazenda</h1>
-            <p>
-              Bem-vindo(a), <strong>{usuario?.nome || "usuário"}</strong> 👋
+            <p className="hf-hero-sub">
+              Bem-vindo(a), {usuario?.nome || "usuário"} 👋
             </p>
-            <p className="hf-hero-sub">Gerencie usuários, pedidos e produtos num só lugar.</p>
           </div>
         </div>
 
-        {/* Corpo */}
+        {/* BODY */}
         <div className="hf-body">
           <p className="hf-intro">Escolha uma opção para começar:</p>
 
-          {/* Grid de cards */}
-          <nav className="hf-grid">
+          <div className="hf-grid">
+            {/* Quartos */}
+            <Link to="/quartos" className="hf-cardlink">
+              <span className="hf-iconbox">
+                <img src={quarto} alt="Ícone de quartos" className="hf-icon" />
+              </span>
+              <span className="hf-cardtext">
+                <span className="hf-cardtitle">Quartos</span>
+                <span className="hf-cardsub">Acomodar hóspedes e visualizar status</span>
+              </span>
+              <span className="hf-arrow">→</span>
+            </Link>
+
+            {/* Usuários */}
             <Link to="/usuarios/novo" className="hf-cardlink">
               <span className="hf-iconbox">
-                <img src={addUsuario} alt="" className="hf-icon" />
+                <img src={addUsuario} alt="Ícone de usuários" className="hf-icon" />
               </span>
-              <div className="hf-cardtext">
+              <span className="hf-cardtext">
                 <span className="hf-cardtitle">Cadastrar usuário</span>
-                <small className="hf-cardsub">Crie acessos para gerente e garçom</small>
-              </div>
-              <span className="hf-arrow">›</span>
-            </Link>
-
-            <Link to="/pedidos" className="hf-cardlink">
-              <span className="hf-iconbox">
-                <img src={pedidoIcon} alt="" className="hf-icon" />
+                <span className="hf-cardsub">Criar acesso para a equipe</span>
               </span>
-              <div className="hf-cardtext">
-                <span className="hf-cardtitle">Pedidos</span>
-                <small className="hf-cardsub">Acompanhe e gerencie pedidos</small>
-              </div>
-              <span className="hf-arrow">›</span>
+              <span className="hf-arrow">→</span>
             </Link>
 
+            {/* Produtos */}
             <Link to="/produtos" className="hf-cardlink">
               <span className="hf-iconbox">
-                <img src={produtoIcon} alt="" className="hf-icon" />
+                <img src={produto} alt="Ícone de produtos" className="hf-icon" />
               </span>
-              <div className="hf-cardtext">
+              <span className="hf-cardtext">
                 <span className="hf-cardtitle">Produtos</span>
-                <small className="hf-cardsub">Cadastre e organize o catálogo</small>
-              </div>
-              <span className="hf-arrow">›</span>
+                <span className="hf-cardsub">Gerenciar cardápio e itens do restaurante</span>
+              </span>
+              <span className="hf-arrow">→</span>
             </Link>
-          </nav>
 
-          {/* Rodapé mini */}
+            {/* Pedidos */}
+            <Link to="/pedidos" className="hf-cardlink">
+              <span className="hf-iconbox">
+                <img src={pedido} alt="Ícone de pedidos" className="hf-icon" />
+              </span>
+              <span className="hf-cardtext">
+                <span className="hf-cardtitle">Pedidos</span>
+                <span className="hf-cardsub">Registrar consumos e entregas</span>
+              </span>
+              <span className="hf-arrow">→</span>
+            </Link>
+          </div>
+
+          {/* FOOTER */}
           <div className="hf-footer">
-            <a href="/esqueci-senha" className="hf-link">
+            <Link to="/esqueci-senha" className="hf-link">
               Esqueci minha senha
-            </a>
+            </Link>
             <span className="hf-copy">
-              © {new Date().getFullYear()} Hotel Fazenda — Todos os direitos reservados
+              © {new Date().getFullYear()} Hotel Fazenda
             </span>
           </div>
         </div>

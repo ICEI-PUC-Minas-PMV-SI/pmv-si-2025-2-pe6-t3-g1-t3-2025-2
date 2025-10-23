@@ -6,6 +6,8 @@ import EsqueciSenha from "./pages/EsqueciSenha.jsx";
 import Produtos from "./pages/Produtos.jsx";
 import RotaPrivada from "./routes/RotaPrivada.jsx";
 import ProdutoCreate from "./pages/ProdutoCreate.jsx";
+import Quartos from "./pages/Quartos.jsx";
+import QuartosCheckin from "./pages/QuartosCheckin.jsx";
 
 export default function App() {
   return (
@@ -49,6 +51,24 @@ export default function App() {
         element={
           <RotaPrivada>
             <ProdutoCreate />
+          </RotaPrivada>
+        }
+      />
+
+      <Route
+        path="/quartos"
+        element={
+          <RotaPrivada>
+            <Quartos />
+          </RotaPrivada>
+        }
+      />
+
+      <Route
+        path="/quartos/checkin/:quartoId"
+        element={
+          <RotaPrivada>
+            <QuartosCheckin />
           </RotaPrivada>
         }
       />
