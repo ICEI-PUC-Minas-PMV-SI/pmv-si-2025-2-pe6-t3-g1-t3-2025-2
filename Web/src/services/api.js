@@ -1,31 +1,29 @@
 // src/services/api.js
 import axios from "axios";
 
-const baseURL = import.meta.env.VITE_API_BASE_URL || "https://localhost:5000"; // ajuste p/ sua API
+// Usa variável de ambiente se existir, senão cai no localhost:5210/api
+const baseURL = import.meta.env.VITE_API_BASE_URL || "http://localhost:5210/api";
 
+// Cria instância global do Axios
 export const api = axios.create({
   baseURL,
-  timeout: 15000,
-  // withCredentials: true, // habilite APENAS se usar cookies (CORS deve permitir)
-  // validateStatus: (status) => status >= 200 && status < 300, // padrão do axios
+  timeout: 15000, // 15 segundos
 });
 
-// Injeta token em toda requisição
+// 🔐 Injeta token JWT automaticamente, se existir no localStorage
 api.interceptors.request.use((config) => {
   const token = localStorage.getItem("token");
-  if (token) config.headers.Authorization = `Bearer ${token}`;
+  if (token) {
+    config.headers.Authorization = `Bearer ${token}`;
+  }
   return config;
 });
 
-// (Opcional) 401 global – se já trata no AuthProvider, pode remover
-// api.interceptors.response.use(
-//   (res) => res,
-//   (err) => {
-//     if (err?.response?.status === 401) {
-//       localStorage.removeItem("token");
-//       localStorage.removeItem("user");
-//       // redirecione se quiser: window.location.href = "/login";
-//     }
-//     return Promise.reject(err);
-//   }
-// );
+// ⚠️ Intercepta erros de resposta para logar e tratar globalmente
+api.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    console.error("Erro na API:", error?.response || error?.message);
+    return Promise.reject(error);
+  }
+);

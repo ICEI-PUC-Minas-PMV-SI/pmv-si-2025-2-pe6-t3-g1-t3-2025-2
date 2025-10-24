@@ -1,36 +1,47 @@
 // src/services/reservas.js
-const API = "http://localhost:5210/api";
-function authHeader() {
-  const tok = localStorage.getItem("token");
-  return tok ? { Authorization: `Bearer ${tok}` } : {};
+import { api } from "./api";
+
+/**
+ * Lista reservas com filtros opcionais
+ * @param {{ q?: string, status?: string }} param0
+ */
+export async function listarReservas({ q, status } = {}) {
+  const params = {};
+  if (q) params.q = q;
+  if (status && status !== "Todas") params.status = status;
+
+  const { data } = await api.get("/reservations", { params });
+  // garanta array
+  return Array.isArray(data) ? data : [];
 }
 
-export async function listarReservas({ q = "", status = "Todas" } = {}) {
-  const params = new URLSearchParams();
-  if (q?.trim()) params.append("q", q.trim());
-  if (status && status !== "Todas") params.append("status", status);
-
-  const res = await fetch(`${API}/reservations?${params.toString()}`, {
-    headers: { "Content-Type": "application/json", ...authHeader() },
+/**
+ * Busca quartos disponíveis no período informado
+ * (ajuste o endpoint caso o seu backend use outro caminho)
+ * @param {{ entrada: string, saida: string, hospedes?: number }} param0
+ */
+export async function buscarQuartosLivres({ entrada, saida, hospedes = 1 }) {
+  // tente primeiro este endpoint; se o seu for outro, só troque a URL:
+  // exemplo alternativo: "/rooms/available"
+  const { data } = await api.get("/reservations/available-rooms", {
+    params: { from: entrada, to: saida, guests: hospedes },
   });
-  if (!res.ok) throw new Error("Falha ao carregar reservas");
-  return res.json(); // <- deve devolver um array
+  return Array.isArray(data) ? data : [];
 }
 
+/**
+ * Cria uma reserva
+ * @param {{
+ *  hospedeNome: string,
+ *  hospedeDocumento?: string,
+ *  telefone?: string,
+ *  qtdHospedes: number,
+ *  dataEntrada: string,
+ *  dataSaida: string,
+ *  quartoId: number
+ * }} payload
+ */
 export async function criarReserva(payload) {
-  const res = await fetch(`${API}/reservations`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json", ...authHeader() },
-    body: JSON.stringify(payload),
-  });
-  if (!res.ok) throw new Error("Falha ao salvar reserva");
-  return res.json();
-}
-
-export async function cancelarReserva(id) {
-  const res = await fetch(`${API}/reservations/${id}`, {
-    method: "DELETE",
-    headers: { ...authHeader() },
-  });
-  if (!res.ok) throw new Error("Falha ao cancelar");
+  const { data } = await api.post("/reservations", payload);
+  return data;
 }

@@ -3,6 +3,8 @@ import { Link, useNavigate } from "react-router-dom";
 import { buscarQuartosLivres, criarReserva } from "../services/reservas";
 import "./reservas.css";
 
+
+
 export default function ReservaNova() {
   const [hospedeNome, setHospedeNome] = useState("");
   const [hospedeDocumento, setHospedeDocumento] = useState("");
