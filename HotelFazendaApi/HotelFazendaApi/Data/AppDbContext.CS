@@ -7,15 +7,19 @@ namespace HotelFazendaApi.Data
     {
         public AppDbContext(DbContextOptions<AppDbContext> options) : base(options) { }
 
-        public DbSet<User> Users { get; set; } = null!;
-        public DbSet<Order> Orders { get; set; } = null!;
-        public DbSet<Produto> Produtos { get; set; } = null!;
+        // DbSets
+        public DbSet<User> Users => Set<User>();
+        public DbSet<Order> Orders => Set<Order>();
+        public DbSet<Produto> Produtos => Set<Produto>();
         public DbSet<Room> Rooms => Set<Room>();
         public DbSet<Reservation> Reservations => Set<Reservation>();
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
+
+            // schema padrão do PostgreSQL
+            modelBuilder.HasDefaultSchema("public");
 
             // User: persiste o enum como string
             modelBuilder.Entity<User>()
@@ -36,9 +40,7 @@ namespace HotelFazendaApi.Data
                     .HasMaxLength(20)
                     .HasDefaultValue("Livre");
 
-                // Índice único pelo número do quarto
-                e.HasIndex(p => p.Numero)
-                    .IsUnique();
+                e.HasIndex(p => p.Numero).IsUnique();
             });
 
             // Reservation
@@ -48,11 +50,8 @@ namespace HotelFazendaApi.Data
                     .HasMaxLength(120)
                     .IsRequired();
 
-                e.Property(p => p.HospedeDocumento)
-                    .HasMaxLength(40);
-
-                e.Property(p => p.Telefone)
-                    .HasMaxLength(40);
+                e.Property(p => p.HospedeDocumento).HasMaxLength(40);
+                e.Property(p => p.Telefone).HasMaxLength(40);
 
                 e.Property(p => p.Status)
                     .HasMaxLength(20)
@@ -64,9 +63,13 @@ namespace HotelFazendaApi.Data
                     .HasForeignKey(p => p.QuartoId)
                     .OnDelete(DeleteBehavior.Restrict);
 
-                // Índice para acelerar buscas por período
                 e.HasIndex(p => new { p.DataEntrada, p.DataSaida });
             });
+
+            // (Opcional) Se Produto tiver preço/valor decimal, descomente:
+            // modelBuilder.Entity<Produto>()
+            //     .Property(p => p.Preco)
+            //     .HasPrecision(18, 2);
         }
     }
 }

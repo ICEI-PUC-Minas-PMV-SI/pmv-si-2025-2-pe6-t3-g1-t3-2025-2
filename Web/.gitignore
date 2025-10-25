@@ -1,13 +1,55 @@
-# Optional npm cache directory
-.npm
+# ===============================
+# 🧩 Node & NPM
+# ===============================
 
-# Dependency directories
+# Diretórios de dependências
 node_modules/
+Web/node_modules/
 web_modules/
 
-# Vite files
+# Cache do npm
+.npm
+.npm-cache
+package-lock.json
+
+# ===============================
+# ⚙️ Vite / React
+# ===============================
+
+.vite/
 vite.config.js.timestamp-*
 vite.config.ts.timestamp-*
-.vite/
+dist/
+build/
 
-package-lock.json
+# ===============================
+# 🧱 IDEs e Ambiente
+# ===============================
+
+# VS Code
+.vscode/
+.history/
+
+# Logs e temporários
+*.log
+*.tmp
+*.DS_Store
+Thumbs.db
+
+# ===============================
+# 🔐 Arquivos sensíveis
+# ===============================
+
+.env
+.env.local
+.env.development
+.env.production
+.env.test
+
+# ===============================
+# 📦 Outros opcionais
+# ===============================
+
+# Arquivos de lock do Yarn ou pnpm (se não usados)
+yarn.lock
+pnpm-lock.yaml
