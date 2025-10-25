@@ -51,8 +51,8 @@ builder.Services.AddSwaggerGen(c =>
 });
 
 // DbContext
-var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
-builder.Services.AddDbContext<AppDbContext>(opt => opt.UseSqlServer(connectionString));
+var connectionString = builder.Configuration.GetConnectionString("RemotePostgres");
+builder.Services.AddDbContext<AppDbContext>(opt => opt.UseNpgsql(connectionString));
 
 // CORS (frontend local)
 var allowedOrigins = builder.Configuration

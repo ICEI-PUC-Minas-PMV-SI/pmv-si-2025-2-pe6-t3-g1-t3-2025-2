@@ -21,11 +21,11 @@ namespace HotelFazendaApi
                 .AddEnvironmentVariables()
                 .Build();
 
-            var cs = configuration.GetConnectionString("DefaultConnection")
-                     ?? throw new System.Exception("DefaultConnection não encontrada em appsettings.");
+            var cs = configuration.GetConnectionString("RemotePostgres")
+                     ?? throw new System.Exception("RemotePostgres não encontrada em appsettings.");
 
             var optionsBuilder = new DbContextOptionsBuilder<AppDbContext>();
-            optionsBuilder.UseSqlServer(cs);
+            optionsBuilder.UseNpgsql(cs);
 
             return new AppDbContext(optionsBuilder.Options);
         }
