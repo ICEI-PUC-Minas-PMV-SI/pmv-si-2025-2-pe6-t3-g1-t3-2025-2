@@ -3,6 +3,8 @@ import { useEffect, useMemo, useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { listarQuartos } from "../services/quartos";
 import "./quartos.css";
+import quartoIcon from "../assets/quarto.png";
+
 
 export default function Quartos() {
   const [quartos, setQuartos] = useState([]);
@@ -14,13 +16,37 @@ export default function Quartos() {
   const location = useLocation();
   const navigate = useNavigate();
 
+  // Gera um conjunto base de 15 quartos
+  function seedQuartosBase() {
+    return Array.from({ length: 15 }, (_, i) => ({
+      id: i + 1,
+      numero: i + 1,
+      status: "Livre",
+      tipo: "Padrão",
+      capacidade: 2,
+    }));
+  }
+
+  // Preenche/garante 15 quartos sem duplicar ids
+  function ensureFifteen(list = []) {
+    const base = seedQuartosBase();
+    const byNumero = new Map(list.map(q => [Number(q.numero ?? q.id), q]));
+    const final = base.map(b =>
+      byNumero.get(b.numero) ? { ...b, ...byNumero.get(b.numero) } : b
+    );
+    return final;
+  }
+
   async function carregar() {
     try {
       setLoading(true);
-      const data = await listarQuartos();
-      setQuartos(data || []);
+      const data = await listarQuartos();        // pode vir [] ou menos de 15
+      const safe = Array.isArray(data) ? data : [];
+      setQuartos(ensureFifteen(safe));           // sempre 15
     } catch (e) {
-      setErro("Não foi possível carregar os quartos.");
+      // Falhou? mostra erro mas ainda assim mostra 15 livros
+      setErro("Não foi possível carregar os quartos (mostrando padrão).");
+      setQuartos(ensureFifteen([]));
     } finally {
       setLoading(false);
     }
@@ -54,15 +80,26 @@ export default function Quartos() {
     <div className="qr-root">
       <div className="qr-card">
         <div className="qr-header">
-          <h2 className="qr-title">🏠 Quartos</h2>
+          <h2 className="qr-title">
+            <img
+              src={quartoIcon}
+              alt=""
+              className="qr-icon"
+              width={40}
+              height={40}
+            />
+            Quartos
+          </h2>
           <Link to="/" className="qr-link">← Voltar</Link>
         </div>
 
+
+
         {toast && <div className="qr-toast qr-toast--ok">{toast}</div>}
-        {erro &&  <div className="qr-toast qr-toast--erro">{erro}</div>}
+        {erro && <div className="qr-toast qr-toast--erro">{erro}</div>}
 
         <div className="qr-toolbar">
-          <label style={{ fontSize: 14, color: "#333" }}>Filtrar:</label>
+          <label style={{ fontSize: 14, color: "var(--texto)" }}>Filtrar:</label>
           <select
             value={filtro}
             onChange={(e) => setFiltro(e.target.value)}
@@ -73,22 +110,17 @@ export default function Quartos() {
             <option>Ocupado</option>
             <option>Manutencao</option>
           </select>
-
-          {/* (Opcional) cadastro de quarto */}
-          {/* <Link to="/quartos/novo" className="qr-btn qr-btn--primary">➕ Novo quarto</Link> */}
         </div>
 
         {loading ? (
           <p>Carregando...</p>
-        ) : visiveis.length === 0 ? (
-          <p>Nenhum quarto encontrado.</p>
         ) : (
           <div className="qr-grid">
             {visiveis.map((q) => (
-              <div key={q.id} className="qr-room">
+              <div key={q.id ?? q.numero} className="qr-room">
                 <div className="qr-roomHeader">
                   <div className="qr-roomTitle">
-                    Quarto {q.numero || q.nome || q.id}
+                    Quarto {q.numero ?? q.nome ?? q.id}
                   </div>
                   <span className={classePill(q.status)}>
                     {q.status === "Manutencao" ? "Manutenção" : q.status}
@@ -109,7 +141,7 @@ export default function Quartos() {
                 <div className="qr-actions">
                   {q.status === "Livre" ? (
                     <Link
-                      to={`/quartos/checkin/${q.id}`}
+                      to={`/quartos/checkin/${q.id ?? q.numero}`}
                       className="qr-btn qr-btn--primary"
                     >
                       🛎️ Acomodar

@@ -1,6 +1,9 @@
+// src/pages/Login.jsx
 import { useState } from "react";
 import { useAuth } from "../context/AuthProvider.jsx";
 import { useNavigate } from "react-router-dom";
+import logoHF from "../assets/logoHF.png";
+import "../pages/Login.css";
 
 export default function Login() {
   const [email, setEmail] = useState("");
@@ -19,38 +22,44 @@ export default function Login() {
   }
 
   return (
-    <div style={styles.wrapper}>
-      <form onSubmit={handleSubmit} style={styles.card}>
-        <h2 style={{ marginBottom: 8 }}>Acessar o sistema</h2>
-        <p style={{ marginTop: 0, color: "#666" }}>Hotel Fazenda</p>
+    <div className="login-root">
+      <div className="login-card">
+        <div className="login-hero">
+          <img src={logoHF} alt="Logo Hotel Fazenda" className="login-logo" />
+        </div>
 
-        <label style={styles.label}>E-mail</label>
-        <input
-          type="email" value={email} onChange={(e)=>setEmail(e.target.value)}
-          placeholder="seu@email.com" style={styles.input} autoFocus
-        />
+        <div className="login-body">
+          <h2 className="login-title">Acessar o sistema</h2>
+          <p className="login-subtitle">Hotel Fazenda</p>
 
-        <label style={styles.label}>Senha</label>
-        <input
-          type="password" value={senha} onChange={(e)=>setSenha(e.target.value)}
-          placeholder="••••••••" style={styles.input}
-        />
+          <form onSubmit={handleSubmit} className="login-form">
+            <label className="login-label">E-mail</label>
+            <input
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              placeholder="seu@email.com"
+              className="login-input"
+              autoFocus
+            />
 
-        {error && <div style={styles.error}>{error}</div>}
+            <label className="login-label">Senha</label>
+            <input
+              type="password"
+              value={senha}
+              onChange={(e) => setSenha(e.target.value)}
+              placeholder="••••••••"
+              className="login-input"
+            />
 
-        <button type="submit" style={styles.button} disabled={loading}>
-          {loading ? "Entrando..." : "Entrar"}
-        </button>
-      </form>
+            {error && <div className="login-error">{error}</div>}
+
+            <button type="submit" className="login-button" disabled={loading}>
+              {loading ? "Entrando..." : "Entrar"}
+            </button>
+          </form>
+        </div>
+      </div>
     </div>
   );
 }
-
-const styles = {
-  wrapper: { minHeight: "100vh", display: "grid", placeItems: "center", background: "#f5f6f8" },
-  card: { width: 360, background: "#fff", padding: 24, borderRadius: 12, boxShadow: "0 8px 24px rgba(0,0,0,.08)", display: "flex", flexDirection: "column", gap: 8 },
-  label: { fontSize: 14, color: "#222", marginTop: 8 },
-  input: { padding: "10px 12px", border: "1px solid #ddd", borderRadius: 8, outline: "none" },
-  button: { marginTop: 12, padding: "10px 14px", borderRadius: 8, border: "none", background: "#0b5ed7", color: "#fff", cursor: "pointer" },
-  error: { background: "#fde2e1", color: "#b21f1f", padding: "8px 10px", borderRadius: 8, fontSize: 13 }
-};
