@@ -1,29 +1,85 @@
 # Front-end Web
 
-[Inclua uma breve descrição do projeto e seus objetivos.]
+O projeto Front-end Web do sistema **Hotel Fazenda** tem como objetivo oferecer uma interface moderna, intuitiva e responsiva, que permita aos usuários (hóspedes, garçons, gerentes e administradores) interagir com o sistema de forma prática e segura. A aplicação web é responsável por permitir o acesso ao cardápio digital, gestão de reservas, controle de quartos e autenticação por perfis, garantindo uma experiência fluida e eficiente tanto para o cliente final quanto para a equipe administrativa do hotel.
 
 ## Projeto da Interface Web
 
-[Descreva o projeto da interface Web da aplicação, incluindo o design visual, layout das páginas, interações do usuário e outros aspectos relevantes.]
+A interface foi desenvolvida em **React (Vite)**, integrando-se diretamente à API desenvolvida em **.NET 9**, com banco de dados **PostgreSQL**. O layout segue uma estética rústica e acolhedora, inspirada em hotéis fazenda, utilizando tons neutros e elementos visuais que remetem à natureza e ao conforto. O design foi pensado para ser funcional e agradável, com navegação simples, componentes reutilizáveis e foco na acessibilidade.
+
+As principais páginas da aplicação são:
+- **Home**: apresenta informações institucionais, imagens do hotel e botões de acesso rápido para reservas e cardápio digital.
+- **Login**: tela de autenticação com validação de credenciais via API (JWT), direcionando o usuário para o painel de acordo com o seu perfil.
+- **Dashboard (restrito)**: painel administrativo com funcionalidades distintas conforme o tipo de usuário.
+  - **Administrador**: gestão completa de usuários e permissões.
+  - **Gerente**: gerenciamento de quartos, reservas e cardápio.
+  - **Garçom**: controle de pedidos e acompanhamento em tempo real.
+- **Cardápio Digital**: visualização dos produtos disponíveis, com imagens, descrição e valores, além da funcionalidade de adicionar itens ao pedido.
+- **Reservas e Quartos**: controle de disponibilidade, cadastro e histórico de reservas realizadas.
 
 ### Wireframes
 
-[Inclua os wireframes das páginas principais da interface, mostrando a disposição dos elementos na página.]
+Os wireframes do projeto foram elaborados para orientar a construção da interface, representando a disposição dos elementos e a hierarquia visual das páginas. Estão armazenados na pasta `docs/wireframes/`, incluindo os arquivos:
+- `home.png`
+- `login.png`
+- `dashboard.png`
+- `cardapio.png`
+- `quartos.png`
+- `reservas.png`
+
+Esses modelos servem como base para a implementação das páginas, garantindo consistência no design e usabilidade.
 
 ### Design Visual
 
-[Descreva o estilo visual da interface, incluindo paleta de cores, tipografia, ícones e outros elementos gráficos.]
+O estilo visual do sistema foi definido a partir de uma paleta de cores que remete ao ambiente de fazenda e natureza, mantendo um contraste adequado e leitura agradável. A tipografia e os ícones seguem um padrão simples e harmônico.
+
+**Paleta de cores:**
+- Bege de fundo: `#F5F1E8`
+- Verde oliva escuro: `#3D5B3D`
+- Verde oliva claro: `#5F7F5F`
+- Marrom: `#6E4F3A`
+- Branco para cards: `#FFFFFF`
+- Cinza de texto: `#2B2B2B`
+
+**Tipografia:**
+- Títulos: *Merriweather* (serif)
+- Texto: *Inter* (sans-serif)
+
+**Ícones e logotipo:**
+- Ícones padronizados com a biblioteca `lucide-react`.
+- Ícones específicos armazenados na pasta `/public/icons` (exemplo: `quarto.png`).
+- Logotipo oficial do projeto: `logoHF.pnj`.
+
+O layout utiliza botões arredondados, sombras suaves, cards com fundo branco e bordas claras, além de efeitos visuais sutis para foco e interação.
 
 ## Fluxo de Dados
 
-[Diagrama ou descrição do fluxo de dados na aplicação.]
+O fluxo de dados segue uma arquitetura cliente-servidor. A aplicação web consome os dados da API por meio de requisições HTTP utilizando **Axios**. O usuário realiza login, recebe um token JWT, e acessa as rotas conforme seu perfil. O token é armazenado em `localStorage` e injetado automaticamente nos cabeçalhos das requisições.
+
+1. O usuário acessa a página de login e insere e-mail e senha.
+2. A aplicação envia as credenciais para o endpoint `/api/Auth/login`.
+3. A API valida o usuário e retorna um token JWT.
+4. O front-end armazena o token e libera as rotas protegidas.
+5. As demais páginas consomem os endpoints correspondentes (produtos, quartos, reservas, usuários).
 
 ## Tecnologias Utilizadas
-[Lista das tecnologias principais que serão utilizadas no projeto.]
+- **Frontend:** React, Vite, React Router, Axios, Context API/Zustand.
+- **Estilo:** CSS Modules, Tailwind ou Styled Components.
+- **Ícones:** lucide-react.
+- **Backend:** API em .NET 9 (JWT).
+- **Banco de Dados:** PostgreSQL.
+- **Testes:** Vitest, React Testing Library, Cypress.
+- **Hospedagem:** Vercel, Netlify ou servidor Nginx.
+- **Versionamento:** Git e GitHub.
 
 ## Considerações de Segurança
 
-[Discuta as considerações de segurança relevantes para a aplicação distribuída, como autenticação, autorização, proteção contra ataques, etc.]
+A aplicação adota práticas recomendadas para segurança de sistemas distribuídos:
+- **Autenticação segura:** via JWT, emitido pela API após login.
+- **Autorização baseada em papéis:** controle de acesso conforme perfil (Administrador, Gerente, Garçom).
+- **Proteção contra XSS e CSRF:** sanitização de dados e uso de HTTPS.
+- **Gerenciamento de sessão:** expiração automática do token e logout seguro.
+- **Variáveis de ambiente:** armazenamento em arquivos `.env` sem informações sensíveis no repositório.
+- **Criptografia:** tráfego protegido via HTTPS.
 
 ## Implantação
 
