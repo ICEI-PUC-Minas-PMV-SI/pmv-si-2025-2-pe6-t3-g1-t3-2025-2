@@ -107,9 +107,7 @@ export default function Home() {
           </nav>
 
           <div className="hf-footer">
-            <Link to="/esqueci-senha" className="hf-link">
-              Esqueci minha senha
-            </Link>
+            {/* Removido o link de "Esqueci minha senha" da Home */}
             <span className="hf-copy">
               © {new Date().getFullYear()} Hotel Fazenda
             </span>

@@ -1,41 +1,35 @@
-// src/services/quartos.js
 import { api } from "./api";
-
-// Lista todos os quartos
 export async function listarQuartos() {
-  const res = await api.get("/api/quarto");
+  const res = await api.get("/api/Rooms/with-guest");
   return res.data;
 }
 
-// (Opcional) cria/edita quarto — se já tiver endpoints
+/** (se usar criação de quarto, ajuste para /api/Rooms) */
 export async function criarQuarto(payload) {
-  const res = await api.post("/api/quarto", payload);
+  const res = await api.post("/api/Rooms", payload);
   return res.data;
 }
 
-// Check-in (acomodar hóspede no quarto)
+/** Check-in continua criando uma Reservation */
 export async function acomodarHospede({
   quartoId,
   nomeHospede,
   documento,
   adultos,
   criancas,
-  dataEntrada,           // "2025-10-23T14:00:00"
-  dataSaidaPrevista,     // "2025-10-25T11:00:00"
-  observacoes,
-  tarifaDiaria
+  dataEntrada,
+  dataSaidaPrevista,
 }) {
-  const body = {
-    quartoId,
-    nomeHospede,
-    documento,
-    adultos: Number(adultos || 1),
-    criancas: Number(criancas || 0),
-    dataEntrada,
-    dataSaidaPrevista,
-    observacoes,
-    tarifaDiaria: Number(tarifaDiaria || 0),
+  const dto = {
+    HospedeNome: nomeHospede,
+    HospedeDocumento: documento || null,
+    Telefone: null,
+    QtdeHospedes: Number(adultos || 0) + Number(criancas || 0),
+    DataEntrada: dataEntrada,       // use toISOString() no chamador
+    DataSaida: dataSaidaPrevista,   // idem
+    QuartoId: quartoId != null ? Number(quartoId) : null,
   };
-  const res = await api.post("/api/hospedagem/checkin", body);
+
+  const res = await api.post("/api/Reservations", dto);
   return res.data;
 }

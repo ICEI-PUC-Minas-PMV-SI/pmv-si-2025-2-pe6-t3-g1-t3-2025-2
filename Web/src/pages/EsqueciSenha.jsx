@@ -1,119 +1,66 @@
+// src/pages/EsqueciSenha.jsx
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import { solicitarRedefinicaoSenha } from "../services/auth"; // << caminho correto
-
-// Validação simples de e-mail
-function emailValido(email) {
-  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
-}
+import { api } from "../services/api";
+import logoHF from "../assets/logoHF.png";
+import "./Login.css"; // reaproveita o estilo
 
 export default function EsqueciSenha() {
   const [email, setEmail] = useState("");
-  const [tocouCampo, setTocouCampo] = useState(false);
-  const [carregando, setCarregando] = useState(false);
-  const [mensagemSucesso, setMensagemSucesso] = useState(null);
-  const [mensagemErro, setMensagemErro] = useState(null);
+  const [msg, setMsg] = useState("");
+  const [err, setErr] = useState("");
+  const [loading, setLoading] = useState(false);
 
-  const desabilitado = !emailValido(email) || carregando;
-
-  async function aoEnviarFormulario(e) {
+  async function handleSubmit(e) {
     e.preventDefault();
-    setTocouCampo(true);
-    setMensagemSucesso(null);
-    setMensagemErro(null);
-
-    if (!emailValido(email)) return;
-
+    setMsg(""); setErr("");
+    if (!email) return setErr("Informe o e-mail.");
+    setLoading(true);
     try {
-      setCarregando(true);
-      const resposta = await solicitarRedefinicaoSenha(email.trim());
-      setMensagemSucesso(
-        (resposta && resposta.mensagem) ||
-          "Se o e-mail existir no sistema, enviaremos instruções para redefinir sua senha."
-      );
-    } catch (erro) {
-      const msg =
-        (erro && erro.response && erro.response.data && erro.response.data.mensagem) ||
-        erro?.message ||
-        "Não foi possível processar sua solicitação. Tente novamente.";
-      setMensagemErro(msg);
+      // Ajuste a rota conforme sua API (ex.: /api/Auth/forgot-password)
+      await api.post("/api/Auth/forgot-password", { email });
+      setMsg("Se o e-mail existir, enviaremos instruções de redefinição.");
+    } catch (error) {
+      setErr(error?.response?.data?.message || "Não foi possível processar a solicitação.");
     } finally {
-      setCarregando(false);
+      setLoading(false);
     }
   }
 
-  const mostrarErroEmail = tocouCampo && !emailValido(email);
-
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 p-4">
-      <div className="w-full max-w-md bg-white rounded-2xl shadow p-6">
-        <h1 className="text-2xl font-semibold mb-1">Esqueci minha senha</h1>
-        <p className="text-sm text-gray-600 mb-6">
-          Digite seu e-mail para receber o link de redefinição de senha.
-        </p>
-
-        {mensagemSucesso && (
-          <div className="mb-4 rounded-lg border border-green-200 bg-green-50 px-3 py-2 text-green-700 text-sm">
-            {mensagemSucesso}
-          </div>
-        )}
-
-        {mensagemErro && (
-          <div className="mb-4 rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-red-700 text-sm">
-            {mensagemErro}
-          </div>
-        )}
-
-        <form onSubmit={aoEnviarFormulario} noValidate>
-          <label htmlFor="email" className="block text-sm font-medium mb-1">
-            E-mail cadastrado
-          </label>
-
-          <input
-            id="email"
-            type="email"
-            autoComplete="email"
-            className={`w-full rounded-xl border px-3 py-2 outline-none transition ${
-              mostrarErroEmail
-                ? "border-red-400 focus:ring-2 focus:ring-red-200"
-                : "border-gray-300 focus:ring-2 focus:ring-blue-200"
-            }`}
-            placeholder="exemplo@hotel.com"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            onBlur={() => setTocouCampo(true)}
-          />
-
-          {mostrarErroEmail && (
-            <p className="mt-1 text-xs text-red-600">Informe um e-mail válido.</p>
-          )}
-
-          <button
-            type="submit"
-            disabled={desabilitado}
-            className={`mt-5 w-full rounded-xl px-4 py-2 font-medium text-white transition ${
-              desabilitado
-                ? "bg-gray-300 cursor-not-allowed"
-                : "bg-blue-600 hover:bg-blue-700"
-            }`}
-            aria-busy={carregando}
-          >
-            {carregando ? "Enviando..." : "Enviar instruções"}
-          </button>
-        </form>
-
-        <div className="mt-6 text-sm text-gray-600 flex items-center justify-between">
-          <Link to="/login" className="hover:underline">
-            Voltar ao login
-          </Link>
-          <Link to="/reset-password" className="hover:underline">
-            Já tenho o código/token
-          </Link>
+    <div className="login-root">
+      <div className="login-card">
+        <div className="login-hero">
+          <img src={logoHF} alt="Logo Hotel Fazenda" className="login-logo" />
         </div>
 
-        <p className="mt-6 text-[11px] leading-4 text-gray-500">
-          🔒 Por segurança, a resposta é genérica para evitar exposição de dados.
-        </p>
+        <div className="login-body">
+          <h2 className="login-title">Redefinir senha</h2>
+          <p className="login-subtitle">Informe seu e-mail para receber o link</p>
+
+          <form onSubmit={handleSubmit} className="login-form">
+            <label className="login-label">E-mail</label>
+            <input
+              type="email"
+              className="login-input"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              placeholder="seu@email.com"
+              autoFocus
+            />
+
+            {msg && <div className="login-success">{msg}</div>}
+            {err && <div className="login-error">{err}</div>}
+
+            <button type="submit" className="login-button" disabled={loading}>
+              {loading ? "Enviando..." : "Enviar link"}
+            </button>
+
+            <div className="login-actions">
+              <Link to="/login" className="login-link">Voltar ao login</Link>
+            </div>
+          </form>
+        </div>
       </div>
     </div>
   );

@@ -1,7 +1,7 @@
 // src/pages/Login.jsx
 import { useState } from "react";
 import { useAuth } from "../context/AuthProvider.jsx";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import logoHF from "../assets/logoHF.png";
 import "../pages/Login.css";
 
@@ -57,6 +57,12 @@ export default function Login() {
             <button type="submit" className="login-button" disabled={loading}>
               {loading ? "Entrando..." : "Entrar"}
             </button>
+
+            <div className="login-actions">
+              <Link to="/esqueci-senha" className="login-link">
+                Esqueci minha senha
+              </Link>
+            </div>
           </form>
         </div>
       </div>
