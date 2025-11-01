@@ -1,12 +1,12 @@
 import { api } from "./api";
 export async function listarQuartos() {
-  const res = await api.get("/api/Rooms/with-guest");
+  const res = await api.get("/Rooms/with-guest");
   return res.data;
 }
 
 /** (se usar criação de quarto, ajuste para /api/Rooms) */
 export async function criarQuarto(payload) {
-  const res = await api.post("/api/Rooms", payload);
+  const res = await api.post("/Rooms", payload);
   return res.data;
 }
 
@@ -30,6 +30,6 @@ export async function acomodarHospede({
     QuartoId: quartoId != null ? Number(quartoId) : null,
   };
 
-  const res = await api.post("/api/Reservations", dto);
+  const res = await api.post("/Reservations", dto);
   return res.data;
 }

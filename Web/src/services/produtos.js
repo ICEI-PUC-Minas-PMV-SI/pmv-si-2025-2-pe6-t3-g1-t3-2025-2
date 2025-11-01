@@ -3,7 +3,7 @@ import { api } from "./api";
 
 // lista produtos (GET /api/produto)
 export async function listarProdutos() {
-  const res = await api.get("/api/produto");
+  const res = await api.get("/produto");
   return res.data;
 }
 
@@ -17,6 +17,6 @@ export async function criarProduto({ nome, preco, categoria, descricao, ativo })
     descricao,
     ativo,
   };
-  const res = await api.post("/api/produto", payload);
+  const res = await api.post("/produto", payload);
   return res.data;
 }

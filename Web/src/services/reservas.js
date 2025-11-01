@@ -10,17 +10,18 @@ export async function listarReservas({ q, status } = {}) {
   if (q) params.q = q;
   if (status && status !== "Todas") params.status = status;
 
-  const { data } = await api.get("/api/Reservations", { params });
+  // ✅ sem /api aqui (baseURL já termina com /api)
+  const { data } = await api.get("/Reservations", { params });
   return Array.isArray(data) ? data : [];
 }
 
 /**
- * Busca quartos livres – casa com GET /api/Reservations/disponibilidade
+ * Busca quartos livres – casa com GET /Reservations/disponibilidade
  * Query esperada pelo backend:
  *   dataEntrada, dataSaida, capacidade
  */
 export async function buscarQuartosLivres({ entrada, saida, hospedes = 1 }) {
-  const { data } = await api.get("/api/Reservations/disponibilidade", {
+  const { data } = await api.get("/Reservations/disponibilidade", {
     params: {
       dataEntrada: entrada,   // ISO (use toISOString() no chamador)
       dataSaida: saida,       // ISO
@@ -31,7 +32,7 @@ export async function buscarQuartosLivres({ entrada, saida, hospedes = 1 }) {
 }
 
 /**
- * Cria uma reserva – POST /api/Reservations
+ * Cria uma reserva – POST /Reservations
  * DTO esperado pelo backend (PascalCase):
  *  - HospedeNome, HospedeDocumento, Telefone (opcional)
  *  - QtdeHospedes, DataEntrada, DataSaida, QuartoId
@@ -46,30 +47,34 @@ export async function criarReserva(payload) {
     DataSaida: payload.dataSaida,
     QuartoId: Number(payload.quartoId),
   };
-  const { data } = await api.post("/api/Reservations", dto);
+
+  // ✅ sem /api
+  const { data } = await api.post("/Reservations", dto);
   return data;
 }
-import { api } from "./api";
 
 /**
  * Busca reservas e devolve apenas as que estão ATIVAS AGORA
  * Sem depender de o backend filtrar por status/intervalo.
  */
 export async function listarReservasAtivasAgora() {
-  // Se seu backend tem endpoint dedicado, pode trocar por:
-  // const { data } = await api.get("/api/Reservations/active-now");
+  // Se seu backend tiver endpoint dedicado:
+  // const { data } = await api.get("/Reservations/active-now");
   // return Array.isArray(data) ? data : [];
 
-  const { data } = await api.get("/api/Reservations", { params: { status: "Todas" } });
+  // ✅ sem /api; pedimos “Todas” e filtramos no front
+  const { data } = await api.get("/Reservations", { params: { status: "Todas" } });
   const lista = Array.isArray(data) ? data : [];
   const now = new Date();
 
   return lista.filter((r) => {
     const status = (r.status ?? r.Status ?? "").toString().toLowerCase();
     if (status.includes("cancel") || status.includes("final")) return false;
+
     const de = new Date(r.dataEntrada ?? r.DataEntrada);
     const ate = new Date(r.dataSaida ?? r.DataSaida);
     if (isNaN(+de) || isNaN(+ate)) return false;
+
     return de <= now && now < ate; // ativa neste instante
   });
 }

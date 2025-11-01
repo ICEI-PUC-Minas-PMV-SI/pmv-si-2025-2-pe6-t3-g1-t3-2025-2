@@ -2,7 +2,7 @@
 import { createContext, useContext, useMemo, useState, useEffect } from "react";
 import { api } from "../services/api";
 
-const LOGIN_PATH = import.meta.env.VITE_LOGIN_PATH || "/api/auth/login";
+const LOGIN_PATH = import.meta.env.VITE_LOGIN_PATH || "/Auth/login";
 
 const AuthCtx = createContext(null);
 export const useAuth = () => useContext(AuthCtx);
