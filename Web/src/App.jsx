@@ -11,6 +11,8 @@ import QuartosCheckin from "./pages/QuartosCheckin.jsx";
 import Reservas from "./pages/Reservas.jsx";
 import ReservaNova from "./pages/ReservaNova.jsx";
 import ContaHospedagem from "./pages/ContaHospedagem.jsx";
+import Pedidos from "./pages/Pedidos.jsx";
+import PedidoCreate from "./pages/PedidosCreate.jsx";
 
 
 export default function App() {
@@ -99,6 +101,24 @@ export default function App() {
         element={
           <RotaPrivada>
             <ContaHospedagem />
+          </RotaPrivada>
+        }
+      />
+
+      <Route
+        path="/pedidos"
+        element={
+          <RotaPrivada>
+            <Pedidos />
+          </RotaPrivada>
+        }
+      />
+
+      <Route
+        path="/pedidos/novo"
+        element={
+          <RotaPrivada>
+            <PedidoCreate />
           </RotaPrivada>
         }
       />
