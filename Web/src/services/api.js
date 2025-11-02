@@ -2,40 +2,30 @@
 import axios from "axios";
 
 /**
- * Normaliza a baseURL:
- * - Remove barras finais repetidas
- * - Garante sufixo /api (independente do .env vir com ou sem)
+ * Base URL SEM /api (o /api fica no path de cada request)
+ * VITE_API_BASE_URL pode ser algo como: http://localhost:5210
  */
 function buildBaseURL() {
   const raw = import.meta.env.VITE_API_BASE_URL || "http://localhost:5210";
-  const noTrailing = String(raw).replace(/\/+$/, "");
-  // Se já terminar com /api (exato), mantém. Caso contrário, adiciona.
-  return noTrailing.endsWith("/api") ? noTrailing : `${noTrailing}/api`;
+  return String(raw).replace(/\/+$/, ""); // remove barras finais
 }
 
-const baseURL = buildBaseURL();
-
-// Instância global do Axios
 export const api = axios.create({
-  baseURL,
+  baseURL: buildBaseURL(),
   timeout: 15000,
-  // withCredentials: false, // deixe false com Bearer; true só se for cookie de auth
   headers: {
     Accept: "application/json",
     "X-Requested-With": "XMLHttpRequest",
   },
 });
 
-// 🔐 Injeta token JWT automaticamente (se existir)
+// 🔐 injeta JWT se existir
 api.interceptors.request.use((config) => {
   const token = localStorage.getItem("token");
-  if (token) {
-    config.headers.Authorization = `Bearer ${token}`;
-  }
+  if (token) config.headers.Authorization = `Bearer ${token}`;
   return config;
 });
 
-// Helper para extrair mensagens amigáveis de erro
 export function apiErrorMessage(error) {
   const r = error?.response;
   return (
@@ -47,14 +37,12 @@ export function apiErrorMessage(error) {
   );
 }
 
-// ⚠️ Log básico (deixe simples e padronizado)
 api.interceptors.response.use(
-  (response) => response,
-  (error) => {
-    // Evita poluir o console com objetos enormes
-    const status = error?.response?.status;
-    const url = error?.config?.url;
-    console.error(`[API ${status ?? "ERR"}] ${url}:`, apiErrorMessage(error));
-    return Promise.reject(error);
+  (res) => res,
+  (err) => {
+    const s = err?.response?.status;
+    const u = err?.config?.url;
+    console.error(`[API ${s ?? "ERR"}] ${u}:`, apiErrorMessage(err));
+    return Promise.reject(err);
   }
 );

@@ -64,4 +64,6 @@ namespace HotelFazendaApi.Controllers
             return NoContent();
         }
     }
+
+    
 }

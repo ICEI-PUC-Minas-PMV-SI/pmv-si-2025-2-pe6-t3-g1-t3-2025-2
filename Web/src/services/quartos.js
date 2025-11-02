@@ -1,16 +1,26 @@
+// src/services/quartos.js
 import { api } from "./api";
+
+/** Lista quartos com status (e hóspede, se houver) calculados AGORA */
 export async function listarQuartos() {
-  const res = await api.get("/Rooms/with-guest");
-  return res.data;
+  const { data } = await api.get("/api/Rooms/with-guest");
+  return Array.isArray(data) ? data : data?.items ?? data ?? [];
 }
 
-/** (se usar criação de quarto, ajuste para /api/Rooms) */
+/** GET /api/Rooms/{id} */
+export async function obterQuarto(id) {
+  const { data } = await api.get(`/api/Rooms/${Number(id)}`);
+  // backend retorna: { id, numero, capacidade, status }
+  return data;
+}
+
+/** (opcional) POST /api/Rooms */
 export async function criarQuarto(payload) {
-  const res = await api.post("/Rooms", payload);
-  return res.data;
+  const { data } = await api.post("/api/Rooms", payload);
+  return data;
 }
 
-/** Check-in continua criando uma Reservation */
+/** Check-in = POST /api/Reservations com QuartoId */
 export async function acomodarHospede({
   quartoId,
   nomeHospede,
@@ -25,11 +35,10 @@ export async function acomodarHospede({
     HospedeDocumento: documento || null,
     Telefone: null,
     QtdeHospedes: Number(adultos || 0) + Number(criancas || 0),
-    DataEntrada: dataEntrada,       // use toISOString() no chamador
-    DataSaida: dataSaidaPrevista,   // idem
-    QuartoId: quartoId != null ? Number(quartoId) : null,
+    DataEntrada: dataEntrada,       // ISO (use toISOString no chamador)
+    DataSaida: dataSaidaPrevista,   // ISO
+    QuartoId: Number(quartoId),
   };
-
-  const res = await api.post("/Reservations", dto);
-  return res.data;
+  const { data } = await api.post("/api/Reservations", dto);
+  return data;
 }

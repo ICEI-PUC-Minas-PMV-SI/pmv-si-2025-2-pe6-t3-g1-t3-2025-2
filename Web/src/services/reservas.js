@@ -1,69 +1,43 @@
 // src/services/reservas.js
 import { api } from "./api";
 
-/**
- * Lista reservas (o backend atual não filtra por q/status, mas
- * mandamos só se vierem para não quebrar no futuro)
- */
+/** Lista reservas (enviamos q/status só se vierem) */
 export async function listarReservas({ q, status } = {}) {
   const params = {};
   if (q) params.q = q;
   if (status && status !== "Todas") params.status = status;
 
-  // ✅ sem /api aqui (baseURL já termina com /api)
-  const { data } = await api.get("/Reservations", { params });
+  const { data } = await api.get("/api/Reservations", { params });
   return Array.isArray(data) ? data : [];
 }
 
-/**
- * Busca quartos livres – casa com GET /Reservations/disponibilidade
- * Query esperada pelo backend:
- *   dataEntrada, dataSaida, capacidade
- */
+/** Busca quartos livres usando a rota do RoomsController */
 export async function buscarQuartosLivres({ entrada, saida, hospedes = 1 }) {
-  const { data } = await api.get("/Reservations/disponibilidade", {
-    params: {
-      dataEntrada: entrada,   // ISO (use toISOString() no chamador)
-      dataSaida: saida,       // ISO
-      capacidade: hospedes
-    },
+  const { data } = await api.get("/api/Rooms/available", {
+    params: { entrada, saida, hospedes },
   });
-  return Array.isArray(data) ? data : [];
+  return Array.isArray(data) ? data : data?.items ?? [];
 }
 
-/**
- * Cria uma reserva – POST /Reservations
- * DTO esperado pelo backend (PascalCase):
- *  - HospedeNome, HospedeDocumento, Telefone (opcional)
- *  - QtdeHospedes, DataEntrada, DataSaida, QuartoId
- */
+/** Cria reserva – POST /api/Reservations */
 export async function criarReserva(payload) {
   const dto = {
     HospedeNome: payload.hospedeNome,
     HospedeDocumento: payload.hospedeDocumento ?? null,
     Telefone: payload.telefone ?? null,
-    QtdeHospedes: Number(payload.qtdHospedes || 1),
+    QtdeHospedes: Number(payload.qtdeHospedes || 1), // << alinhar NOME
     DataEntrada: payload.dataEntrada,
     DataSaida: payload.dataSaida,
     QuartoId: Number(payload.quartoId),
   };
 
-  // ✅ sem /api
-  const { data } = await api.post("/Reservations", dto);
+  const { data } = await api.post("/api/Reservations", dto);
   return data;
 }
 
-/**
- * Busca reservas e devolve apenas as que estão ATIVAS AGORA
- * Sem depender de o backend filtrar por status/intervalo.
- */
+/** Retorna reservas ATIVAS AGORA (filtrando no front) */
 export async function listarReservasAtivasAgora() {
-  // Se seu backend tiver endpoint dedicado:
-  // const { data } = await api.get("/Reservations/active-now");
-  // return Array.isArray(data) ? data : [];
-
-  // ✅ sem /api; pedimos “Todas” e filtramos no front
-  const { data } = await api.get("/Reservations", { params: { status: "Todas" } });
+  const { data } = await api.get("/api/Reservations", { params: { status: "Todas" } });
   const lista = Array.isArray(data) ? data : [];
   const now = new Date();
 
@@ -75,6 +49,6 @@ export async function listarReservasAtivasAgora() {
     const ate = new Date(r.dataSaida ?? r.DataSaida);
     if (isNaN(+de) || isNaN(+ate)) return false;
 
-    return de <= now && now < ate; // ativa neste instante
+    return de <= now && now < ate;
   });
 }

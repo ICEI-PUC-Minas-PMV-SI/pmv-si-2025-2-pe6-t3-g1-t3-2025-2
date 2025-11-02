@@ -1,6 +1,9 @@
 import { useEffect, useState } from "react";
-import { api } from "../services/api";
 import { Link } from "react-router-dom";
+import { listarProdutos } from "../services/produtos"; // usa o service (rota certa /api/Produto)
+import "./produtos.css";
+// opcional: se tiver um ícone, descomente e troque o caminho
+// import produtoIcon from "../assets/produto.png";
 
 export default function Produtos() {
   const [produtos, setProdutos] = useState([]);
@@ -9,9 +12,12 @@ export default function Produtos() {
 
   async function carregarProdutos() {
     try {
-      const res = await api.get("/api/produto");
-      setProdutos(res.data);
+      setErro("");
+      setLoading(true);
+      const data = await listarProdutos();
+      setProdutos(Array.isArray(data) ? data : []);
     } catch (e) {
+      console.error(e);
       setErro("Não foi possível carregar os produtos.");
     } finally {
       setLoading(false);
@@ -23,73 +29,60 @@ export default function Produtos() {
   }, []);
 
   return (
-    <div
-      style={{
-        minHeight: "100vh",
-        background: "#f5f6f8",
-        display: "grid",
-        placeItems: "center",
-      }}
-    >
-      <div
-        style={{
-          width: 720,
-          background: "#fff",
-          padding: 24,
-          borderRadius: 12,
-          boxShadow: "0 8px 24px rgba(0,0,0,.08)",
-        }}
-      >
-        <h2 style={{ marginTop: 0 }}>🛒 Produtos</h2>
+    <div className="pr-root">
+      <div className="pr-card">
+        <div className="pr-header">
+          <h2 className="pr-title">
+            {/* {produtoIcon ? <img src={produtoIcon} alt="" className="pr-icon" /> : null} */}
+            <span className="pr-emoji" aria-hidden>🛒</span>
+            Produtos
+          </h2>
 
-        {loading && <p>Carregando...</p>}
-        {erro && <p style={{ color: "red" }}>{erro}</p>}
+          <div className="pr-actionsHeader">
+            <button
+              className="pr-btn pr-btn--ghost"
+              onClick={carregarProdutos}
+              disabled={loading}
+            >
+              {loading ? "Atualizando..." : "Atualizar"}
+            </button>
 
-        {!loading && !erro && produtos.length === 0 && (
-          <p>Nenhum produto cadastrado ainda.</p>
-        )}
+            <Link to="/" className="pr-link">← Voltar</Link>
 
-        {!loading && produtos.length > 0 && (
-          <table
-            style={{
-              width: "100%",
-              borderCollapse: "collapse",
-              marginTop: 12,
-            }}
-          >
-            <thead>
-              <tr style={{ background: "#eee" }}>
-                <th style={{ textAlign: "left", padding: 8 }}>Nome</th>
-                <th style={{ textAlign: "left", padding: 8 }}>Preço (R$)</th>
-                <th style={{ textAlign: "left", padding: 8 }}>Categoria</th>
-              </tr>
-            </thead>
-            <tbody>
-              {produtos.map((p) => (
-                <tr key={p.id} style={{ borderBottom: "1px solid #ddd" }}>
-                  <td style={{ padding: 8 }}>{p.nome}</td>
-                  <td style={{ padding: 8 }}>{p.preco?.toFixed(2)}</td>
-                  <td style={{ padding: 8 }}>{p.categoria}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        )}
-
-        <div style={{ display: "flex", justifyContent: "flex-end", marginTop: 16 }}>
-          <Link
-            to="/produtos/novo"
-            style={{
-              background: "#0b5ed7",
-              color: "#fff",
-              padding: "8px 12px",
-              borderRadius: 8,
-              textDecoration: "none",
-            }}
-          >
-            ➕ Novo Produto
-          </Link>
+            <Link to="/produtos/novo" className="pr-btn pr-btn--primary">
+              ➕ Novo Produto
+            </Link>
+          </div>
         </div>
+
+        {erro && <div className="pr-toast pr-toast--erro">{erro}</div>}
+
+        {loading ? (
+          <p className="pr-loading">Carregando...</p>
+        ) : produtos.length === 0 ? (
+          <div className="pr-empty">Nenhum produto cadastrado ainda.</div>
+        ) : (
+          <div className="pr-tableWrap">
+            <table className="pr-table">
+              <thead>
+                <tr>
+                  <th>Nome</th>
+                  <th>Preço (R$)</th>
+                  <th>Categoria</th>
+                </tr>
+              </thead>
+              <tbody>
+                {produtos.map((p) => (
+                  <tr key={p.id}>
+                    <td>{p.nome}</td>
+                    <td>{Number(p.preco ?? 0).toFixed(2)}</td>
+                    <td>{p.categoria ?? "-"}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
       </div>
     </div>
   );

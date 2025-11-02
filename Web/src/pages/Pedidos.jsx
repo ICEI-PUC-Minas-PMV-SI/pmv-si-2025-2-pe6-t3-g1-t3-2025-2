@@ -1,8 +1,9 @@
+// src/pages/Pedidos.jsx
 import { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { getPedidos, criarPedido } from "../services/pedidos";
-import { listarReservasAtivasAgora /* listarReservas */ } from "../services/reservas";
-import { api } from "../services/api";
+import { listarReservasAtivasAgora } from "../services/reservas";
+import { listarProdutos } from "../services/produtos";
 import "./Pedidos.css";
 
 export default function Pedidos() {
@@ -23,9 +24,9 @@ export default function Pedidos() {
 
     try {
       const [pedRes, resAtivas, prodsRes] = await Promise.allSettled([
-        getPedidos(),                  // GET /Order  (service já enriquece com dados de reserva)
-        listarReservasAtivasAgora(),   // GET /Reservations (filtra por agora)
-        api.get("/Product"),           // GET /Product  (sem /api no path!)
+        getPedidos(),                 // GET /api/Order  (service enriquece com dados da reserva)
+        listarReservasAtivasAgora(),  // GET /api/Reservations (filtra no front “ativas agora”)
+        listarProdutos(),             // GET /api/Produto
       ]);
 
       // --- pedidos ---
@@ -42,29 +43,25 @@ export default function Pedidos() {
         setReservas(arr);
 
         if (!reservationId && arr.length) {
-          const primeiroId = arr[0].id ?? arr[0].Id;
-          setReservationId(primeiroId ?? "");
+          const primeiroId = arr[0].id ?? arr[0].Id ?? "";
+          setReservationId(primeiroId);
         }
       } else {
         console.error("Falha ao carregar reservas ativas:", resAtivas.reason);
-        // ⚠️ DEBUG opcional: carregar todas para ver se o filtro "ativas agora" está excluindo:
-        // const todas = await listarReservas({ status: "Todas" });
-        // setReservas(todas);
       }
 
-      // --- produtos (somente “alimentos”) ---
+      // --- produtos (filtra por categoria “alimento” quando existir) ---
       if (prodsRes.status === "fulfilled") {
-        const lista = Array.isArray(prodsRes.value?.data) ? prodsRes.value.data : [];
+        const lista = Array.isArray(prodsRes.value) ? prodsRes.value : [];
         setProdutos(
           lista.filter((p) =>
             String(p.categoria ?? p.Categoria ?? "").toLowerCase().includes("alimento")
           )
         );
       } else {
-        console.warn("Produtos não carregados (seguindo sem alimentos):", prodsRes.reason);
+        console.warn("Produtos não carregados:", prodsRes.reason);
       }
 
-      // Mensagem de erro só se o crítico (pedidos ou reservas) falhar
       if (pedRes.status === "rejected" || resAtivas.status === "rejected") {
         setErro("Erro ao carregar dados. Verifique conexão e autenticação.");
       }
@@ -72,7 +69,7 @@ export default function Pedidos() {
       console.error("carregarTudo falhou:", e);
       setErro("Erro ao carregar dados. Tente novamente.");
     } finally {
-      setLoading(false); // ✅
+      setLoading(false);
     }
   }
 
@@ -99,14 +96,11 @@ export default function Pedidos() {
   function formatarData(data) {
     if (!data) return "N/A";
     const d = new Date(data);
-    if (isNaN(+d)) return "N/A";
-    return d.toLocaleDateString("pt-BR");
+    return isNaN(+d) ? "N/A" : d.toLocaleDateString("pt-BR");
   }
-
   function formatarMoeda(v) {
     return Number(v ?? 0).toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
   }
-
   function formatarStatus(status) {
     const s = String(status ?? "").toLowerCase();
     if (s.includes("aguard") || s === "0") return "🕒 Aguardando";
@@ -176,7 +170,7 @@ export default function Pedidos() {
                 {reservas.map((r) => {
                   const id = r.id ?? r.Id;
                   const hospede = r.hospedeNome ?? r.HospedeNome ?? "—";
-                  const quarto = r.quarto ?? r.Quarto ?? "—";
+                  const quarto = r.quarto ?? r.Quarto ?? r.quartoNumero ?? r.QuartoNumero ?? "—";
                   return (
                     <option key={id} value={id}>
                       #{id} • Quarto {quarto} • {hospede}
@@ -281,10 +275,10 @@ export default function Pedidos() {
                     <tr key={p.id ?? p.Id}>
                       <td>{p.id ?? p.Id}</td>
                       <td>{p.reservationId ?? p.ReservationId}</td>
-                      <td>{p.quarto ?? "—"}</td>
-                      <td>{p.hospedeNome ?? "—"}</td>
-                      <td>{formatarData(p.checkInDate)}</td>
-                      <td>{formatarData(p.checkOutDate)}</td>
+                      <td>{p.quarto ?? p.Quarto ?? "—"}</td>
+                      <td>{p.hospedeNome ?? p.HospedeNome ?? "—"}</td>
+                      <td>{formatarData(p.checkInDate ?? p.CheckInDate)}</td>
+                      <td>{formatarData(p.checkOutDate ?? p.CheckOutDate)}</td>
                       <td>{formatarMoeda(p.total ?? p.Total)}</td>
                       <td>{formatarStatus(p.status ?? p.Status)}</td>
                     </tr>
