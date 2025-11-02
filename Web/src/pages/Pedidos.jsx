@@ -1,121 +1,299 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { getPedidos, criarPedido } from "../services/pedidos";
+import { listarReservasAtivasAgora /* listarReservas */ } from "../services/reservas";
 import { api } from "../services/api";
-import { Link } from "react-router-dom";
+import "./Pedidos.css";
 
 export default function Pedidos() {
+  const navigate = useNavigate();
+
   const [pedidos, setPedidos] = useState([]);
+  const [reservas, setReservas] = useState([]);
+  const [produtos, setProdutos] = useState([]);
   const [loading, setLoading] = useState(true);
   const [erro, setErro] = useState("");
 
-  async function carregarPedidos() {
+  const [reservationId, setReservationId] = useState("");
+  const [itens, setItens] = useState([{ productId: "", quantity: 1 }]);
+
+  async function carregarTudo() {
+    setLoading(true);
+    setErro("");
+
     try {
-      const res = await api.get("/api/order"); 
-      setPedidos(res.data);
+      const [pedRes, resAtivas, prodsRes] = await Promise.allSettled([
+        getPedidos(),                  // GET /Order  (service já enriquece com dados de reserva)
+        listarReservasAtivasAgora(),   // GET /Reservations (filtra por agora)
+        api.get("/Product"),           // GET /Product  (sem /api no path!)
+      ]);
+
+      // --- pedidos ---
+      if (pedRes.status === "fulfilled") {
+        const lista = Array.isArray(pedRes.value) ? pedRes.value : [];
+        setPedidos(lista);
+      } else {
+        console.error("Falha ao carregar pedidos:", pedRes.reason);
+      }
+
+      // --- reservas ativas ---
+      if (resAtivas.status === "fulfilled") {
+        const arr = Array.isArray(resAtivas.value) ? resAtivas.value : [];
+        setReservas(arr);
+
+        if (!reservationId && arr.length) {
+          const primeiroId = arr[0].id ?? arr[0].Id;
+          setReservationId(primeiroId ?? "");
+        }
+      } else {
+        console.error("Falha ao carregar reservas ativas:", resAtivas.reason);
+        // ⚠️ DEBUG opcional: carregar todas para ver se o filtro "ativas agora" está excluindo:
+        // const todas = await listarReservas({ status: "Todas" });
+        // setReservas(todas);
+      }
+
+      // --- produtos (somente “alimentos”) ---
+      if (prodsRes.status === "fulfilled") {
+        const lista = Array.isArray(prodsRes.value?.data) ? prodsRes.value.data : [];
+        setProdutos(
+          lista.filter((p) =>
+            String(p.categoria ?? p.Categoria ?? "").toLowerCase().includes("alimento")
+          )
+        );
+      } else {
+        console.warn("Produtos não carregados (seguindo sem alimentos):", prodsRes.reason);
+      }
+
+      // Mensagem de erro só se o crítico (pedidos ou reservas) falhar
+      if (pedRes.status === "rejected" || resAtivas.status === "rejected") {
+        setErro("Erro ao carregar dados. Verifique conexão e autenticação.");
+      }
     } catch (e) {
-      setErro("Não foi possível carregar os pedidos/ordens.");
+      console.error("carregarTudo falhou:", e);
+      setErro("Erro ao carregar dados. Tente novamente.");
     } finally {
-      setLoading(false);
+      setLoading(false); // ✅
     }
   }
 
   useEffect(() => {
-    carregarPedidos();
+    carregarTudo();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  const produtosById = useMemo(() => {
+    const map = new Map();
+    produtos.forEach((p) => map.set(Number(p.id ?? p.Id), p));
+    return map;
+  }, [produtos]);
+
+  const totalEstimado = useMemo(() => {
+    return itens.reduce((acc, it) => {
+      const prod = produtosById.get(Number(it.productId));
+      const preco = Number(prod?.preco ?? prod?.Preco ?? prod?.price ?? 0);
+      const qtd = Number(it.quantity || 0);
+      return acc + preco * qtd;
+    }, 0);
+  }, [itens, produtosById]);
 
   function formatarData(data) {
     if (!data) return "N/A";
-    return new Date(data).toLocaleString("pt-BR", {
-      day: "2-digit",
-      month: "2-digit",
-      year: "numeric",
-    });
+    const d = new Date(data);
+    if (isNaN(+d)) return "N/A";
+    return d.toLocaleDateString("pt-BR");
+  }
+
+  function formatarMoeda(v) {
+    return Number(v ?? 0).toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
   }
 
   function formatarStatus(status) {
-    if (status === 0) return "🕒 Aguardando";
-    if (status === 1) return "🧑‍🍳 Em Processo";
-    if (status === 2) return "✅ Finalizado";
-    return status;
+    const s = String(status ?? "").toLowerCase();
+    if (s.includes("aguard") || s === "0") return "🕒 Aguardando";
+    if (s.includes("process") || s === "1") return "🧑‍🍳 Em Processo";
+    if (s.includes("final") || s === "2") return "✅ Finalizado";
+    return status ?? "—";
+  }
+
+  function addItem() {
+    setItens((prev) => [...prev, { productId: "", quantity: 1 }]);
+  }
+  function removeItem(idx) {
+    setItens((prev) => prev.filter((_, i) => i !== idx));
+  }
+  function updateItem(idx, key, value) {
+    setItens((prev) => prev.map((it, i) => (i === idx ? { ...it, [key]: value } : it)));
+  }
+
+  async function onSubmit(e) {
+    e.preventDefault();
+    setErro("");
+    try {
+      if (!reservationId) throw new Error("Selecione um hóspede acomodado.");
+      const itensValidos = itens.filter((i) => i.productId && Number(i.quantity) > 0);
+      if (!itensValidos.length) throw new Error("Adicione ao menos 1 item válido.");
+
+      await criarPedido({
+        reservationId: Number(reservationId),
+        items: itensValidos.map((i) => ({
+          productId: Number(i.productId),
+          quantity: Number(i.quantity),
+        })),
+      });
+
+      setItens([{ productId: "", quantity: 1 }]);
+      await carregarTudo();
+    } catch (e) {
+      setErro(e?.message || "Erro ao salvar o pedido.");
+    }
   }
 
   return (
-    <div
-      style={{
-        minHeight: "100vh",
-        background: "#f5f6f8",
-        display: "grid",
-        placeItems: "center",
-      }}
-    >
-      <div
-        style={{
-          width: 960,
-          background: "#fff",
-          padding: 24,
-          borderRadius: 12,
-          boxShadow: "0 8px 24px rgba(0,0,0,.08)",
-        }}
-      >
-        <h2 style={{ marginTop: 0 }}>📋 Pedidos</h2>
+    <div className="pedidos-page">
+      <div className="pedidos-card">
+        <header className="pedidos-header">
+          <button type="button" className="btn-back" onClick={() => navigate(-1)} aria-label="Voltar">
+            ← Voltar
+          </button>
+          <h2 className="pedidos-title">📋 Pedidos</h2>
+        </header>
 
-        {loading && <p>Carregando...</p>}
-        {erro && <p style={{ color: "red" }}>{erro}</p>}
+        {loading && <p className="info">Carregando...</p>}
+        {erro && <p className="error">{erro}</p>}
 
-        {!loading && !erro && pedidos.length === 0 && (
-          <p>Nenhum pedido registrado ainda.</p>
-        )}
+        {/* Novo Pedido */}
+        <section className="section">
+          <h3 className="section-title">➕ Novo Pedido</h3>
+          <form className="pedido-form" onSubmit={onSubmit}>
+            <div className="field">
+              <label className="label">Hóspede (reserva ativa)</label>
+              <select
+                className="select"
+                value={reservationId}
+                onChange={(e) => setReservationId(e.target.value)}
+              >
+                <option value="">Selecione...</option>
+                {reservas.map((r) => {
+                  const id = r.id ?? r.Id;
+                  const hospede = r.hospedeNome ?? r.HospedeNome ?? "—";
+                  const quarto = r.quarto ?? r.Quarto ?? "—";
+                  return (
+                    <option key={id} value={id}>
+                      #{id} • Quarto {quarto} • {hospede}
+                    </option>
+                  );
+                })}
+              </select>
+            </div>
 
-        {!loading && pedidos.length > 0 && (
-          <table
-            style={{
-              width: "100%",
-              borderCollapse: "collapse",
-              marginTop: 12,
-            }}
-          >
-            <thead>
-              <tr style={{ background: "#eee" }}>
-                <th style={{ textAlign: "left", padding: 8 }}>ID</th>
-                <th style={{ textAlign: "left", padding: 8 }}>Quarto</th>
-                <th style={{ textAlign: "left", padding: 8 }}>Hóspede</th>
-                <th style={{ textAlign: "left", padding: 8 }}>Check-in</th>
-                <th style={{ textAlign: "left", padding: 8 }}>Check-out</th>
-                <th style={{ textAlign: "left", padding: 8 }}>Total (R$)</th>
-                <th style={{ textAlign: "left", padding: 8 }}>Status</th>
-              </tr>
-            </thead>
-            <tbody>
-              {pedidos.map((p) => (
-                <tr key={p.id} style={{ borderBottom: "1px solid #ddd" }}>
-                  <td style={{ padding: 8 }}>{p.id}</td>
-                  <td style={{ padding: 8 }}>{p.roomId}</td>
-                  <td style={{ padding: 8 }}>{p.customerName}</td>
-                  <td style={{ padding: 8 }}>{formatarData(p.checkInDate)}</td>
-                  <td style={{ padding: 8 }}>{formatarData(p.checkOutDate)}</td>
-                  <td style={{ padding: 8 }}>{p.total?.toFixed(2)}</td>
-                  <td style={{ padding: 8 }}>
-                    <strong>{formatarStatus(p.status)}</strong>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        )}
+            <div className="field">
+              <label className="label">Itens</label>
 
-        <div style={{ display: "flex", justifyContent: "flex-end", marginTop: 16 }}>
-          <Link
-            to="/pedidos/novo"
-            style={{
-              background: "#0b5ed7",
-              color: "#fff",
-              padding: "8px 12px",
-              borderRadius: 8,
-              textDecoration: "none",
-            }}
-          >
-            ➕ Novo Pedido
-          </Link>
-        </div>
+              {itens.map((it, idx) => {
+                const prod = produtosById.get(Number(it.productId));
+                const preco = Number(prod?.preco ?? prod?.Preco ?? prod?.price ?? 0);
+                const subtotal = preco * Number(it.quantity || 0);
+
+                return (
+                  <div className="item-row" key={idx}>
+                    <select
+                      className="select"
+                      value={it.productId}
+                      onChange={(e) => updateItem(idx, "productId", e.target.value)}
+                    >
+                      <option value="">Selecione o alimento…</option>
+                      {produtos.map((p) => (
+                        <option key={p.id ?? p.Id} value={p.id ?? p.Id}>
+                          {(p.nome ?? p.Nome) + " - " + formatarMoeda(p.preco ?? p.Preco ?? p.price ?? 0)}
+                        </option>
+                      ))}
+                    </select>
+
+                    <input
+                      className="input-qty"
+                      type="number"
+                      min={1}
+                      value={it.quantity}
+                      onChange={(e) => updateItem(idx, "quantity", e.target.value)}
+                    />
+
+                    <div className="item-subtotal">{formatarMoeda(subtotal)}</div>
+
+                    <button type="button" className="btn-remove" onClick={() => removeItem(idx)} title="Remover">
+                      ✕
+                    </button>
+                  </div>
+                );
+              })}
+
+              <button type="button" className="btn-primary" onClick={addItem}>
+                + Adicionar item
+              </button>
+            </div>
+
+            <div className="total">
+              Total estimado: <strong>{formatarMoeda(totalEstimado)}</strong>
+            </div>
+
+            <div className="actions">
+              <button
+                type="button"
+                className="btn-secondary"
+                onClick={() => {
+                  setReservationId("");
+                  setItens([{ productId: "", quantity: 1 }]);
+                }}
+              >
+                Limpar
+              </button>
+              <button type="submit" className="btn-success">
+                Salvar Pedido
+              </button>
+            </div>
+          </form>
+        </section>
+
+        {/* Lista de pedidos */}
+        <section className="section">
+          <h3 className="section-title">📦 Pedidos cadastrados</h3>
+
+          {!loading && !erro && pedidos.length === 0 && (
+            <p className="info">Nenhum pedido registrado ainda.</p>
+          )}
+
+          {!loading && pedidos.length > 0 && (
+            <div className="table-wrapper">
+              <table className="table">
+                <thead>
+                  <tr>
+                    <th>ID</th>
+                    <th>Reserva</th>
+                    <th>Quarto</th>
+                    <th>Hóspede</th>
+                    <th>Check-in</th>
+                    <th>Check-out</th>
+                    <th>Total</th>
+                    <th>Status</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {pedidos.map((p) => (
+                    <tr key={p.id ?? p.Id}>
+                      <td>{p.id ?? p.Id}</td>
+                      <td>{p.reservationId ?? p.ReservationId}</td>
+                      <td>{p.quarto ?? "—"}</td>
+                      <td>{p.hospedeNome ?? "—"}</td>
+                      <td>{formatarData(p.checkInDate)}</td>
+                      <td>{formatarData(p.checkOutDate)}</td>
+                      <td>{formatarMoeda(p.total ?? p.Total)}</td>
+                      <td>{formatarStatus(p.status ?? p.Status)}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
+        </section>
       </div>
     </div>
   );
