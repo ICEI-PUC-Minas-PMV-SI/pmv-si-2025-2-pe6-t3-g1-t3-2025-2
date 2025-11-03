@@ -73,7 +73,7 @@ export default function ReservaNova() {
         hospedeDocumento,
         telefone,
         qtdeHospedes: Number(qtdeHospedes),
-        dataEntrada,          // backend da criação já aceita date? Se precisar ISO, me avise
+        dataEntrada,          
         dataSaida,
         quartoId,
       });
