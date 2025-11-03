@@ -1,3 +1,7 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 using HotelFazendaApi.Data;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -11,14 +15,61 @@ namespace HotelFazendaApi.Controllers
         private readonly AppDbContext _db;
         public ReservationsController(AppDbContext db) => _db = db;
 
+        // =========================
+        // LISTAGEM (usado pelo front)
+        // GET /api/Reservations?q=...&status=...
+        // status: "Todas" | "Abertas" | "Encerradas"
+        // =========================
+        [HttpGet]
+        public async Task<ActionResult<IEnumerable<object>>> GetLista([FromQuery] string? q, [FromQuery] string? status)
+        {
+            var query = _db.Reservations.AsNoTracking().AsQueryable();
+
+            // Filtro por status
+            if (!string.IsNullOrWhiteSpace(status) && !status.Equals("Todas", StringComparison.OrdinalIgnoreCase))
+            {
+                if (status.Equals("Abertas", StringComparison.OrdinalIgnoreCase))
+                    query = query.Where(r => r.DataSaida == default); // aberta
+                else if (status.Equals("Encerradas", StringComparison.OrdinalIgnoreCase))
+                    query = query.Where(r => r.DataSaida != default);
+            }
+
+            // Filtro de busca
+            if (!string.IsNullOrWhiteSpace(q))
+            {
+                var qNorm = q.Trim();
+                query = query.Where(r =>
+                    (r.HospedeNome != null && r.HospedeNome.Contains(qNorm)) ||
+                    (r.HospedeDocumento != null && r.HospedeDocumento.Contains(qNorm)) ||
+                    r.QuartoId.ToString() == qNorm
+                );
+            }
+
+            var lista = await query
+                .OrderByDescending(r => r.DataEntrada)
+                .Select(r => new
+                {
+                    id = r.Id,
+                    quartoId = r.QuartoId,
+                    hospedeNome = r.HospedeNome,
+                    dataEntrada = r.DataEntrada,
+                    dataSaida = (r.DataSaida == default ? (DateTime?)null : r.DataSaida)
+                })
+                .ToListAsync();
+
+            return Ok(lista);
+        }
+
+        // =========================
+        // ATIVA POR QUARTO
         // GET /api/Reservations/ativa-por-quarto/3
+        // =========================
         [HttpGet("ativa-por-quarto/{quartoId:int}")]
         public async Task<ActionResult<object>> GetAtivaPorQuarto(int quartoId)
         {
-            // Se DataSaida for não anulável, "aberta" = DataSaida == default(DateTime)
             var r = await _db.Reservations
                 .AsNoTracking()
-                .Where(x => x.QuartoId == quartoId && x.DataSaida == default)
+                .Where(x => x.QuartoId == quartoId && x.DataSaida == default) // aberta
                 .OrderByDescending(x => x.DataEntrada)
                 .FirstOrDefaultAsync();
 
@@ -27,7 +78,7 @@ namespace HotelFazendaApi.Controllers
                 var now = DateTime.UtcNow;
                 r = await _db.Reservations
                     .AsNoTracking()
-                    .Where(x => x.QuartoId == quartoId && x.DataSaida > now)
+                    .Where(x => x.QuartoId == quartoId && x.DataSaida > now) // vigente (saída futura)
                     .OrderByDescending(x => x.DataEntrada)
                     .FirstOrDefaultAsync();
             }
@@ -44,7 +95,10 @@ namespace HotelFazendaApi.Controllers
             });
         }
 
+        // =========================
+        // ATIVAS AGORA
         // GET /api/Reservations/ativas-agora
+        // =========================
         [HttpGet("ativas-agora")]
         public async Task<ActionResult<IEnumerable<object>>> GetAtivasAgora()
         {
@@ -53,11 +107,8 @@ namespace HotelFazendaApi.Controllers
             var lista = await _db.Reservations
                 .AsNoTracking()
                 .Where(x =>
-                    // aberta
-                    (x.DataSaida == default && x.DataEntrada <= now)
-                    ||
-                    // vigente (saída no futuro)
-                    (x.DataSaida != default && x.DataEntrada <= now && x.DataSaida > now)
+                    (x.DataSaida == default && x.DataEntrada <= now) ||           // aberta
+                    (x.DataSaida != default && x.DataEntrada <= now && x.DataSaida > now) // vigente
                 )
                 .OrderByDescending(x => x.DataEntrada)
                 .Select(x => new
@@ -73,8 +124,11 @@ namespace HotelFazendaApi.Controllers
             return Ok(lista);
         }
 
+        // =========================
+        // CHECKOUT (dados para a tela)
         // GET /api/Reservations/{id}/checkout
-        // GET /api/Rooms/{id}/checkout
+        // Alias opcional: GET /api/Rooms/{id}/checkout
+        // =========================
         [HttpGet("{id:int}/checkout")]
         [HttpGet("/api/Rooms/{id:int}/checkout")]
         public async Task<ActionResult<object>> GetCheckout(int id)
@@ -82,22 +136,15 @@ namespace HotelFazendaApi.Controllers
             var r = await _db.Reservations.AsNoTracking().FirstOrDefaultAsync(x => x.Id == id);
             if (r == null) return NotFound(new { message = "Reserva não encontrada." });
 
-            // entrada
-            var entrada = r.DataEntrada;
-            if (entrada == default) entrada = DateTime.UtcNow;
+            var entrada = (r.DataEntrada == default) ? DateTime.UtcNow : r.DataEntrada;
+            var fim = (r.DataSaida == default) ? DateTime.UtcNow : r.DataSaida;
 
-            // fim = DataSaida (se setado) senão agora
-            var fim = r.DataSaida;
-            if (fim == default) fim = DateTime.UtcNow;
-
-            // noites mínimas 1
             var noites = Math.Max(1, (int)Math.Ceiling((fim - entrada).TotalDays));
 
-            // tarifa placeholder (sem depender de Room.*)
+            // Sem integração de quarto/produtos neste momento
             decimal tarifaDiaria = 0m;
             var totalDiarias = tarifaDiaria * noites;
 
-            // itens ainda sem integração
             var itensDto = new List<object>();
             decimal totalPedidos = 0m;
             decimal totalGeral = totalDiarias + totalPedidos;
@@ -144,11 +191,14 @@ namespace HotelFazendaApi.Controllers
             public string? Observacao { get; set; }
         }
 
+        // =========================
+        // CHECKOUT (encerrar)
         // POST /api/Reservations/{id}/checkout
-        // POST /api/Rooms/{id}/checkout
+        // Alias opcional: POST /api/Rooms/{id}/checkout
+        // =========================
         [HttpPost("{id:int}/checkout")]
         [HttpPost("/api/Rooms/{id:int}/checkout")]
-        public async Task<IActionResult> PostCheckout(int id, [FromBody] CheckoutRequest? req)
+        public async Task<IActionResult> PostCheckout(int id, [FromBody] CheckoutRequest? _)
         {
             var r = await _db.Reservations.FindAsync(id);
             if (r == null) return NotFound(new { message = "Reserva não encontrada." });
@@ -159,7 +209,10 @@ namespace HotelFazendaApi.Controllers
             return NoContent();
         }
 
+        // =========================
+        // ENCERRAR (rota alternativa)
         // POST /api/Reservations/{id}/encerrar
+        // =========================
         [HttpPost("{id:int}/encerrar")]
         public async Task<IActionResult> Encerrar(int id)
         {
