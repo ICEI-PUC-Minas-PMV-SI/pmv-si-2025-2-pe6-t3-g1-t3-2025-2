@@ -1,86 +1,175 @@
-// Controllers/ReservationsController.cs
 using HotelFazendaApi.Data;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
-[ApiController]
-[Route("api/[controller]")] // /api/Reservations
-public class ReservationsController : ControllerBase
+namespace HotelFazendaApi.Controllers
 {
-    private readonly AppDbContext _db;
-    public ReservationsController(AppDbContext db) => _db = db;
-
-    // ✅ GET /api/Reservations
-    // Lista todas as reservas (pode filtrar por hóspede ou status)
-    [HttpGet]
-    public async Task<ActionResult<IEnumerable<object>>> GetAll([FromQuery] string? q, [FromQuery] string? status)
+    [ApiController]
+    [Route("api/[controller]")] // base: /api/Reservations
+    public class ReservationsController : ControllerBase
     {
-        var query = _db.Reservations.AsNoTracking();
+        private readonly AppDbContext _db;
+        public ReservationsController(AppDbContext db) => _db = db;
 
-        if (!string.IsNullOrEmpty(q))
+        // GET /api/Reservations/ativa-por-quarto/3
+        [HttpGet("ativa-por-quarto/{quartoId:int}")]
+        public async Task<ActionResult<object>> GetAtivaPorQuarto(int quartoId)
         {
-            query = query.Where(r =>
-                r.HospedeNome.Contains(q) ||
-                r.QuartoId.ToString().Contains(q));
-        }
+            // Se DataSaida for não anulável, "aberta" = DataSaida == default(DateTime)
+            var r = await _db.Reservations
+                .AsNoTracking()
+                .Where(x => x.QuartoId == quartoId && x.DataSaida == default)
+                .OrderByDescending(x => x.DataEntrada)
+                .FirstOrDefaultAsync();
 
-        if (!string.IsNullOrEmpty(status))
-        {
-            query = query.Where(r => r.Status == status);
-        }
+            if (r == null)
+            {
+                var now = DateTime.UtcNow;
+                r = await _db.Reservations
+                    .AsNoTracking()
+                    .Where(x => x.QuartoId == quartoId && x.DataSaida > now)
+                    .OrderByDescending(x => x.DataEntrada)
+                    .FirstOrDefaultAsync();
+            }
 
-        var list = await query
-            .OrderByDescending(r => r.DataEntrada)
-            .Select(r => new
+            if (r == null) return NotFound();
+
+            return Ok(new
             {
                 id = r.Id,
                 quartoId = r.QuartoId,
-                hospedeNome = r.HospedeNome,
                 dataEntrada = r.DataEntrada,
-                dataSaida = r.DataSaida,
-                status = r.Status
-            })
-            .ToListAsync();
+                dataSaida = (r.DataSaida == default ? (DateTime?)null : r.DataSaida),
+                hospedeNome = r.HospedeNome
+            });
+        }
 
-        return Ok(list);
-    }
-
-    // GET /api/Reservations/ativa-por-quarto/3
-    [HttpGet("ativa-por-quarto/{quartoId:int}")]
-    public async Task<ActionResult<object>> GetAtivaPorQuarto(int quartoId)
-    {
-        var r = await _db.Reservations
-            .AsNoTracking()
-            .Where(x => x.QuartoId == quartoId && x.DataSaida == null)
-            .OrderByDescending(x => x.DataEntrada)
-            .FirstOrDefaultAsync();
-
-        if (r == null) return NotFound();
-
-        return Ok(new
+        // GET /api/Reservations/ativas-agora
+        [HttpGet("ativas-agora")]
+        public async Task<ActionResult<IEnumerable<object>>> GetAtivasAgora()
         {
-            id = r.Id,
-            quartoId = r.QuartoId,
-            dataEntrada = r.DataEntrada,
-            dataSaida = r.DataSaida,
-            hospedeNome = r.HospedeNome
-        });
-    }
+            var now = DateTime.UtcNow;
 
-    // POST /api/Reservations/{id}/encerrar
-    [HttpPost("{id:int}/encerrar")]
-    public async Task<IActionResult> Encerrar(int id)
-    {
-        var r = await _db.Reservations.FindAsync(id);
-        if (r == null) return NotFound();
+            var lista = await _db.Reservations
+                .AsNoTracking()
+                .Where(x =>
+                    // aberta
+                    (x.DataSaida == default && x.DataEntrada <= now)
+                    ||
+                    // vigente (saída no futuro)
+                    (x.DataSaida != default && x.DataEntrada <= now && x.DataSaida > now)
+                )
+                .OrderByDescending(x => x.DataEntrada)
+                .Select(x => new
+                {
+                    id = x.Id,
+                    quartoId = x.QuartoId,
+                    dataEntrada = x.DataEntrada,
+                    dataSaida = (x.DataSaida == default ? (DateTime?)null : x.DataSaida),
+                    hospedeNome = x.HospedeNome
+                })
+                .ToListAsync();
 
-        if (r.DataSaida != null)
-            return Conflict("Reserva já encerrada.");
+            return Ok(lista);
+        }
 
-        r.DataSaida = DateTime.UtcNow;
-        // r.Status = "Encerrada"; // caso tenha coluna de status
+        // GET /api/Reservations/{id}/checkout
+        // GET /api/Rooms/{id}/checkout
+        [HttpGet("{id:int}/checkout")]
+        [HttpGet("/api/Rooms/{id:int}/checkout")]
+        public async Task<ActionResult<object>> GetCheckout(int id)
+        {
+            var r = await _db.Reservations.AsNoTracking().FirstOrDefaultAsync(x => x.Id == id);
+            if (r == null) return NotFound(new { message = "Reserva não encontrada." });
 
-        await _db.SaveChangesAsync();
-        return NoContent();
+            // entrada
+            var entrada = r.DataEntrada;
+            if (entrada == default) entrada = DateTime.UtcNow;
+
+            // fim = DataSaida (se setado) senão agora
+            var fim = r.DataSaida;
+            if (fim == default) fim = DateTime.UtcNow;
+
+            // noites mínimas 1
+            var noites = Math.Max(1, (int)Math.Ceiling((fim - entrada).TotalDays));
+
+            // tarifa placeholder (sem depender de Room.*)
+            decimal tarifaDiaria = 0m;
+            var totalDiarias = tarifaDiaria * noites;
+
+            // itens ainda sem integração
+            var itensDto = new List<object>();
+            decimal totalPedidos = 0m;
+            decimal totalGeral = totalDiarias + totalPedidos;
+
+            var resp = new
+            {
+                reservaId = r.Id,
+                quarto = new
+                {
+                    id = r.QuartoId,
+                    numero = r.QuartoId.ToString(),
+                    tipo = "Padrão",
+                    capacidade = 2
+                },
+                hospede = new
+                {
+                    nome = r.HospedeNome ?? "—",
+                    documento = r.HospedeDocumento,
+                    telefone = r.Telefone
+                },
+                datas = new
+                {
+                    dataEntrada = entrada,
+                    dataSaidaPrevista = (DateTime?)null,
+                    dataSaidaReal = (r.DataSaida == default ? (DateTime?)null : r.DataSaida)
+                },
+                valores = new
+                {
+                    tarifaDiaria,
+                    noites,
+                    totalDiarias,
+                    totalPedidos,
+                    totalGeral
+                },
+                itens = itensDto
+            };
+
+            return Ok(resp);
+        }
+
+        public class CheckoutRequest
+        {
+            public string? FormaPagamento { get; set; }
+            public string? Observacao { get; set; }
+        }
+
+        // POST /api/Reservations/{id}/checkout
+        // POST /api/Rooms/{id}/checkout
+        [HttpPost("{id:int}/checkout")]
+        [HttpPost("/api/Rooms/{id:int}/checkout")]
+        public async Task<IActionResult> PostCheckout(int id, [FromBody] CheckoutRequest? req)
+        {
+            var r = await _db.Reservations.FindAsync(id);
+            if (r == null) return NotFound(new { message = "Reserva não encontrada." });
+            if (r.DataSaida != default) return Conflict(new { message = "Reserva já encerrada." });
+
+            r.DataSaida = DateTime.UtcNow; // ou DateTime.Now
+            await _db.SaveChangesAsync();
+            return NoContent();
+        }
+
+        // POST /api/Reservations/{id}/encerrar
+        [HttpPost("{id:int}/encerrar")]
+        public async Task<IActionResult> Encerrar(int id)
+        {
+            var r = await _db.Reservations.FindAsync(id);
+            if (r == null) return NotFound();
+            if (r.DataSaida != default) return Conflict("Reserva já encerrada.");
+
+            r.DataSaida = DateTime.UtcNow; // ou DateTime.Now
+            await _db.SaveChangesAsync();
+            return NoContent();
+        }
     }
 }

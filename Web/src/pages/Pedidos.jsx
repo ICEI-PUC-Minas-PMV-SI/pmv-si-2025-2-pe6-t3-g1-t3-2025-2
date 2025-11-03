@@ -2,7 +2,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { getPedidos, criarPedido } from "../services/pedidos";
-import { listarReservasAtivasAgora } from "../services/reservas";
+import { listarReservasAtivasAgora, listarReservas } from "../services/reservas";
 import { listarProdutos } from "../services/produtos";
 import "./Pedidos.css";
 
@@ -10,7 +10,8 @@ export default function Pedidos() {
   const navigate = useNavigate();
 
   const [pedidos, setPedidos] = useState([]);
-  const [reservas, setReservas] = useState([]);
+  const [reservasAtivas, setReservasAtivas] = useState([]);
+  const [reservasTodas, setReservasTodas] = useState([]);
   const [produtos, setProdutos] = useState([]);
   const [loading, setLoading] = useState(true);
   const [erro, setErro] = useState("");
@@ -23,25 +24,24 @@ export default function Pedidos() {
     setErro("");
 
     try {
-      const [pedRes, resAtivas, prodsRes] = await Promise.allSettled([
-        getPedidos(),                 // GET /api/Order  (service enriquece com dados da reserva)
-        listarReservasAtivasAgora(),  // GET /api/Reservations (filtra no front “ativas agora”)
+      const [pedRes, resAtivas, resTodas, prodsRes] = await Promise.allSettled([
+        getPedidos(),                 // GET /api/Order
+        listarReservasAtivasAgora(),  // ativa agora (combo do topo)
+        listarReservas(),             // TODAS as reservas (para enriquecer a grade)
         listarProdutos(),             // GET /api/Produto
       ]);
 
-      // --- pedidos ---
+      // pedidos
       if (pedRes.status === "fulfilled") {
-        const lista = Array.isArray(pedRes.value) ? pedRes.value : [];
-        setPedidos(lista);
+        setPedidos(Array.isArray(pedRes.value) ? pedRes.value : []);
       } else {
         console.error("Falha ao carregar pedidos:", pedRes.reason);
       }
 
-      // --- reservas ativas ---
+      // reservas ativas (combo)
       if (resAtivas.status === "fulfilled") {
         const arr = Array.isArray(resAtivas.value) ? resAtivas.value : [];
-        setReservas(arr);
-
+        setReservasAtivas(arr);
         if (!reservationId && arr.length) {
           const primeiroId = arr[0].id ?? arr[0].Id ?? "";
           setReservationId(primeiroId);
@@ -50,7 +50,14 @@ export default function Pedidos() {
         console.error("Falha ao carregar reservas ativas:", resAtivas.reason);
       }
 
-      // --- produtos (filtra por categoria “alimento” quando existir) ---
+      // reservas todas (enriquecer tabela)
+      if (resTodas.status === "fulfilled") {
+        setReservasTodas(Array.isArray(resTodas.value) ? resTodas.value : []);
+      } else {
+        console.error("Falha ao carregar todas as reservas:", resTodas.reason);
+      }
+
+      // produtos
       if (prodsRes.status === "fulfilled") {
         const lista = Array.isArray(prodsRes.value) ? prodsRes.value : [];
         setProdutos(
@@ -78,12 +85,35 @@ export default function Pedidos() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  // === Índices para consulta rápida ===
   const produtosById = useMemo(() => {
     const map = new Map();
     produtos.forEach((p) => map.set(Number(p.id ?? p.Id), p));
     return map;
   }, [produtos]);
 
+  const reservasById = useMemo(() => {
+    const map = new Map();
+    (reservasTodas ?? []).forEach((r) => {
+      const id = Number(r.id ?? r.Id);
+      if (!id) return;
+      // normalizações úteis
+      const hospede = r.hospedeNome ?? r.HospedeNome ?? "—";
+      const quarto =
+        r.quartoNumero ??
+        r.QuartoNumero ??
+        r.Quarto?.Numero ??
+        r.quarto ??
+        r.Quarto ??
+        "—";
+      const checkin = r.dataEntrada ?? r.DataEntrada ?? r.checkinAt ?? r.CheckinAt;
+      const checkout = r.dataSaida ?? r.DataSaida ?? r.checkoutAt ?? r.CheckoutAt;
+      map.set(id, { hospede, quarto, checkin, checkout });
+    });
+    return map;
+  }, [reservasTodas]);
+
+  // === totais ===
   const totalEstimado = useMemo(() => {
     return itens.reduce((acc, it) => {
       const prod = produtosById.get(Number(it.productId));
@@ -93,6 +123,7 @@ export default function Pedidos() {
     }, 0);
   }, [itens, produtosById]);
 
+  // === helpers de formatação ===
   function formatarData(data) {
     if (!data) return "N/A";
     const d = new Date(data);
@@ -109,6 +140,7 @@ export default function Pedidos() {
     return status ?? "—";
   }
 
+  // === manipulação de itens ===
   function addItem() {
     setItens((prev) => [...prev, { productId: "", quantity: 1 }]);
   }
@@ -119,6 +151,7 @@ export default function Pedidos() {
     setItens((prev) => prev.map((it, i) => (i === idx ? { ...it, [key]: value } : it)));
   }
 
+  // === submit ===
   async function onSubmit(e) {
     e.preventDefault();
     setErro("");
@@ -167,10 +200,11 @@ export default function Pedidos() {
                 onChange={(e) => setReservationId(e.target.value)}
               >
                 <option value="">Selecione...</option>
-                {reservas.map((r) => {
+                {reservasAtivas.map((r) => {
                   const id = r.id ?? r.Id;
                   const hospede = r.hospedeNome ?? r.HospedeNome ?? "—";
-                  const quarto = r.quarto ?? r.Quarto ?? r.quartoNumero ?? r.QuartoNumero ?? "—";
+                  const quarto =
+                    r.quarto ?? r.Quarto ?? r.quartoNumero ?? r.QuartoNumero ?? r.Quarto?.Numero ?? "—";
                   return (
                     <option key={id} value={id}>
                       #{id} • Quarto {quarto} • {hospede}
@@ -271,18 +305,29 @@ export default function Pedidos() {
                   </tr>
                 </thead>
                 <tbody>
-                  {pedidos.map((p) => (
-                    <tr key={p.id ?? p.Id}>
-                      <td>{p.id ?? p.Id}</td>
-                      <td>{p.reservationId ?? p.ReservationId}</td>
-                      <td>{p.quarto ?? p.Quarto ?? "—"}</td>
-                      <td>{p.hospedeNome ?? p.HospedeNome ?? "—"}</td>
-                      <td>{formatarData(p.checkInDate ?? p.CheckInDate)}</td>
-                      <td>{formatarData(p.checkOutDate ?? p.CheckOutDate)}</td>
-                      <td>{formatarMoeda(p.total ?? p.Total)}</td>
-                      <td>{formatarStatus(p.status ?? p.Status)}</td>
-                    </tr>
-                  ))}
+                  {pedidos.map((p) => {
+                    const id = p.id ?? p.Id;
+                    const resId = Number(p.reservationId ?? p.ReservationId);
+                    const res = reservasById.get(resId);
+
+                    const quarto = res?.quarto ?? p.quarto ?? p.Quarto ?? "—";
+                    const hospede = res?.hospede ?? p.hospedeNome ?? p.HospedeNome ?? "—";
+                    const checkin = res?.checkin ?? p.checkInDate ?? p.CheckInDate;
+                    const checkout = res?.checkout ?? p.checkOutDate ?? p.CheckOutDate;
+
+                    return (
+                      <tr key={id}>
+                        <td>{id}</td>
+                        <td>{resId || "—"}</td>
+                        <td>{quarto}</td>
+                        <td>{hospede}</td>
+                        <td>{formatarData(checkin)}</td>
+                        <td>{formatarData(checkout)}</td>
+                        <td>{formatarMoeda(p.total ?? p.Total)}</td>
+                        <td>{formatarStatus(p.status ?? p.Status)}</td>
+                      </tr>
+                    );
+                  })}
                 </tbody>
               </table>
             </div>
