@@ -1,179 +1,86 @@
+// Controllers/ReservationsController.cs
 using HotelFazendaApi.Data;
-using HotelFazendaApi.DTOs;
-using HotelFazendaApi.Entities;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
-namespace HotelFazendaApi.Controllers
+[ApiController]
+[Route("api/[controller]")] // /api/Reservations
+public class ReservationsController : ControllerBase
 {
-    [ApiController]
-    // Suporta ambas as rotas para evitar 404 por diferenças no front
-    [Route("api/[controller]")]     // -> /api/Reservations
-    [Route("api/reservas")]         // -> /api/reservas
-    [Authorize] // remova se quiser testar sem auth
-    public class ReservationsController : ControllerBase
+    private readonly AppDbContext _db;
+    public ReservationsController(AppDbContext db) => _db = db;
+
+    // ✅ GET /api/Reservations
+    // Lista todas as reservas (pode filtrar por hóspede ou status)
+    [HttpGet]
+    public async Task<ActionResult<IEnumerable<object>>> GetAll([FromQuery] string? q, [FromQuery] string? status)
     {
-        private readonly AppDbContext _db;
-        public ReservationsController(AppDbContext db) => _db = db;
+        var query = _db.Reservations.AsNoTracking();
 
-        // GET: /api/Reservations  (ou /api/reservas)
-        [HttpGet]
-        public async Task<ActionResult<IEnumerable<ReservationDto>>> Listar()
+        if (!string.IsNullOrEmpty(q))
         {
-            var data = await _db.Reservations
-                .Include(r => r.Quarto)
-                .OrderByDescending(r => r.CriadoEm)
-                .Select(r => new ReservationDto
-                {
-                    Id = r.Id,
-                    HospedeNome = r.HospedeNome,
-                    Quarto = r.Quarto != null ? r.Quarto.Numero : null,
-                    Status = r.Status,
-                    DataEntrada = r.DataEntrada,
-                    DataSaida = r.DataSaida
-                })
-                .ToListAsync();
-
-            return Ok(data);
+            query = query.Where(r =>
+                r.HospedeNome.Contains(q) ||
+                r.QuartoId.ToString().Contains(q));
         }
 
-        // POST: /api/Reservations  (ou /api/reservas)
-        [HttpPost]
-        public async Task<ActionResult<ReservationDto>> Criar([FromBody] ReservationCreateDto dto)
+        if (!string.IsNullOrEmpty(status))
         {
-            if (dto.DataSaida <= dto.DataEntrada)
-                return BadRequest(new { mensagem = "Data de saída deve ser após a entrada." });
-
-            // valida quarto se informado
-            Room? quarto = null;
-            if (dto.QuartoId.HasValue)
-            {
-                quarto = await _db.Rooms.FindAsync(dto.QuartoId.Value);
-                if (quarto == null)
-                    return NotFound(new { mensagem = "Quarto não encontrado." });
-
-                // checa disponibilidade básica
-                bool conflita = await _db.Reservations.AnyAsync(r =>
-                    r.QuartoId == quarto.Id &&
-                    r.Status != "Cancelada" &&
-                    r.DataEntrada < dto.DataSaida &&
-                    dto.DataEntrada < r.DataSaida
-                );
-                if (conflita)
-                    return Conflict(new { mensagem = "Quarto indisponível no período." });
-            }
-
-            var entity = new Reservation
-            {
-                HospedeNome = dto.HospedeNome,
-                HospedeDocumento = dto.HospedeDocumento,
-                Telefone = dto.Telefone,
-                QtdeHospedes = dto.QtdeHospedes,
-                DataEntrada = dto.DataEntrada,
-                DataSaida = dto.DataSaida,
-                QuartoId = dto.QuartoId,
-                Status = "Aberta"
-            };
-
-            _db.Reservations.Add(entity);
-
-            // 🔸 Reflete ocupação no quarto assim que cria
-            if (quarto != null)
-                quarto.Status = "Ocupado";
-
-            await _db.SaveChangesAsync();
-
-            var result = new ReservationDto
-            {
-                Id = entity.Id,
-                HospedeNome = entity.HospedeNome,
-                Quarto = quarto?.Numero,
-                Status = entity.Status,
-                DataEntrada = entity.DataEntrada,
-                DataSaida = entity.DataSaida
-            };
-
-            return CreatedAtAction(nameof(Obter), new { id = entity.Id }, result);
+            query = query.Where(r => r.Status == status);
         }
 
-        // GET: /api/Reservations/{id}  (ou /api/reservas/{id})
-        [HttpGet("{id:int}")]
-        public async Task<ActionResult<ReservationDto>> Obter(int id)
-        {
-            var r = await _db.Reservations
-                .Include(x => x.Quarto)
-                .FirstOrDefaultAsync(x => x.Id == id);
-
-            if (r == null) return NotFound();
-
-            return new ReservationDto
+        var list = await query
+            .OrderByDescending(r => r.DataEntrada)
+            .Select(r => new
             {
-                Id = r.Id,
-                HospedeNome = r.HospedeNome,
-                Quarto = r.Quarto?.Numero,
-                Status = r.Status,
-                DataEntrada = r.DataEntrada,
-                DataSaida = r.DataSaida
-            };
-        }
+                id = r.Id,
+                quartoId = r.QuartoId,
+                hospedeNome = r.HospedeNome,
+                dataEntrada = r.DataEntrada,
+                dataSaida = r.DataSaida,
+                status = r.Status
+            })
+            .ToListAsync();
 
-        // GET: /api/Reservations/disponibilidade?dataEntrada=...&dataSaida=...&capacidade=2
-        [HttpGet("disponibilidade")]
-        public async Task<ActionResult<IEnumerable<object>>> Disponibilidade(
-            [FromQuery] DateTime dataEntrada,
-            [FromQuery] DateTime dataSaida,
-            [FromQuery] int capacidade = 1)
+        return Ok(list);
+    }
+
+    // GET /api/Reservations/ativa-por-quarto/3
+    [HttpGet("ativa-por-quarto/{quartoId:int}")]
+    public async Task<ActionResult<object>> GetAtivaPorQuarto(int quartoId)
+    {
+        var r = await _db.Reservations
+            .AsNoTracking()
+            .Where(x => x.QuartoId == quartoId && x.DataSaida == null)
+            .OrderByDescending(x => x.DataEntrada)
+            .FirstOrDefaultAsync();
+
+        if (r == null) return NotFound();
+
+        return Ok(new
         {
-            if (dataSaida <= dataEntrada)
-                return BadRequest(new { mensagem = "Período inválido." });
+            id = r.Id,
+            quartoId = r.QuartoId,
+            dataEntrada = r.DataEntrada,
+            dataSaida = r.DataSaida,
+            hospedeNome = r.HospedeNome
+        });
+    }
 
-            // quartos com capacidade OK (ignora manutenção)
-            var baseQuery = _db.Rooms.Where(q => q.Capacidade >= capacidade && q.Status != "Manutencao");
+    // POST /api/Reservations/{id}/encerrar
+    [HttpPost("{id:int}/encerrar")]
+    public async Task<IActionResult> Encerrar(int id)
+    {
+        var r = await _db.Reservations.FindAsync(id);
+        if (r == null) return NotFound();
 
-            // remove os que estão reservados no período
-            var quartosIndisponiveis = await _db.Reservations
-                .Where(r => r.Status != "Cancelada" &&
-                            r.DataEntrada < dataSaida &&
-                            dataEntrada < r.DataSaida &&
-                            r.QuartoId != null)
-                .Select(r => r.QuartoId!.Value)
-                .Distinct()
-                .ToListAsync();
+        if (r.DataSaida != null)
+            return Conflict("Reserva já encerrada.");
 
-            var livres = await baseQuery
-                .Where(q => !quartosIndisponiveis.Contains(q.Id))
-                .OrderBy(q => q.Numero)
-                .Select(q => new { id = q.Id, numero = q.Numero, capacidade = q.Capacidade })
-                .ToListAsync();
+        r.DataSaida = DateTime.UtcNow;
+        // r.Status = "Encerrada"; // caso tenha coluna de status
 
-            return Ok(livres);
-        }
-
-        // PUT: /api/Reservations/{id}/status?novo=Confirmada|Cancelada|Finalizada|Checkout
-        [HttpPut("{id:int}/status")]
-        public async Task<IActionResult> AlterarStatus(int id, [FromQuery] string novo = "Confirmada")
-        {
-            var r = await _db.Reservations.FindAsync(id);
-            if (r == null) return NotFound();
-
-            r.Status = novo;
-
-            if (r.QuartoId.HasValue)
-            {
-                var quarto = await _db.Rooms.FindAsync(r.QuartoId.Value);
-                if (quarto != null)
-                {
-                    // Cancelada / Finalizada / Checkout => quarto fica Livre
-                    // Demais estados (Aberta/Confirmada) => Ocupado
-                    quarto.Status = (novo == "Cancelada" || novo == "Finalizada" || novo == "Checkout")
-                        ? "Livre"
-                        : "Ocupado";
-                }
-            }
-
-            await _db.SaveChangesAsync();
-            return NoContent();
-        }
+        await _db.SaveChangesAsync();
+        return NoContent();
     }
 }

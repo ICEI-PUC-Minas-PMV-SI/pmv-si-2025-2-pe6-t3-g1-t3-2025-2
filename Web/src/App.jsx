@@ -1,3 +1,4 @@
+// src/App.jsx
 import { Routes, Route, Navigate } from "react-router-dom";
 import Login from "./pages/Login.jsx";
 import UsuarioCreate from "./pages/UsuarioCreate.jsx";
@@ -13,7 +14,7 @@ import ReservaNova from "./pages/ReservaNova.jsx";
 import ContaHospedagem from "./pages/ContaHospedagem.jsx";
 import Pedidos from "./pages/Pedidos.jsx";
 import PedidoCreate from "./pages/PedidosCreate.jsx";
-
+import ReservaEncerrar from "./pages/ReservaEncerrar.jsx";
 
 export default function App() {
   return (
@@ -31,6 +32,8 @@ export default function App() {
       {/* Acesso */}
       <Route path="/login" element={<Login />} />
       <Route path="/esqueci-senha" element={<EsqueciSenha />} />
+        <Route path="reservas/encerrar/:id" element={<ReservaEncerrar />} />
+
 
       {/* Usuários */}
       <Route
@@ -51,7 +54,6 @@ export default function App() {
           </RotaPrivada>
         }
       />
-
       <Route
         path="/produtos/novo"
         element={
@@ -61,6 +63,7 @@ export default function App() {
         }
       />
 
+      {/* Quartos */}
       <Route
         path="/quartos"
         element={
@@ -69,7 +72,6 @@ export default function App() {
           </RotaPrivada>
         }
       />
-
       <Route
         path="/quartos/checkin/:quartoId"
         element={
@@ -79,6 +81,7 @@ export default function App() {
         }
       />
 
+      {/* Reservas */}
       <Route
         path="/reservas"
         element={
@@ -96,6 +99,15 @@ export default function App() {
         }
       />
 
+      {/* Conta/Hospedagem – DUAS rotas: com id e sem id (fallback por query) */}
+      <Route
+        path="/conta"
+        element={
+          <RotaPrivada>
+            <ContaHospedagem />
+          </RotaPrivada>
+        }
+      />
       <Route
         path="/conta/:hospedagemId"
         element={
@@ -105,6 +117,7 @@ export default function App() {
         }
       />
 
+      {/* Pedidos */}
       <Route
         path="/pedidos"
         element={
@@ -113,7 +126,6 @@ export default function App() {
           </RotaPrivada>
         }
       />
-
       <Route
         path="/pedidos/novo"
         element={
@@ -122,7 +134,6 @@ export default function App() {
           </RotaPrivada>
         }
       />
-
 
       {/* Fallback */}
       <Route path="*" element={<Navigate to="/" replace />} />

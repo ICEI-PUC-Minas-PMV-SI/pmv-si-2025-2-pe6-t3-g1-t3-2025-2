@@ -1,214 +1,226 @@
+// src/pages/ContaHospedagem.jsx
 import { useEffect, useMemo, useState } from "react";
-import { Link, useParams, useNavigate } from "react-router-dom";
-import { obterHospedagem, listarLancamentos, adicionarLancamento, fecharConta } from "../services/conta";
+import { Link, useNavigate, useParams, useSearchParams } from "react-router-dom";
+import { obterCheckout, encerrarConta, resolverReservaAtiva } from "../services/conta";
 import "./conta.css";
 
+function fmtBRL(n) {
+  return new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" }).format(Number(n || 0));
+}
+function fmtData(iso) {
+  if (!iso) return "-";
+  try { return new Date(iso).toLocaleString("pt-BR"); } catch { return iso; }
+}
+
 export default function ContaHospedagem() {
-  const { hospedagemId } = useParams();
+  const { hospedagemId } = useParams();         // pode ser reservaId
+  const [search] = useSearchParams();           // ou ?roomId=123
+  const roomId = search.get("roomId");
   const navigate = useNavigate();
 
-  const [info, setInfo] = useState(null);
-  const [itens, setItens] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [dados, setDados] = useState(null);
+  const [carregando, setCarregando] = useState(true);
   const [erro, setErro] = useState("");
-  const [ok, setOk] = useState("");
+  const [salvando, setSalvando] = useState(false);
 
-  // form de novo lançamento
-  const [tipo, setTipo] = useState("Consumo"); // Consumo | Diaria | Taxa | Desconto
-  const [descricao, setDescricao] = useState("");
-  const [valor, setValor] = useState("");
-  const [qtd, setQtd] = useState(1);
+  const [pagamento, setPagamento] = useState("");
+  const [observacao, setObservacao] = useState("");
 
   async function carregar() {
+    setCarregando(true);
+    setErro("");
     try {
-      setLoading(true);
-      const [h, l] = await Promise.all([
-        obterHospedagem(hospedagemId),
-        listarLancamentos(hospedagemId),
-      ]);
-      setInfo(h || null);
-      setItens(Array.isArray(l) ? l : []);
-    } catch {
-      setErro("Não foi possível carregar a conta.");
+      let idParaAbrir = hospedagemId;
+      if (!idParaAbrir && roomId) {
+        // resolve a reserva e troca a URL para a forma canônica
+        const rid = await resolverReservaAtiva(roomId);
+        if (rid) {
+          navigate(`/conta/${rid}`, { replace: true });
+          idParaAbrir = rid;
+        }
+      }
+      const resp = await obterCheckout(idParaAbrir ?? roomId);
+      if (!resp.reservaId && !roomId) {
+        setErro("Não foi possível identificar a hospedagem.");
+      }
+      setDados(resp);
+    } catch (e) {
+      console.error(e);
+      setErro(
+        e?.response?.data?.mensagem ||
+        e?.response?.data?.message ||
+        "Não foi possível carregar a conta."
+      );
     } finally {
-      setLoading(false);
+      setCarregando(false);
     }
   }
 
-  useEffect(() => { carregar(); }, [hospedagemId]);
+  useEffect(() => { carregar(); /* eslint-disable-next-line */ }, [hospedagemId, roomId]);
 
-  const totais = useMemo(() => {
-    const subtotal = itens.reduce((acc, i) => acc + (i.valor * (i.qtd ?? 1)), 0);
-    const descontos = itens
-      .filter(i => (i.tipo || "").toLowerCase() === "desconto")
-      .reduce((acc, i) => acc + (i.valor * (i.qtd ?? 1)), 0);
-    const total = subtotal; // já considera descontos como valor negativo
-    return { subtotal, descontos, total };
-  }, [itens]);
+  const totais = useMemo(
+    () => dados?.valores ?? { tarifaDiaria: 0, noites: 0, totalDiarias: 0, totalPedidos: 0, totalGeral: 0 },
+    [dados]
+  );
 
-  async function onAdicionar(e) {
-    e.preventDefault();
-    setErro(""); setOk("");
-
-    const v = Number(valor);
-    const q = Number(qtd || 1);
-    if (!descricao.trim()) return setErro("Informe a descrição do lançamento.");
-    if (Number.isNaN(v)) return setErro("Informe um valor numérico.");
-    if (tipo !== "Desconto" && v <= 0) return setErro("Valor deve ser maior que zero.");
-    if (tipo === "Desconto" && v >= 0) return setErro("Desconto deve ser negativo (ex.: -20).");
+  async function aoEncerrar() {
+    if (!dados?.reservaId) return;
+    if (!window.confirm("Confirmar encerramento da conta?")) return;
 
     try {
-      await adicionarLancamento(hospedagemId, { tipo, descricao, valor: v, qtd: q });
-      setOk("Lançamento adicionado.");
-      setDescricao(""); setValor(""); setQtd(1); setTipo("Consumo");
-      await carregar();
-    } catch (err) {
-      const msg = err?.response?.data?.mensagem || err?.message || "Falha ao adicionar lançamento.";
-      setErro(msg);
-    }
-  }
-
-  async function onFecharConta() {
-    setErro(""); setOk("");
-    try {
-      await fecharConta(hospedagemId);
-      navigate("/reservas", { replace: true, state: { toast: "Conta fechada com sucesso." } });
-    } catch (err) {
-      const msg = err?.response?.data?.mensagem || err?.message || "Não foi possível fechar a conta.";
-      setErro(msg);
+      setSalvando(true);
+      await encerrarConta(dados.reservaId, {
+        formaPagamento: pagamento || null,
+        observacao: observacao?.trim() || null,
+      });
+      navigate("/quartos", { replace: true, state: { toast: "Conta encerrada com sucesso!" } });
+    } catch (e) {
+      console.error(e);
+      setErro(
+        e?.response?.data?.mensagem ||
+        e?.response?.data?.message ||
+        "Falha ao encerrar a conta."
+      );
+    } finally {
+      setSalvando(false);
     }
   }
 
   return (
-    <div className="ct-root">
-      <div className="ct-card">
-        <div className="ct-header">
-          <h2 className="ct-title">🧾 Conta da Hospedagem</h2>
-          <div className="ct-actionsHeader">
-            <Link to="/reservas" className="ct-link">← Voltar</Link>
-            <button
-              className="ct-btn ct-btn--danger"
-              disabled={loading || !info || itens.length === 0}
-              onClick={onFecharConta}
-              title={itens.length === 0 ? "Sem lançamentos" : "Encerrar e gerar recibo"}
-            >
-              Fechar conta
-            </button>
-          </div>
+    <div className="ch-root">
+      <div className="ch-card">
+        <div className="ch-header">
+          <h2 className="ch-title">Encerramento de Conta</h2>
+          <Link to="/quartos" className="ch-link">← Voltar</Link>
         </div>
 
-        {ok &&  <div className="ct-toast ct-toast--ok" role="status">{ok}</div>}
-        {erro && <div className="ct-toast ct-toast--erro" role="alert">{erro}</div>}
+        {erro && <div className="ch-alert ch-alert--erro">{erro}</div>}
 
-        {loading ? (
+        {carregando ? (
           <p>Carregando…</p>
-        ) : !info ? (
-          <div className="ct-empty">Hospedagem não encontrada.</div>
+        ) : !dados ? (
+          <div style={{ marginTop: 12 }}>
+            <Link to="/quartos" className="ch-btn ch-btn--ghost">Voltar</Link>
+          </div>
         ) : (
           <>
-            {/* dados resumidos */}
-            <section className="ct-info">
-              <div>
-                <div className="ct-infoLbl">Hóspede</div>
-                <div className="ct-infoVal">{info.hospedeNome}</div>
+            <div className="ch-grid2 ch-topinfo">
+              <div className="ch-box">
+                <div className="ch-box-title">Quarto</div>
+                <div className="ch-box-line">Número: <strong>{dados.quarto?.numero ?? "-"}</strong></div>
+                <div className="ch-box-line">Tipo/Capacidade: {dados.quarto?.tipo ?? "Padrão"} · {dados.quarto?.capacidade ?? 2} hóspedes</div>
               </div>
-              <div>
-                <div className="ct-infoLbl">Quarto</div>
-                <div className="ct-infoVal">{info.quartoLabel || `Quarto ${info.quartoNumero}`}</div>
+              <div className="ch-box">
+                <div className="ch-box-title">Hóspede</div>
+                <div className="ch-box-line">Nome: <strong>{dados.hospede?.nome}</strong></div>
+                {dados.hospede?.documento && <div className="ch-box-line">Documento: {dados.hospede.documento}</div>}
+                {dados.hospede?.telefone && <div className="ch-box-line">Telefone: {dados.hospede.telefone}</div>}
               </div>
-              <div>
-                <div className="ct-infoLbl">Período</div>
-                <div className="ct-infoVal">
-                  {formatarData(info.dataEntrada)} — {formatarData(info.dataSaida)}
-                </div>
-              </div>
-              <div>
-                <div className="ct-infoLbl">Hóspedes</div>
-                <div className="ct-infoVal">{info.qtdHospedes}</div>
-              </div>
-            </section>
+            </div>
 
-            {/* lançamentos + resumo */}
-            <div className="ct-layout">
-              <section className="ct-lancBox">
-                <h3 className="ct-subtitle">Lançamentos</h3>
-                {itens.length === 0 ? (
-                  <div className="ct-empty">Nenhum lançamento até o momento.</div>
-                ) : (
-                  <div className="ct-tableWrap">
-                    <table className="ct-table">
-                      <thead>
-                        <tr>
-                          <th className="ct-th">Tipo</th>
-                          <th className="ct-th">Descrição</th>
-                          <th className="ct-th ct-num">Qtd</th>
-                          <th className="ct-th ct-num">Valor (R$)</th>
-                          <th className="ct-th ct-num">Total (R$)</th>
+            <div className="ch-grid2 ch-topinfo">
+              <div className="ch-box">
+                <div className="ch-box-title">Período</div>
+                <div className="ch-box-line">Entrada: {fmtData(dados.datas?.dataEntrada)}</div>
+                <div className="ch-box-line">Saída prevista: {fmtData(dados.datas?.dataSaidaPrevista)}</div>
+                <div className="ch-box-line">Saída real: {fmtData(dados.datas?.dataSaidaReal)}</div>
+              </div>
+              <div className="ch-box">
+                <div className="ch-box-title">Diárias</div>
+                <div className="ch-box-line">Tarifa diária: <strong>{fmtBRL(totais.tarifaDiaria)}</strong></div>
+                <div className="ch-box-line">Noites: <strong>{totais.noites}</strong></div>
+                <div className="ch-box-line">Total diárias: <strong>{fmtBRL(totais.totalDiarias)}</strong></div>
+              </div>
+            </div>
+
+            <div className="ch-section">
+              <div className="ch-section-title">Consumos / Pedidos</div>
+              {Array.isArray(dados.itens) && dados.itens.length > 0 ? (
+                <div className="ch-tablewrap">
+                  <table className="ch-table">
+                    <thead>
+                      <tr>
+                        <th style={{ textAlign: "left" }}>Item</th>
+                        <th>Qtd</th>
+                        <th>Preço</th>
+                        <th>Subtotal</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {dados.itens.map((it) => (
+                        <tr key={it.id}>
+                          <td className="ch-td-left">{it.produto}</td>
+                          <td>{it.quantidade}</td>
+                          <td>{fmtBRL(it.precoUnitario)}</td>
+                          <td>{fmtBRL(it.subtotal)}</td>
                         </tr>
-                      </thead>
-                      <tbody>
-                        {itens.map((i) => (
-                          <tr key={i.id} className="ct-row">
-                            <td className="ct-td">{i.tipo}</td>
-                            <td className="ct-td">{i.descricao}</td>
-                            <td className="ct-td ct-num">{i.qtd ?? 1}</td>
-                            <td className="ct-td ct-num">{formatarMoeda(i.valor)}</td>
-                            <td className="ct-td ct-num">{formatarMoeda(i.valor * (i.qtd ?? 1))}</td>
-                          </tr>
-                        ))}
-                      </tbody>
-                    </table>
-                  </div>
-                )}
-              </section>
-
-              <aside className="ct-side">
-                <h3 className="ct-subtitle">Adicionar lançamento</h3>
-                <form className="ct-form" onSubmit={onAdicionar} noValidate>
-                  <label className="ct-label">Tipo</label>
-                  <select className="ct-input" value={tipo} onChange={(e)=>setTipo(e.target.value)}>
-                    <option>Consumo</option>
-                    <option>Diaria</option>
-                    <option>Taxa</option>
-                    <option>Desconto</option>
-                  </select>
-
-                  <label className="ct-label">Descrição</label>
-                  <input className="ct-input" value={descricao} onChange={(e)=>setDescricao(e.target.value)} placeholder="Ex.: Diária 01/10" />
-
-                  <div className="ct-split2">
-                    <div>
-                      <label className="ct-label">Valor (R$)</label>
-                      <input className="ct-input" type="number" step="0.01" value={valor} onChange={(e)=>setValor(e.target.value)} placeholder={tipo==="Desconto"?"Ex.: -20.00":"Ex.: 120.00"} />
-                    </div>
-                    <div>
-                      <label className="ct-label">Qtd</label>
-                      <input className="ct-input" type="number" min="1" value={qtd} onChange={(e)=>setQtd(e.target.value)} />
-                    </div>
-                  </div>
-
-                  <button className="ct-btn ct-btn--primary">Adicionar</button>
-                </form>
-
-                <div className="ct-resumo">
-                  <div className="ct-rowR"><span>Subtotal</span><strong>{formatarMoeda(totais.subtotal)}</strong></div>
-                  <div className="ct-rowR"><span>Descontos</span><strong>{formatarMoeda(totais.descontos)}</strong></div>
-                  <div className="ct-rowR ct-total"><span>Total</span><strong>{formatarMoeda(totais.total)}</strong></div>
+                      ))}
+                    </tbody>
+                    <tfoot>
+                      <tr>
+                        <td colSpan={3} className="ch-td-right"><strong>Total pedidos</strong></td>
+                        <td><strong>{fmtBRL(totais.totalPedidos)}</strong></td>
+                      </tr>
+                    </tfoot>
+                  </table>
                 </div>
-              </aside>
+              ) : (
+                <div className="ch-note">Sem itens consumidos.</div>
+              )}
+            </div>
+
+            <div className="ch-grid2 ch-resume">
+              <div className="ch-box">
+                <div className="ch-resume-line">
+                  <span>Total diárias</span><strong>{fmtBRL(totais.totalDiarias)}</strong>
+                </div>
+                <div className="ch-resume-line">
+                  <span>Total pedidos</span><strong>{fmtBRL(totais.totalPedidos)}</strong>
+                </div>
+                <div className="ch-resume-line ch-resume-total">
+                  <span>Total geral</span><strong>{fmtBRL(totais.totalGeral)}</strong>
+                </div>
+              </div>
+
+              <div className="ch-box">
+                <div className="ch-box-title">Finalização</div>
+                <div className="ch-form-row">
+                  <label className="ch-label">Forma de pagamento</label>
+                  <select className="ch-input" value={pagamento} onChange={(e) => setPagamento(e.target.value)}>
+                    <option value="">Selecione...</option>
+                    <option value="dinheiro">Dinheiro</option>
+                    <option value="credito">Cartão de crédito</option>
+                    <option value="debito">Cartão de débito</option>
+                    <option value="pix">PIX</option>
+                    <option value="boleto">Boleto</option>
+                  </select>
+                </div>
+                <div className="ch-form-row">
+                  <label className="ch-label">Observação</label>
+                  <textarea
+                    className="ch-textarea"
+                    rows={3}
+                    value={observacao}
+                    onChange={(e) => setObservacao(e.target.value)}
+                    placeholder="Observações da conta (opcional)"
+                  />
+                </div>
+                <div className="ch-actions">
+                  <Link to="/quartos" className="ch-btn ch-btn--ghost">Cancelar</Link>
+                  <button
+                    type="button"
+                    className="ch-btn ch-btn--primary"
+                    disabled={salvando || !dados?.reservaId}
+                    onClick={aoEncerrar}
+                  >
+                    {salvando ? "Encerrando..." : "Encerrar conta"}
+                  </button>
+                </div>
+              </div>
             </div>
           </>
         )}
       </div>
     </div>
   );
-}
-
-function formatarData(iso){
-  if(!iso) return "—";
-  try{ return new Date(iso).toLocaleDateString(); }catch{return iso;}
-}
-function formatarMoeda(n){
-  if(typeof n !== "number") return "—";
-  return n.toLocaleString("pt-BR", { style:"currency", currency:"BRL" });
 }
