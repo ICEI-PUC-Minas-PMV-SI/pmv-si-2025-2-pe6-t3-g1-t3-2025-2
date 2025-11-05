@@ -60,11 +60,8 @@ export default function Pedidos() {
       // produtos
       if (prodsRes.status === "fulfilled") {
         const lista = Array.isArray(prodsRes.value) ? prodsRes.value : [];
-        setProdutos(
-          lista.filter((p) =>
-            String(p.categoria ?? p.Categoria ?? "").toLowerCase().includes("alimento")
-          )
-        );
+        setProdutos(lista);
+        console.log("Produtos carregados:", lista);
       } else {
         console.warn("Produtos não carregados:", prodsRes.reason);
       }
@@ -219,7 +216,7 @@ export default function Pedidos() {
 
               {itens.map((it, idx) => {
                 const prod = produtosById.get(Number(it.productId));
-                const preco = Number(prod?.preco ?? prod?.Preco ?? prod?.price ?? 0);
+                const preco = Number(prod?.preco) || 0;
                 const subtotal = preco * Number(it.quantity || 0);
 
                 return (
@@ -231,8 +228,8 @@ export default function Pedidos() {
                     >
                       <option value="">Selecione o alimento…</option>
                       {produtos.map((p) => (
-                        <option key={p.id ?? p.Id} value={p.id ?? p.Id}>
-                          {(p.nome ?? p.Nome) + " - " + formatarMoeda(p.preco ?? p.Preco ?? p.price ?? 0)}
+                        <option key={p.id} value={p.id}>
+                          {(p.nome) + " - " + formatarMoeda(p.preco ?? 0)}
                         </option>
                       ))}
                     </select>
@@ -245,7 +242,7 @@ export default function Pedidos() {
                       onChange={(e) => updateItem(idx, "quantity", e.target.value)}
                     />
 
-                    <div className="item-subtotal">{formatarMoeda(subtotal)}</div>
+                    <div className="item-subtotal"><span>{it.quantity} x {formatarMoeda(preco)}</span></div>
 
                     <button type="button" className="btn-remove" onClick={() => removeItem(idx)} title="Remover">
                       ✕
