@@ -159,29 +159,3 @@
   .pr-actionsHeader{ width:100%; justify-content:space-between; }
   .pr-btn{ width:auto; }
 }
-
-/* ===== Dark mode opcional ===== */
-@media (prefers-color-scheme: dark){
-  :root{
-    --bg-bege:#151612;
-    --card:#1d1f1a;
-    --borda:#2b2e26;
-    --texto:#f5f5f5;
-  }
-
-  .pr-root{
-    background:
-      radial-gradient(1200px 600px at 50% -10%, #233224 0%, transparent 60%),
-      linear-gradient(135deg, #1a1c17 0%, #11130F 100%);
-  }
-
-  .pr-card{ box-shadow:0 18px 36px rgba(0,0,0,.45); }
-  .pr-table thead th{ background:#26281f; color:#ddd; border-color:#333; }
-  .pr-table tbody td{ color:#ddd; border-color:#333; }
-  .pr-table tbody tr:hover{ background:#22261f; }
-
-  .pr-btn--primary{ background:#5F7F5F; border-color:#5F7F5F; }
-  .pr-btn--ghost{ background:#222; color:#ccc; border-color:#333; }
-  .pr-link{ color:#9ac19a; }
-  .pr-link:hover{ color:#cfe5cf; }
-}

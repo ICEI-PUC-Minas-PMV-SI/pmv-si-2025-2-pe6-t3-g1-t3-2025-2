@@ -121,16 +121,3 @@
 
 .login-button:hover{ background:var(--oliva-claro); transform:translateY(-1px); }
 .login-button:disabled{ background:#B6B6B6; cursor:not-allowed; }
-
-/* Dark mode opcional */
-@media (prefers-color-scheme: dark){
-  .login-root{
-    background: radial-gradient(1200px 600px at 50% -10%, rgba(61,91,61,.18) 0%, transparent 60%),
-                linear-gradient(135deg, #151812 0%, #0F110D 100%);
-  }
-  .login-card{ background:#181B14; border-color:#2F3730; }
-  .login-title{ color:#EBDCCB; }
-  .login-subtitle{ color:#A9CCA9; }
-  .login-input{ background:#1B1F17; border-color:#2F3730; color:#F2EFE9; }
-  .login-error{ background:#4a1e1e; color:#ffd2d2; }
-}

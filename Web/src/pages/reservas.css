@@ -193,16 +193,3 @@
 @media (prefers-reduced-motion: reduce){
   .rr-card,.rr-row,.rr-btn{ animation:none !important; transition:none !important; }
 }
-
-/* ===== Dark mode ===== */
-@media (prefers-color-scheme: dark){
-  :root{ --card:#1d1f1a; --borda:#2b2e26; --texto:#f5f5f5; }
-  .rr-card{ box-shadow:0 18px 36px rgba(0,0,0,.45); }
-  .rr-row{ background:#1e201a; border-color:#2b2e26; }
-  .rr-row:hover{ background:#21231d; }
-  .rr-input,.rr-select{ background:#222; color:#ddd; border-color:#333; }
-  .rr-btn--ghost{ background:#222; color:#ddd; border-color:#333; }
-  .rr-th{ color:#a9a9a9; background:#1e201a; }
-  .rr-table-wrap{ border-color:#2b2e26; }
-  .rr-empty{ background:#1b1c18; border-color:#2b2e26; color:#bcbcbc; }
-}
