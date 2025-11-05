@@ -131,7 +131,7 @@ export default function Pedidos() {
   }
   function formatarStatus(status) {
     const s = String(status ?? "").toLowerCase();
-    if (s.includes("aguard") || s === "0") return "🕒 Aguardando";
+    if (s.includes("pending") || s === "0") return "🕒 Aguardando";
     if (s.includes("process") || s === "1") return "🧑‍🍳 Em Processo";
     if (s.includes("final") || s === "2") return "✅ Finalizado";
     return status ?? "—";
