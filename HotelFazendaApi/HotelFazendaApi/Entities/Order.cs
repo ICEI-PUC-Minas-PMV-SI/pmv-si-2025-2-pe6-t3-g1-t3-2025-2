@@ -14,5 +14,7 @@ namespace HotelFazendaApi.Entities
         [Required] public DateTime CheckOutDate { get; set; }
         [Required] public OrderStatus Status { get; set; } = OrderStatus.Pending;
         [Column(TypeName = "decimal(10,2)")] public decimal Total { get; set; }
+
+        public virtual ICollection<OrderItem> OrderItems { get; set; } = new List<OrderItem>();
     }
 }

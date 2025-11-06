@@ -13,20 +13,18 @@ namespace HotelFazendaApi.Data
         public DbSet<Produto> Produtos => Set<Produto>();
         public DbSet<Room> Rooms => Set<Room>();
         public DbSet<Reservation> Reservations => Set<Reservation>();
+        public DbSet<OrderItem> OrderItems { get; set; } = default!;
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
 
-            // schema padrão do PostgreSQL
             modelBuilder.HasDefaultSchema("public");
 
-            // User: persiste o enum como string
             modelBuilder.Entity<User>()
                 .Property(u => u.Role)
                 .HasConversion<string>();
 
-            // Room
             modelBuilder.Entity<Room>(e =>
             {
                 e.Property(p => p.Numero)
@@ -43,7 +41,6 @@ namespace HotelFazendaApi.Data
                 e.HasIndex(p => p.Numero).IsUnique();
             });
 
-            // Reservation
             modelBuilder.Entity<Reservation>(e =>
             {
                 e.Property(p => p.HospedeNome)
@@ -57,7 +54,6 @@ namespace HotelFazendaApi.Data
                     .HasMaxLength(20)
                     .HasDefaultValue("Aberta");
 
-                // FK para quarto (sem cascade delete)
                 e.HasOne(p => p.Quarto)
                     .WithMany()
                     .HasForeignKey(p => p.QuartoId)
@@ -66,10 +62,18 @@ namespace HotelFazendaApi.Data
                 e.HasIndex(p => new { p.DataEntrada, p.DataSaida });
             });
 
-            // (Opcional) Se Produto tiver preço/valor decimal, descomente:
-            // modelBuilder.Entity<Produto>()
-            //     .Property(p => p.Preco)
-            //     .HasPrecision(18, 2);
+            modelBuilder.Entity<OrderItem>()
+                .HasKey(oi => new { oi.PedidoId, oi.ProdutoId });
+
+            modelBuilder.Entity<OrderItem>()
+                .HasOne(oi => oi.Pedido)
+                .WithMany(o => o.OrderItems)
+                .HasForeignKey(oi => oi.PedidoId);
+
+            modelBuilder.Entity<OrderItem>()
+                .HasOne(oi => oi.Produto)
+                .WithMany(p => p.OrderItems)
+                .HasForeignKey(oi => oi.ProdutoId);
         }
     }
 }

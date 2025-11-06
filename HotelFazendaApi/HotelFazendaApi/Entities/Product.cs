@@ -12,5 +12,7 @@ namespace HotelFazendaApi.Entities
         public string Nome { get; set; }
         public decimal Preco { get; set; }
         public int Estoque { get; set; }
+
+        public virtual ICollection<OrderItem> OrderItems { get; set; } = new List<OrderItem>();
     }
 }
