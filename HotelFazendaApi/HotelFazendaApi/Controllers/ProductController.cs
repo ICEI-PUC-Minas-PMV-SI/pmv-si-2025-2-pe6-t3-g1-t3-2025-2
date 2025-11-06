@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using HotelFazendaApi.Entities;
 using HotelFazendaApi.Services.Interfaces;
@@ -12,7 +9,7 @@ namespace HotelFazendaApi.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    [Authorize] // protege com autenticação JWT
+    [Authorize]
     public class ProdutoController : ControllerBase
     {
         private readonly IProdutoService _produtoService;
@@ -23,7 +20,7 @@ namespace HotelFazendaApi.Controllers
         }
 
         [HttpGet]
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Admin,Gerente,Garcom,Recepcao")]
         public async Task<IActionResult> GetAll()
         {
             var produtos = await _produtoService.GetAllAsync();
@@ -31,7 +28,7 @@ namespace HotelFazendaApi.Controllers
         }
 
         [HttpGet("{id}")]
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Admin,Gerente,Garcom,Recepcao")]
         public async Task<IActionResult> GetById(int id)
         {
             var produto = await _produtoService.GetByIdAsync(id);
@@ -64,6 +61,4 @@ namespace HotelFazendaApi.Controllers
             return NoContent();
         }
     }
-
-    
 }
