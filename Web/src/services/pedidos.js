@@ -12,8 +12,8 @@ export async function criarPedido(payload) {
   const dto = {
     ReservationId: payload.reservationId,
     Items: payload.items.map((i) => ({
-      ProductId: i.productId,
-      Quantity: i.quantity,
+      ProdutoId: i.productId,
+      Quantidade: i.quantity,
     })),
   };
 
