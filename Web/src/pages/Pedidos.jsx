@@ -89,11 +89,10 @@ export default function Pedidos() {
       const id = Number(r.id ?? r.Id);
       if (!id) return;
       const hospede = r.hospedeNome ?? r.HospedeNome ?? "—";
-      const quarto =
-        r.quartoNumero ?? r.QuartoNumero ?? r.Quarto?.Numero ?? r.quarto ?? r.Quarto ?? "—";
+      const quartoId = r.quartoId ?? "—";
       const checkin = r.dataEntrada ?? r.DataEntrada ?? r.checkinAt ?? r.CheckinAt;
       const checkout = r.dataSaida ?? r.DataSaida ?? r.checkoutAt ?? r.CheckoutAt;
-      map.set(id, { hospede, quarto, checkin, checkout });
+      map.set(id, { hospede, quartoId, checkin, checkout });
     });
     return map;
   }, [reservasTodas]);
@@ -190,9 +189,8 @@ export default function Pedidos() {
                 <option value="">Selecione...</option>
                 {reservasAtivas.map((r) => {
                   const id = r.id ?? r.Id;
-                  const hospede = r.hospedeNome ?? r.HospedeNome ?? "—";
-                  const quarto =
-                    r.quarto ?? r.Quarto ?? r.quartoNumero ?? r.QuartoNumero ?? r.Quarto?.Numero ?? "—";
+                  const hospede = r.hospedeNome;
+                  const quarto = r.quartoId || "—";
                   return (
                     <option key={id} value={id}>
                       #{id} • Quarto {quarto} • {hospede}
@@ -302,7 +300,7 @@ export default function Pedidos() {
                     const id = p.id ?? p.Id;
                     const resId = Number(p.reservationId ?? p.ReservationId);
                     const res = reservasById.get(resId);
-                    const quarto = res?.quarto ?? p.quarto ?? p.Quarto ?? "—";
+                    const quarto = res?.quartoId ?? "—";
                     const hospede = res?.hospede ?? p.hospedeNome ?? p.HospedeNome ?? "—";
                     const checkin = res?.checkin ?? p.checkInDate ?? p.CheckInDate;
                     const checkout = res?.checkout ?? p.checkOutDate ?? p.CheckOutDate;
@@ -310,9 +308,9 @@ export default function Pedidos() {
 
                     return (
                       <tr key={id}>
-                        <td>{id}</td>
-                        <td>{resId || "—"}</td>
-                        <td>{quarto}</td>
+                        <td>#{id}</td>
+                        <td>#{resId || "—"}</td>
+                        <td>#{quarto}</td>
                         <td>{hospede}</td>
                         <td>{formatarData(checkin)}</td>
                         <td>{formatarData(checkout)}</td>
