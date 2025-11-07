@@ -216,30 +216,6 @@
   .rr-btn:focus-visible,.rr-link:focus-visible{ outline: 2px solid Highlight; box-shadow:none }
 }
 
-/* ===== Dark mode (opcional) ===== */
-@media (prefers-color-scheme: dark){
-  :root{
-    --bg-bege:#1e201c;
-    --card:#1a1b18;
-    --borda:#2b2d27;
-    --texto:#e9e9e9;
-  }
-  .rr-root{
-    background:
-      linear-gradient(135deg,#1c1d1a 0%, #22231f 100%),
-      repeating-linear-gradient(45deg, rgba(255,255,255,.03) 0 2px, transparent 2px 6px);
-  }
-  .rr-card{ border-color:var(--borda) }
-  .rr-link{ color:#7ab3ff }
-  .rr-row{ background:#1a1b18; border-color:#2a2b25 }
-  .rr-row:hover{ background:#1d1e1a }
-  .rr-input,.rr-select{ background:#10110f; color:var(--texto); border-color:#2a2b25 }
-  .rr-btn--ghost{ background:#10110f; color:var(--texto); border-color:#2a2b25 }
-  .rr-table{ background:#10110f }
-  .rr-th{ background:#131411; color:#cfcfcf }
-  .rr-empty{ background:#141512; border-color:#2a2b25; color:#bdbdbd }
-}
-
 /* ===== Print ===== */
 @media print{
   .rr-root{ background:#fff; padding:0 }
