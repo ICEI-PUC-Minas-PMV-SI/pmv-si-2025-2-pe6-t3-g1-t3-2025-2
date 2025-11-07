@@ -1,6 +1,10 @@
-import { useMemo, useState } from "react";
+// src/pages/UsuarioCreate.jsx
+import { useState } from "react";
+import { Link } from "react-router-dom";
 import { api } from "../services/api";
 import { useAuth } from "../context/AuthProvider.jsx";
+import "./usuarioCreate.css";
+import addUsuarioIcon from "../assets/addUsuario.png"; // ✅ caminho correto
 
 const ROLES = [
   { value: "ADMINISTRADOR", label: "Administrador" },
@@ -9,7 +13,7 @@ const ROLES = [
 ];
 
 export default function UsuarioCreate() {
-  const { user, token, isAdmin } = useAuth?.() || {};
+  const { token, isAdmin } = useAuth?.() || {};
   const [form, setForm] = useState({
     nome: "",
     email: "",
@@ -32,8 +36,10 @@ export default function UsuarioCreate() {
     if (!form.email.trim()) return "Informe o e-mail.";
     const emailOk = /.+@.+\..+/.test(form.email);
     if (!emailOk) return "E-mail inválido.";
-    if (!form.senha || form.senha.length < 6) return "A senha deve ter pelo menos 6 caracteres.";
-    if (form.senha !== form.confirmarSenha) return "As senhas não coincidem.";
+    if (!form.senha || form.senha.length < 6)
+      return "A senha deve ter pelo menos 6 caracteres.";
+    if (form.senha !== form.confirmarSenha)
+      return "As senhas não coincidem.";
     return "";
   }
 
@@ -43,7 +49,6 @@ export default function UsuarioCreate() {
     setErr(null);
     const v = validate();
     if (v) return setErr(v);
-
     try {
       setSaving(true);
       const payload = {
@@ -58,7 +63,14 @@ export default function UsuarioCreate() {
       });
       if (res.status === 200 || res.status === 201) {
         setMsg("Usuário cadastrado com sucesso!");
-        setForm({ nome: "", email: "", senha: "", confirmarSenha: "", perfil: ROLES[1].value, ativo: true });
+        setForm({
+          nome: "",
+          email: "",
+          senha: "",
+          confirmarSenha: "",
+          perfil: ROLES[1].value,
+          ativo: true,
+        });
       }
     } catch (error) {
       setErr(error?.response?.data?.message || "Erro ao salvar usuário.");
@@ -69,8 +81,8 @@ export default function UsuarioCreate() {
 
   if (!isAdmin) {
     return (
-      <div style={styles.wrapper}>
-        <div style={styles.card}>
+      <div className="u-wrapper">
+        <div className="u-card">
           <h2>Acesso negado</h2>
           <p>Somente administradores podem cadastrar usuários.</p>
         </div>
@@ -79,46 +91,80 @@ export default function UsuarioCreate() {
   }
 
   return (
-    <div style={styles.wrapper}>
-      <form onSubmit={handleSubmit} style={styles.card}>
-        <h2>Novo Usuário</h2>
+    <div className="u-wrapper">
+      <form onSubmit={handleSubmit} className="u-card">
+        <div className="u-header">
+          <h2 className="u-title">
+            <img
+              src={addUsuarioIcon}
+              alt="Adicionar usuário"
+              width={30}
+              height={30}
+              style={{ verticalAlign: "middle", marginRight: 8 }}
+            />
+            Novo Usuário
+          </h2>
+          <Link to="/" className="u-back">
+            ← Voltar
+          </Link>
+        </div>
 
-        <label style={styles.label}>Nome</label>
-        <input name="nome" value={form.nome} onChange={handleChange} style={styles.input} />
+        <label className="u-label">Nome</label>
+        <input
+          name="nome"
+          value={form.nome}
+          onChange={handleChange}
+          className="u-input"
+        />
 
-        <label style={styles.label}>E-mail</label>
-        <input name="email" type="email" value={form.email} onChange={handleChange} style={styles.input} />
+        <label className="u-label">E-mail</label>
+        <input
+          name="email"
+          type="email"
+          value={form.email}
+          onChange={handleChange}
+          className="u-input"
+        />
 
-        <label style={styles.label}>Senha</label>
-        <input name="senha" type="password" value={form.senha} onChange={handleChange} style={styles.input} />
+        <label className="u-label">Senha</label>
+        <input
+          name="senha"
+          type="password"
+          value={form.senha}
+          onChange={handleChange}
+          className="u-input"
+        />
 
-        <label style={styles.label}>Confirmar senha</label>
-        <input name="confirmarSenha" type="password" value={form.confirmarSenha} onChange={handleChange} style={styles.input} />
+        <label className="u-label">Confirmar senha</label>
+        <input
+          name="confirmarSenha"
+          type="password"
+          value={form.confirmarSenha}
+          onChange={handleChange}
+          className="u-input"
+        />
 
-        <label style={styles.label}>Perfil</label>
-        <select name="perfil" value={form.perfil} onChange={handleChange} style={styles.input}>
+        <label className="u-label">Perfil</label>
+        <select
+          name="perfil"
+          value={form.perfil}
+          onChange={handleChange}
+          className="u-select"
+        >
           {ROLES.map((r) => (
-            <option key={r.value} value={r.value}>{r.label}</option>
+            <option key={r.value} value={r.value}>
+              {r.label}
+            </option>
           ))}
         </select>
 
-        {err && <div style={styles.error}>{err}</div>}
-        {msg && <div style={styles.success}>{msg}</div>}
+        {err && <div className="u-error">{err}</div>}
+        {msg && <div className="u-success">{msg}</div>}
 
-        <button style={styles.button} disabled={saving}>
+        <button className="u-btn" disabled={saving}>
           {saving ? "Salvando..." : "Salvar"}
         </button>
       </form>
     </div>
   );
 }
-
-const styles = {
-  wrapper: { minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center", background: "#f5f6f8" },
-  card: { width: 400, background: "#fff", padding: 24, borderRadius: 12, boxShadow: "0 8px 24px rgba(0,0,0,.08)", display: "flex", flexDirection: "column", gap: 8 },
-  label: { fontSize: 14, color: "#222", marginTop: 8 },
-  input: { padding: "10px 12px", border: "1px solid #ddd", borderRadius: 8, outline: "none" },
-  button: { marginTop: 12, padding: "10px 14px", borderRadius: 8, border: "none", background: "#0b5ed7", color: "#fff", cursor: "pointer" },
-  error: { background: "#fde2e1", color: "#b21f1f", padding: "8px 10px", borderRadius: 8, fontSize: 13 },
-  success: { background: "#e6f6e6", color: "#1b5e20", padding: "8px 10px", borderRadius: 8, fontSize: 13 },
-};

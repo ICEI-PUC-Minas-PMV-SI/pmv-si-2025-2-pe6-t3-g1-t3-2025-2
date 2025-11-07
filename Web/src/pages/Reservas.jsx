@@ -4,6 +4,10 @@ import { Link } from "react-router-dom";
 import { listarReservas } from "../services/reservas";
 import "./reservas.css";
 
+// 🖼️ Ícones
+import reservaIcon from "../assets/reserva.png";
+import addIcon from "../assets/+.png";
+
 const dtf = new Intl.DateTimeFormat("pt-BR", { dateStyle: "short", timeStyle: "short" });
 
 function fmt(iso) {
@@ -15,6 +19,7 @@ function fmt(iso) {
     return iso;
   }
 }
+
 function capitalize(s) {
   if (!s) return s;
   return s.charAt(0).toUpperCase() + s.slice(1);
@@ -45,9 +50,9 @@ export default function Reservas() {
     }
   }, [q, status]);
 
-  useEffect(() => { carregar(); }, [carregar]);                 // ao abrir
-  useEffect(() => { carregar({ q, status }); }, [status]);       // mudou status
-  useEffect(() => {                                              // debounce q
+  useEffect(() => { carregar(); }, [carregar]);
+  useEffect(() => { carregar({ q, status }); }, [status]);
+  useEffect(() => {
     if (debounceRef.current) clearTimeout(debounceRef.current);
     debounceRef.current = setTimeout(() => carregar({ q, status }), 300);
     return () => clearTimeout(debounceRef.current);
@@ -59,10 +64,35 @@ export default function Reservas() {
     <div className="rr-root">
       <div className="rr-card">
         <div className="rr-header">
-          <h2 className="rr-title">📅 Reservas</h2>
+          <h2 className="rr-title">
+            <img
+              src={reservaIcon}
+              alt="Ícone de reserva"
+              style={{
+                width: 30,
+                height: 30,
+                verticalAlign: "middle",
+                marginRight: 8,
+              }}
+            />
+            Reservas
+          </h2>
           <div className="rr-actions">
             <Link to="/" className="rr-link">← Voltar</Link>
-            <Link to="/reservas/nova" className="rr-btn rr-btn--primary">➕ Nova reserva</Link>
+            <Link to="/reservas/nova" className="rr-btn rr-btn--primary">
+              <img
+                src={addIcon}
+                alt="Nova reserva"
+                style={{
+                  width: 18,
+                  height: 18,
+                  verticalAlign: "middle",
+                  marginRight: 6,
+                  filter: "brightness(0) invert(1)", // deixa branco no botão verde
+                }}
+              />
+              Nova reserva
+            </Link>
           </div>
         </div>
 
@@ -96,7 +126,10 @@ export default function Reservas() {
 
         {erro && (
           <div className="rr-empty">
-            {erro} <button className="rr-btn rr-btn--ghost" onClick={() => carregar({ q, status })}>Tentar de novo</button>
+            {erro}{" "}
+            <button className="rr-btn rr-btn--ghost" onClick={() => carregar({ q, status })}>
+              Tentar de novo
+            </button>
           </div>
         )}
 
@@ -142,4 +175,3 @@ export default function Reservas() {
     </div>
   );
 }
-
