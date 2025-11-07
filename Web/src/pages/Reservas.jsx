@@ -162,9 +162,9 @@ export default function Reservas() {
                     <div className="rr-item-meta">
                       Entrada {fmt(dataEntrada)} · Saída {fmt(dataSaida)} · {qtdHospedes} hóspedes
                     </div>
-                  </div>
-                  <div className="rr-td">
-                    <span className={`rr-pill rr-pill--${cls}`}>{capitalize(statusRaw)}</span>
+                    <div>
+                      <span className={`rr-pill rr-pill--${cls}`}>{capitalize(statusRaw)}</span>
+                    </div>
                   </div>
                 </div>
               );

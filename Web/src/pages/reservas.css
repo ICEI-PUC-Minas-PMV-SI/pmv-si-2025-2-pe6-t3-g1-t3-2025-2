@@ -152,6 +152,7 @@
   font-weight:700;
   display:inline-flex;
   align-items:center;
+  float: right;
   gap:6px;
 }
 .rr-pill--aberta      { background:#E6F1FF; color:#104A86; border-color:#BDD6FF; }
