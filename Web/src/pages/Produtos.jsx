@@ -1,9 +1,14 @@
+// src/pages/Produtos.jsx
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { listarProdutos } from "../services/produtos"; // usa o service (rota certa /api/Produto)
+import { listarProdutos } from "../services/produtos";
 import "./produtos.css";
-// opcional: se tiver um ícone, descomente e troque o caminho
-// import produtoIcon from "../assets/produto.png";
+
+// 🖼️ seus arquivos:
+import produtoIcon from "../assets/produto.png";
+import addIcon from "../assets/+.png";
+
+const fmtBRL = new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" });
 
 export default function Produtos() {
   const [produtos, setProdutos] = useState([]);
@@ -17,24 +22,21 @@ export default function Produtos() {
       const data = await listarProdutos();
       setProdutos(Array.isArray(data) ? data : []);
     } catch (e) {
-      console.error(e);
+      console.error("[produtos] falhou:", e);
       setErro("Não foi possível carregar os produtos.");
     } finally {
       setLoading(false);
     }
   }
 
-  useEffect(() => {
-    carregarProdutos();
-  }, []);
+  useEffect(() => { carregarProdutos(); }, []);
 
   return (
     <div className="pr-root">
       <div className="pr-card">
         <div className="pr-header">
           <h2 className="pr-title">
-            {/* {produtoIcon ? <img src={produtoIcon} alt="" className="pr-icon" /> : null} */}
-            <span className="pr-emoji" aria-hidden>🛒</span>
+            <img src={produtoIcon} alt="Produtos" className="pr-icon" />
             Produtos
           </h2>
 
@@ -50,7 +52,8 @@ export default function Produtos() {
             <Link to="/" className="pr-link">← Voltar</Link>
 
             <Link to="/produtos/novo" className="pr-btn pr-btn--primary">
-              ➕ Novo Produto
+              <img src={addIcon} alt="" className="pr-icon--sm" />
+              Novo Produto
             </Link>
           </div>
         </div>
@@ -67,18 +70,24 @@ export default function Produtos() {
               <thead>
                 <tr>
                   <th>Nome</th>
-                  <th>Preço (R$)</th>
+                  <th>Preço</th>
                   <th>Categoria</th>
                 </tr>
               </thead>
               <tbody>
-                {produtos.map((p) => (
-                  <tr key={p.id}>
-                    <td>{p.nome}</td>
-                    <td>{Number(p.preco ?? 0).toFixed(2)}</td>
-                    <td>{p.categoria ?? "-"}</td>
-                  </tr>
-                ))}
+                {produtos.map((p) => {
+                  const id = p.id ?? p.Id;
+                  const nome = p.nome ?? p.Nome ?? "-";
+                  const preco = p.preco ?? p.Preco ?? 0;
+                  const categoria = p.categoria ?? p.Categoria ?? "-";
+                  return (
+                    <tr key={id}>
+                      <td>{nome}</td>
+                      <td>{fmtBRL.format(Number(preco))}</td>
+                      <td>{categoria}</td>
+                    </tr>
+                  );
+                })}
               </tbody>
             </table>
           </div>

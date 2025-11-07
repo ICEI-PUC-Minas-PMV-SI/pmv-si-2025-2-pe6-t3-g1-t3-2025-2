@@ -3,6 +3,7 @@ import { useEffect, useMemo, useState } from "react";
 import { Link, useNavigate, useParams, useSearchParams } from "react-router-dom";
 import { obterCheckout, encerrarConta, resolverReservaAtiva } from "../services/conta";
 import "./conta.css";
+import reservaIcon from "../assets/reserva.png";
 
 function fmtBRL(n) {
   return new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" }).format(Number(n || 0));
@@ -40,9 +41,7 @@ export default function ContaHospedagem() {
         }
       }
       const resp = await obterCheckout(idParaAbrir ?? roomId);
-      if (!resp.reservaId && !roomId) {
-        setErro("Não foi possível identificar a hospedagem.");
-      }
+      if (!resp?.reservaId && !roomId) setErro("Não foi possível identificar a hospedagem.");
       setDados(resp);
     } catch (e) {
       console.error(e);
@@ -90,7 +89,10 @@ export default function ContaHospedagem() {
     <div className="ch-root">
       <div className="ch-card">
         <div className="ch-header">
-          <h2 className="ch-title">Encerramento de Conta</h2>
+          <h2 className="ch-title">
+            <img src={reservaIcon} alt="" className="ch-title-icon" />
+            Encerramento de Conta
+          </h2>
           <Link to="/quartos" className="ch-link">← Voltar</Link>
         </div>
 
@@ -112,7 +114,7 @@ export default function ContaHospedagem() {
               </div>
               <div className="ch-box">
                 <div className="ch-box-title">Hóspede</div>
-                <div className="ch-box-line">Nome: <strong>{dados.hospede?.nome}</strong></div>
+                <div className="ch-box-line">Nome: <strong>{dados.hospede?.nome ?? "—"}</strong></div>
                 {dados.hospede?.documento && <div className="ch-box-line">Documento: {dados.hospede.documento}</div>}
                 {dados.hospede?.telefone && <div className="ch-box-line">Telefone: {dados.hospede.telefone}</div>}
               </div>
@@ -147,10 +149,10 @@ export default function ContaHospedagem() {
                       </tr>
                     </thead>
                     <tbody>
-                      {dados.itens.map((it) => (
-                        <tr key={it.id}>
-                          <td className="ch-td-left">{it.produto}</td>
-                          <td>{it.quantidade}</td>
+                      {dados.itens.map((it, idx) => (
+                        <tr key={it.id ?? idx}>
+                          <td className="ch-td-left">{it.produto ?? "—"}</td>
+                          <td>{it.quantidade ?? "—"}</td>
                           <td>{fmtBRL(it.precoUnitario)}</td>
                           <td>{fmtBRL(it.subtotal)}</td>
                         </tr>
@@ -186,7 +188,7 @@ export default function ContaHospedagem() {
                 <div className="ch-box-title">Finalização</div>
                 <div className="ch-form-row">
                   <label className="ch-label">Forma de pagamento</label>
-                  <select className="ch-input" value={pagamento} onChange={(e) => setPagamento(e.target.value)}>
+                  <select className="ch-select" value={pagamento} onChange={(e) => setPagamento(e.target.value)}>
                     <option value="">Selecione...</option>
                     <option value="dinheiro">Dinheiro</option>
                     <option value="credito">Cartão de crédito</option>

@@ -2,194 +2,144 @@
 import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { criarProduto } from "../services/produtos";
+import "./produtoCreate.css";
+import produtoIcon from "../assets/produto.png";
+import addIcon from "../assets/+.png";
 
 export default function ProdutoCreate() {
-    const navigate = useNavigate();
+  const navigate = useNavigate();
 
-    const [nome, setNome] = useState("");
-    const [categoria, setCategoria] = useState("");
-    const [preco, setPreco] = useState("");
-    const [descricao, setDescricao] = useState("");
-    const [ativo, setAtivo] = useState(true);
+  const [nome, setNome] = useState("");
+  const [categoria, setCategoria] = useState("");
+  const [preco, setPreco] = useState(""); // mantemos string para aceitar vírgula
+  const [descricao, setDescricao] = useState("");
+  const [ativo, setAtivo] = useState(true);
 
-    const [erro, setErro] = useState("");
-    const [ok, setOk] = useState("");
-    const [salvando, setSalvando] = useState(false);
+  const [erro, setErro] = useState("");
+  const [ok, setOk] = useState("");
+  const [salvando, setSalvando] = useState(false);
 
-    function valido() {
-        if (!nome.trim()) return "Informe o nome do produto.";
-        if (!categoria.trim()) return "Informe a categoria.";
-        const p = Number(preco);
-        if (Number.isNaN(p) || p <= 0) return "Informe um preço válido (maior que zero).";
-        return "";
+  const parsePreco = (v) => Number(String(v).replace(",", "."));
+
+  function valido() {
+    if (!nome.trim()) return "Informe o nome do produto.";
+    if (!categoria.trim()) return "Informe a categoria.";
+    const p = parsePreco(preco);
+    if (Number.isNaN(p) || p <= 0) return "Informe um preço válido (maior que zero).";
+    return "";
+  }
+
+  async function aoSalvar(e) {
+    e.preventDefault();
+    setErro("");
+    setOk("");
+
+    const msg = valido();
+    if (msg) return setErro(msg);
+
+    try {
+      setSalvando(true);
+      await criarProduto({
+        nome: nome.trim(),
+        categoria: categoria.trim(),
+        preco: parsePreco(preco),
+        descricao: descricao?.trim() || null,
+        ativo,
+      });
+      setOk("Produto criado com sucesso!");
+
+      setTimeout(() => {
+        navigate("/produtos", { replace: true, state: { toast: "Produto criado com sucesso!" } });
+      }, 700);
+    } catch (err) {
+      const detail =
+        err?.response?.data?.mensagem ||
+        err?.response?.data?.message ||
+        err?.message ||
+        "Falha ao criar produto.";
+      setErro(detail);
+    } finally {
+      setSalvando(false);
     }
+  }
 
-    async function aoSalvar(e) {
-        e.preventDefault();
-        setErro("");
-        setOk("");
+  return (
+    <div className="pc-root">
+      <div className="pc-card">
+        <div className="pc-header">
+          <h2 className="pc-title">
+            <img src={produtoIcon} alt="" className="pc-ico" />
+            Novo Produto
+          </h2>
+          <Link to="/produtos" className="pc-link">← Voltar</Link>
+        </div>
 
-        const msg = valido();
-        if (msg) return setErro(msg);
+        {erro && <div className="pc-msg pc-erro">{erro}</div>}
+        {ok && <div className="pc-msg pc-ok">{ok}</div>}
 
-        try {
-            setSalvando(true);
-            await criarProduto({ nome, categoria, preco, descricao, ativo });
-            setOk("Produto criado com sucesso!");
+        <form onSubmit={aoSalvar} className="pc-form">
+          <div className="pc-row">
+            <label className="pc-label">Nome *</label>
+            <input
+              className="pc-input"
+              value={nome}
+              onChange={(e) => setNome(e.target.value)}
+              placeholder="Ex.: Suco de Laranja 300ml"
+              autoFocus
+            />
+          </div>
 
-            // pequeno delay para feedback visual, depois volta pra lista
-            setTimeout(() => {
-                navigate("/produtos", {
-                    replace: true,
-                    state: { toast: "Produto criado com sucesso!" },
-                });
-            }, 800);
-        } catch (err) {
-            const detail =
-                err?.response?.data?.mensagem ||
-                err?.response?.data?.message ||
-                err?.message ||
-                "Falha ao criar produto.";
-            setErro(detail);
-        } finally {
-            setSalvando(false);
-        }
-    }
+          <div className="pc-row">
+            <label className="pc-label">Categoria *</label>
+            <input
+              className="pc-input"
+              value={categoria}
+              onChange={(e) => setCategoria(e.target.value)}
+              placeholder="Ex.: Bebidas"
+            />
+          </div>
 
-        return (
-            <div style={styles.wrapper}>
-                <div style={styles.card}>
-                    <div style={styles.header}>
-                        <h2 style={{ margin: 0 }}>➕ Novo Produto</h2>
-                        <Link to="/produtos" style={styles.linkSec}>
-                            ← Voltar
-                        </Link>
-                    </div>
+          <div className="pc-row">
+            <label className="pc-label">Preço (R$) *</label>
+            <input
+              className="pc-input"
+              type="text"
+              inputMode="decimal"
+              value={preco}
+              onChange={(e) => setPreco(e.target.value)}
+              placeholder="Ex.: 12,90"
+            />
+          </div>
 
-                    {erro && <div style={styles.error}>{erro}</div>}
-                    {ok && <div style={styles.success}>{ok}</div>}
+          <div className="pc-row">
+            <label className="pc-label">Descrição</label>
+            <textarea
+              className="pc-textarea"
+              value={descricao}
+              onChange={(e) => setDescricao(e.target.value)}
+              placeholder="Observações, alérgenos, etc."
+            />
+          </div>
 
-                    <form onSubmit={aoSalvar} style={styles.form}>
-                        <div style={styles.row}>
-                            <label style={styles.label}>Nome *</label>
-                            <input
-                                style={styles.input}
-                                value={nome}
-                                onChange={(e) => setNome(e.target.value)}
-                                placeholder="Ex.: Suco de Laranja 300ml"
-                                autoFocus
-                            />
-                        </div>
+          <label className="pc-label" style={{ display: "flex", alignItems: "center", gap: 8 }}>
+            <input
+              id="ativo"
+              type="checkbox"
+              checked={ativo}
+              onChange={(e) => setAtivo(e.target.checked)}
+            />
+            Produto ativo
+          </label>
 
-                        <div style={styles.row}>
-                            <label style={styles.label}>Categoria *</label>
-                            <input
-                                style={styles.input}
-                                value={categoria}
-                                onChange={(e) => setCategoria(e.target.value)}
-                                placeholder="Ex.: Bebidas"
-                            />
-                        </div>
-
-                        <div style={styles.row}>
-                            <label style={styles.label}>Preço (R$) *</label>
-                            <input
-                                style={styles.input}
-                                type="number"
-                                step="0.01"
-                                min="0"
-                                value={preco}
-                                onChange={(e) => setPreco(e.target.value)}
-                                placeholder="Ex.: 12.90"
-                            />
-                        </div>
-
-                        <div style={styles.row}>
-                            <label style={styles.label}>Descrição</label>
-                            <textarea
-                                style={{ ...styles.input, minHeight: 88, resize: "vertical" }}
-                                value={descricao}
-                                onChange={(e) => setDescricao(e.target.value)}
-                                placeholder="Observações, alérgenos, etc."
-                            />
-                        </div>
-
-                        <div style={{ ...styles.row, display: "flex", alignItems: "center", gap: 8 }}>
-                            <input
-                                id="ativo"
-                                type="checkbox"
-                                checked={ativo}
-                                onChange={(e) => setAtivo(e.target.checked)}
-                            />
-                            <label htmlFor="ativo" style={{ ...styles.label, margin: 0 }}>
-                                Produto ativo
-                            </label>
-                        </div>
-
-                        <div style={{ display: "flex", justifyContent: "flex-end", gap: 8, marginTop: 8 }}>
-                            <Link to="/produtos" style={styles.btnGhost}>Cancelar</Link>
-                            <button type="submit" style={styles.button} disabled={salvando}>
-                                {salvando ? "Salvando..." : "Salvar"}
-                            </button>
-                        </div>
-                    </form>
-                </div>
-            </div>
-        );
-    }
-
-    const styles = {
-        wrapper: {
-            minHeight: "100vh",
-            display: "grid",
-            placeItems: "center",
-            background: "#f5f6f8",
-            padding: 16,
-        },
-        card: {
-            width: 720,
-            maxWidth: "100%",
-            background: "#fff",
-            padding: 24,
-            borderRadius: 12,
-            boxShadow: "0 8px 24px rgba(0,0,0,.08)",
-        },
-        header: {
-            display: "flex",
-            justifyContent: "space-between",
-            alignItems: "baseline",
-            marginBottom: 12,
-        },
-        linkSec: { fontSize: 14, color: "#0b5ed7", textDecoration: "none" },
-        form: { display: "grid", gap: 12, marginTop: 8 },
-        row: { display: "grid", gap: 6 },
-        label: { fontSize: 14, color: "#222" },
-        input: {
-            padding: "10px 12px",
-            border: "1px solid #ddd",
-            borderRadius: 8,
-            outline: "none",
-            background: "#fff",
-        },
-        button: {
-            padding: "10px 14px",
-            borderRadius: 8,
-            border: "none",
-            background: "#0b5ed7",
-            color: "#fff",
-            cursor: "pointer",
-            minWidth: 120,
-        },
-        btnGhost: {
-            padding: "10px 14px",
-            borderRadius: 8,
-            border: "1px solid #ddd",
-            background: "#fff",
-            color: "#333",
-            textDecoration: "none",
-            minWidth: 120,
-            textAlign: "center",
-        },
-        error: { background: "#fde2e1", color: "#b21f1f", padding: "8px 10px", borderRadius: 8, fontSize: 13 },
-        success: { background: "#e6f6e6", color: "#1b7f1b", padding: "8px 10px", borderRadius: 8, fontSize: 13 },
-    };
+          <div className="pc-actions">
+            <Link to="/produtos" className="pc-btn pc-btn--ghost">Cancelar</Link>
+            <button type="submit" className="pc-btn pc-btn--primary" disabled={salvando}>
+              <img src={addIcon} alt="" className="pc-btn-ico" />
+              {salvando ? "Salvando..." : "Salvar"}
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  );
+}

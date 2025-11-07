@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { obterQuarto, acomodarHospede } from "../services/quartos";
+import quartoIcon from "../assets/quarto.png";
 import "./checkin.css";
 
 /* ---- helpers ---- */
@@ -141,7 +142,8 @@ export default function QuartosCheckin() {
       <div className="ci-card">
         <div className="ci-header">
           <h2 className="ci-title">
-            🛎️ Check-in — Quarto {quarto?.numero ?? quartoId}
+            <img src={quartoIcon} alt="" className="ci-ico" />
+            Check-in — Quarto {quarto?.numero ?? quartoId}
           </h2>
           <Link to="/quartos" className="ci-link">← Voltar</Link>
         </div>

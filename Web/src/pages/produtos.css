@@ -88,7 +88,9 @@
   font-weight:600;
   cursor:pointer;
   text-decoration:none;
-  display:inline-block;
+  display:inline-flex;               /* para alinhar ícone + texto */
+  align-items:center;
+  gap:6px;
   font-size:14px;
   transition:filter .15s ease, background .15s ease, border-color .15s ease;
 }
@@ -106,6 +108,10 @@
   color:#333;
   border:1px solid var(--borda);
 }
+
+/* ícone pequeno dentro do botão */
+.pr-icon--sm{ width:18px; height:18px; object-fit:contain; }
+.pr-btn--primary .pr-icon--sm{ filter:brightness(0) invert(1); } /* deixa branco no botão verde */
 
 /* ===== Estados / mensagens ===== */
 .pr-toast{

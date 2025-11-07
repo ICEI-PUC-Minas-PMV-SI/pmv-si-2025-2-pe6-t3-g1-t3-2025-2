@@ -1,10 +1,13 @@
 // src/pages/Pedidos.jsx
 import { useEffect, useMemo, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { getPedidos, criarPedido } from "../services/pedidos";
 import { listarReservasAtivasAgora, listarReservas } from "../services/reservas";
 import { listarProdutos } from "../services/produtos";
-import "./Pedidos.css";
+import "./pedidos.css";
+
+import pedidoIcon from "../assets/pedido.png";
+import addIcon from "../assets/+.png";
 
 export default function Pedidos() {
   const navigate = useNavigate();
@@ -22,23 +25,20 @@ export default function Pedidos() {
   async function carregarTudo() {
     setLoading(true);
     setErro("");
-
     try {
       const [pedRes, resAtivas, resTodas, prodsRes] = await Promise.allSettled([
-        getPedidos(),                 // GET /api/Order
-        listarReservasAtivasAgora(),  // ativa agora (combo do topo)
-        listarReservas(),             // TODAS as reservas (para enriquecer a grade)
-        listarProdutos(),             // GET /api/Produto
+        getPedidos(),
+        listarReservasAtivasAgora(),
+        listarReservas(),
+        listarProdutos(),
       ]);
 
-      // pedidos
       if (pedRes.status === "fulfilled") {
         setPedidos(Array.isArray(pedRes.value) ? pedRes.value : []);
       } else {
         console.error("Falha ao carregar pedidos:", pedRes.reason);
       }
 
-      // reservas ativas (combo)
       if (resAtivas.status === "fulfilled") {
         const arr = Array.isArray(resAtivas.value) ? resAtivas.value : [];
         setReservasAtivas(arr);
@@ -50,18 +50,15 @@ export default function Pedidos() {
         console.error("Falha ao carregar reservas ativas:", resAtivas.reason);
       }
 
-      // reservas todas (enriquecer tabela)
       if (resTodas.status === "fulfilled") {
         setReservasTodas(Array.isArray(resTodas.value) ? resTodas.value : []);
       } else {
         console.error("Falha ao carregar todas as reservas:", resTodas.reason);
       }
 
-      // produtos
       if (prodsRes.status === "fulfilled") {
         const lista = Array.isArray(prodsRes.value) ? prodsRes.value : [];
         setProdutos(lista);
-        console.log("Produtos carregados:", lista);
       } else {
         console.warn("Produtos não carregados:", prodsRes.reason);
       }
@@ -77,12 +74,9 @@ export default function Pedidos() {
     }
   }
 
-  useEffect(() => {
-    carregarTudo();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  useEffect(() => { carregarTudo(); /* eslint-disable-next-line */ }, []);
 
-  // === Índices para consulta rápida ===
+  // Mapas auxiliares
   const produtosById = useMemo(() => {
     const map = new Map();
     produtos.forEach((p) => map.set(Number(p.id ?? p.Id), p));
@@ -94,15 +88,9 @@ export default function Pedidos() {
     (reservasTodas ?? []).forEach((r) => {
       const id = Number(r.id ?? r.Id);
       if (!id) return;
-      // normalizações úteis
       const hospede = r.hospedeNome ?? r.HospedeNome ?? "—";
       const quarto =
-        r.quartoNumero ??
-        r.QuartoNumero ??
-        r.Quarto?.Numero ??
-        r.quarto ??
-        r.Quarto ??
-        "—";
+        r.quartoNumero ?? r.QuartoNumero ?? r.Quarto?.Numero ?? r.quarto ?? r.Quarto ?? "—";
       const checkin = r.dataEntrada ?? r.DataEntrada ?? r.checkinAt ?? r.CheckinAt;
       const checkout = r.dataSaida ?? r.DataSaida ?? r.checkoutAt ?? r.CheckoutAt;
       map.set(id, { hospede, quarto, checkin, checkout });
@@ -110,45 +98,39 @@ export default function Pedidos() {
     return map;
   }, [reservasTodas]);
 
-  // === totais ===
+  // Totais
   const totalEstimado = useMemo(() => {
     return itens.reduce((acc, it) => {
       const prod = produtosById.get(Number(it.productId));
-      const preco = Number(prod?.preco ?? prod?.Preco ?? prod?.price ?? 0);
+      const preco = Number(prod?.preco ?? prod?.Preco ?? 0);
       const qtd = Number(it.quantity || 0);
       return acc + preco * qtd;
     }, 0);
   }, [itens, produtosById]);
 
-  // === helpers de formatação ===
-  function formatarData(data) {
+  // Helpers
+  const formatarData = (data) => {
     if (!data) return "N/A";
     const d = new Date(data);
     return isNaN(+d) ? "N/A" : d.toLocaleDateString("pt-BR");
-  }
-  function formatarMoeda(v) {
-    return Number(v ?? 0).toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
-  }
-  function formatarStatus(status) {
+  };
+  const formatarMoeda = (v) =>
+    Number(v ?? 0).toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
+  const formatarStatus = (status) => {
     const s = String(status ?? "").toLowerCase();
-    if (s.includes("pending") || s === "0") return "🕒 Aguardando";
-    if (s.includes("process") || s === "1") return "🧑‍🍳 Em Processo";
-    if (s.includes("final") || s === "2") return "✅ Finalizado";
+    if (s.includes("pending") || s === "0") return "Aguardando";
+    if (s.includes("process") || s === "1") return "Em processo";
+    if (s.includes("final") || s === "2") return "Finalizado";
     return status ?? "—";
-  }
+  };
 
-  // === manipulação de itens ===
-  function addItem() {
-    setItens((prev) => [...prev, { productId: "", quantity: 1 }]);
-  }
-  function removeItem(idx) {
-    setItens((prev) => prev.filter((_, i) => i !== idx));
-  }
-  function updateItem(idx, key, value) {
+  // Itens
+  const addItem = () => setItens((prev) => [...prev, { productId: "", quantity: 1 }]);
+  const removeItem = (idx) => setItens((prev) => prev.filter((_, i) => i !== idx));
+  const updateItem = (idx, key, value) =>
     setItens((prev) => prev.map((it, i) => (i === idx ? { ...it, [key]: value } : it)));
-  }
 
-  // === submit ===
+  // Submit
   async function onSubmit(e) {
     e.preventDefault();
     setErro("");
@@ -176,10 +158,16 @@ export default function Pedidos() {
     <div className="pedidos-page">
       <div className="pedidos-card">
         <header className="pedidos-header">
-          <button type="button" className="btn-back" onClick={() => navigate(-1)} aria-label="Voltar">
-            ← Voltar
-          </button>
-          <h2 className="pedidos-title">📋 Pedidos</h2>
+          <h2 className="pedidos-title">
+            <img src={pedidoIcon} alt="Pedidos" className="title-icon" />
+            Pedidos
+          </h2>
+          <div className="header-actions">
+            <button type="button" className="btn btn-ghost" onClick={carregarTudo} disabled={loading}>
+              {loading ? "Atualizando..." : "Atualizar"}
+            </button>
+            <Link to="/" className="link-back">← Voltar</Link>
+          </div>
         </header>
 
         {loading && <p className="info">Carregando...</p>}
@@ -187,7 +175,10 @@ export default function Pedidos() {
 
         {/* Novo Pedido */}
         <section className="section">
-          <h3 className="section-title">➕ Novo Pedido</h3>
+          <h3 className="section-title">
+            <img src={addIcon} alt="" className="btn-icon" /> Novo Pedido
+          </h3>
+
           <form className="pedido-form" onSubmit={onSubmit}>
             <div className="field">
               <label className="label">Hóspede (reserva ativa)</label>
@@ -216,8 +207,7 @@ export default function Pedidos() {
 
               {itens.map((it, idx) => {
                 const prod = produtosById.get(Number(it.productId));
-                const preco = Number(prod?.preco) || 0;
-                const subtotal = preco * Number(it.quantity || 0);
+                const preco = Number(prod?.preco ?? prod?.Preco ?? 0);
 
                 return (
                   <div className="item-row" key={idx}>
@@ -228,8 +218,8 @@ export default function Pedidos() {
                     >
                       <option value="">Selecione o alimento…</option>
                       {produtos.map((p) => (
-                        <option key={p.id} value={p.id}>
-                          {(p.nome) + " - " + formatarMoeda(p.preco ?? 0)}
+                        <option key={p.id ?? p.Id} value={p.id ?? p.Id}>
+                          {(p.nome ?? p.Nome) + " - " + formatarMoeda(p.preco ?? p.Preco ?? 0)}
                         </option>
                       ))}
                     </select>
@@ -242,36 +232,42 @@ export default function Pedidos() {
                       onChange={(e) => updateItem(idx, "quantity", e.target.value)}
                     />
 
-                    <div className="item-subtotal"><span>{it.quantity} x {formatarMoeda(preco)}</span></div>
+                    <div className="item-subtotal">
+                      <span>{it.quantity} x {formatarMoeda(preco)}</span>
+                    </div>
 
-                    <button type="button" className="btn-remove" onClick={() => removeItem(idx)} title="Remover">
+                    <button
+                      type="button"
+                      className="btn-remove"
+                      onClick={() => removeItem(idx)}
+                      title="Remover"
+                      aria-label={`Remover item ${idx + 1}`}
+                    >
                       ✕
                     </button>
                   </div>
                 );
               })}
 
-              <button type="button" className="btn-primary" onClick={addItem}>
-                + Adicionar item
+              <button type="button" className="btn btn-primary" onClick={addItem}>
+                <img src={addIcon} alt="" className="btn-icon" />
+                Adicionar item
               </button>
             </div>
 
             <div className="total">
-              Total estimado: <strong>{formatarMoeda(totalEstimado)}</strong>
+              Total estimado: <strong>&nbsp;{formatarMoeda(totalEstimado)}</strong>
             </div>
 
             <div className="actions">
               <button
                 type="button"
-                className="btn-secondary"
-                onClick={() => {
-                  setReservationId("");
-                  setItens([{ productId: "", quantity: 1 }]);
-                }}
+                className="btn btn-ghost"
+                onClick={() => { setReservationId(""); setItens([{ productId: "", quantity: 1 }]); }}
               >
                 Limpar
               </button>
-              <button type="submit" className="btn-success">
+              <button type="submit" className="btn btn-success">
                 Salvar Pedido
               </button>
             </div>
@@ -280,7 +276,7 @@ export default function Pedidos() {
 
         {/* Lista de pedidos */}
         <section className="section">
-          <h3 className="section-title">📦 Pedidos cadastrados</h3>
+          <h3 className="section-title">Pedidos cadastrados</h3>
 
           {!loading && !erro && pedidos.length === 0 && (
             <p className="info">Nenhum pedido registrado ainda.</p>
@@ -306,11 +302,11 @@ export default function Pedidos() {
                     const id = p.id ?? p.Id;
                     const resId = Number(p.reservationId ?? p.ReservationId);
                     const res = reservasById.get(resId);
-
                     const quarto = res?.quarto ?? p.quarto ?? p.Quarto ?? "—";
                     const hospede = res?.hospede ?? p.hospedeNome ?? p.HospedeNome ?? "—";
                     const checkin = res?.checkin ?? p.checkInDate ?? p.CheckInDate;
                     const checkout = res?.checkout ?? p.checkOutDate ?? p.CheckOutDate;
+                    const total = p.total ?? p.Total;
 
                     return (
                       <tr key={id}>
@@ -320,7 +316,7 @@ export default function Pedidos() {
                         <td>{hospede}</td>
                         <td>{formatarData(checkin)}</td>
                         <td>{formatarData(checkout)}</td>
-                        <td>{formatarMoeda(p.total ?? p.Total)}</td>
+                        <td>{formatarMoeda(total)}</td>
                         <td>{formatarStatus(p.status ?? p.Status)}</td>
                       </tr>
                     );
