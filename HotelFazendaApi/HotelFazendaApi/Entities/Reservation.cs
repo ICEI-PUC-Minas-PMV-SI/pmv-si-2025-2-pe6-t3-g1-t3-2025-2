@@ -31,5 +31,8 @@ namespace HotelFazendaApi.Entities
         public string Status { get; set; } = "Aberta";
 
         public DateTime CriadoEm { get; set; } = DateTime.UtcNow;
+
+        [Column(TypeName = "decimal(10,2)")]
+        public decimal ValorTotal { get; set; } = 0M;
     }
 }

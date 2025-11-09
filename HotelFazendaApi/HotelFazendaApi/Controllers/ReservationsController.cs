@@ -1,41 +1,28 @@
 using HotelFazendaApi.Data;
-using HotelFazendaApi.Entities; // ajuste se a entidade estiver em outro namespace
+using HotelFazendaApi.Entities;
+using HotelFazendaApi.DTOs;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Security.Claims;
+using Microsoft.AspNetCore.Authorization;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+using System.Linq;
 
 namespace HotelFazendaApi.Controllers
 {
     [ApiController]
-    [Route("api/[controller]")] // base: /api/Reservations
+    [Route("api/reservations")]
+    [Authorize]
     public class ReservationsController : ControllerBase
     {
         private readonly AppDbContext _db;
-        public ReservationsController(AppDbContext db) => _db = db;
 
-        // ----------------- DTOs -----------------
-        public record ReservationListItemDto(
-            int Id,
-            int QuartoId,
-            DateTime DataEntrada,
-            DateTime? DataSaida,
-            string? HospedeNome
-        );
-
-        public class CreateReservationDto
+        public ReservationsController(AppDbContext db)
         {
-            public int QuartoId { get; set; }
-            public string? HospedeNome { get; set; }
-            public string? HospedeDocumento { get; set; }
-            public string? Telefone { get; set; }
-            public DateTime? DataEntrada { get; set; }
-            public DateTime? SaidaPrevista { get; set; }    // ignorado se o modelo não tiver
-            public decimal? TarifaDiaria { get; set; }      // idem
-            public int? Adultos { get; set; }               // só pra não quebrar o front
-            public int? Criancas { get; set; }
-            public string? Observacoes { get; set; }
+            _db = db;
         }
 
-        // -------- LISTAR (GET /api/Reservations) --------
         [HttpGet]
         public async Task<ActionResult<IEnumerable<ReservationListItemDto>>> GetAll(
             [FromQuery] string? q,
@@ -78,7 +65,6 @@ namespace HotelFazendaApi.Controllers
             return Ok(lista);
         }
 
-        // -------- CRIAR (POST /api/Reservations) --------
         [HttpPost]
         public async Task<ActionResult<object>> Create([FromBody] CreateReservationDto body)
         {
@@ -101,8 +87,9 @@ namespace HotelFazendaApi.Controllers
                 Telefone = body.Telefone,
                 DataEntrada = body.DataEntrada == null || body.DataEntrada == default
                     ? DateTime.UtcNow
-                    : body.DataEntrada.Value
-                // DataSaida permanece default
+                    : body.DataEntrada.Value,
+
+                ValorTotal = body.ValorTotal
             };
 
             _db.Reservations.Add(r);
@@ -118,7 +105,6 @@ namespace HotelFazendaApi.Controllers
             });
         }
 
-        // -------- GET por id (GET /api/Reservations/{id}) --------
         [HttpGet("{id:int}")]
         public async Task<ActionResult<object>> GetById(int id)
         {
@@ -137,7 +123,6 @@ namespace HotelFazendaApi.Controllers
             });
         }
 
-        // -------- ATIVA POR QUARTO --------
         [HttpGet("ativa-por-quarto/{quartoId:int}")]
         public async Task<ActionResult<object>> GetAtivaPorQuarto(int quartoId)
         {
@@ -169,7 +154,6 @@ namespace HotelFazendaApi.Controllers
             });
         }
 
-        // -------- ATIVAS AGORA --------
         [HttpGet("ativas-agora")]
         public async Task<ActionResult<IEnumerable<object>>> GetAtivasAgora()
         {
@@ -195,37 +179,50 @@ namespace HotelFazendaApi.Controllers
             return Ok(lista);
         }
 
-        // -------- CHECKOUT (GET/POST) e ENCERRAR --------
         [HttpGet("{id:int}/checkout")]
         [HttpGet("/api/Rooms/{id:int}/checkout")]
-        public async Task<ActionResult<object>> GetCheckout(int id)
+        [ProducesResponseType(typeof(CheckoutDto), 200)]
+        [ProducesResponseType(404)]
+        public async Task<ActionResult<CheckoutDto>> GetCheckout(int id)
         {
-            var r = await _db.Reservations.AsNoTracking().FirstOrDefaultAsync(x => x.Id == id);
-            if (r == null) return NotFound(new { message = "Reserva não encontrada." });
+            var reserva = await _db.Reservations.AsNoTracking().FirstOrDefaultAsync(r => r.Id == id);
+            if (reserva == null) return NotFound();
 
-            var entrada = r.DataEntrada == default ? DateTime.UtcNow : r.DataEntrada;
-            var fim = r.DataSaida == default ? DateTime.UtcNow : r.DataSaida;
-            var noites = Math.Max(1, (int)Math.Ceiling((fim - entrada).TotalDays));
+            var pedidos = await _db.Orders
+                .Include(o => o.OrderItems)
+                .ThenInclude(oi => oi.Produto)
+                .Where(o => o.ReservationId == id && o.Status.ToString() != "Canceled")
+                .ToListAsync();
 
-            decimal tarifaDiaria = 0m;
-            var totalDiarias = tarifaDiaria * noites;
-            var itensDto = new List<object>();
-            decimal totalPedidos = 0m;
-            decimal totalGeral = totalDiarias + totalPedidos;
+            decimal totalConsumo = pedidos.Sum(o => o.Total);
 
-            return Ok(new
+            decimal valorHospedagem = reserva.ValorTotal;
+
+            var detalhesPedidos = pedidos.Select(o => new OrderReadDto
             {
-                reservaId = r.Id,
-                quarto = new { id = r.QuartoId.GetValueOrDefault(), numero = r.QuartoId.GetValueOrDefault().ToString(), tipo = "Padrão", capacidade = 2 },
-                hospede = new { nome = r.HospedeNome ?? "—", documento = r.HospedeDocumento, telefone = r.Telefone },
-                datas = new
+                Id = o.Id,
+                CustomerName = o.CustomerName,
+                ReservationId = o.ReservationId,
+                Status = o.Status.ToString(),
+                Total = o.Total,
+                Items = o.OrderItems.Select(oi => new OrderItemReadDto
                 {
-                    dataEntrada = entrada,
-                    dataSaidaPrevista = (DateTime?)null,
-                    dataSaidaReal = r.DataSaida == default ? (DateTime?)null : r.DataSaida
-                },
-                valores = new { tarifaDiaria, noites, totalDiarias, totalPedidos, totalGeral },
-                itens = itensDto
+                    ProdutoId = oi.ProdutoId,
+                    NomeProduto = oi.Produto?.Nome ?? "Produto Não Encontrado",
+                    Quantidade = oi.Quantidade,
+                    PrecoUnitario = oi.PrecoUnitario,
+                    Subtotal = oi.PrecoUnitario * oi.Quantidade
+                }).ToList()
+            }).ToList();
+
+            return Ok(new CheckoutDto
+            {
+                ReservationId = reserva.Id,
+                CustomerName = reserva.HospedeNome,
+                TotalHospedagem = valorHospedagem,
+                TotalConsumoRestaurante = totalConsumo,
+                ValorFinalDaConta = valorHospedagem + totalConsumo,
+                DetalhesDosPedidos = detalhesPedidos
             });
         }
 
@@ -236,14 +233,22 @@ namespace HotelFazendaApi.Controllers
         }
 
         [HttpPost("{id:int}/checkout")]
-        [HttpPost("/api/Rooms/{id:int}/checkout")]
+        [Authorize(Roles = "Admin,Gerente,Recepcao")]
         public async Task<IActionResult> PostCheckout(int id, [FromBody] CheckoutRequest? _)
         {
             var r = await _db.Reservations.FindAsync(id);
             if (r == null) return NotFound(new { message = "Reserva não encontrada." });
-            if (r.DataSaida != default) return Conflict(new { message = "Reserva já encerrada." });
+            if (r.Status == "Encerrada" || r.DataSaida != default) return Conflict(new { message = "Reserva já encerrada." });
 
             r.DataSaida = DateTime.UtcNow;
+            r.Status = "Encerrada";
+
+            var pedidos = await _db.Orders.Where(o => o.ReservationId == id && o.Status.ToString() != "Canceled").ToListAsync();
+            foreach (var pedido in pedidos)
+            {
+                pedido.Status = OrderStatus.Billed;
+            }
+
             await _db.SaveChangesAsync();
             return NoContent();
         }
@@ -258,6 +263,30 @@ namespace HotelFazendaApi.Controllers
             r.DataSaida = DateTime.UtcNow;
             await _db.SaveChangesAsync();
             return NoContent();
+        }
+
+        public record ReservationListItemDto(
+            int Id,
+            int QuartoId,
+            DateTime DataEntrada,
+            DateTime? DataSaida,
+            string? HospedeNome
+        );
+
+        public class CreateReservationDto
+        {
+            public int QuartoId { get; set; }
+            public string? HospedeNome { get; set; }
+            public string? HospedeDocumento { get; set; }
+            public string? Telefone { get; set; }
+            public DateTime? DataEntrada { get; set; }
+            public DateTime? SaidaPrevista { get; set; }
+            public decimal? TarifaDiaria { get; set; }
+            public int? Adultos { get; set; }
+            public int? Criancas { get; set; }
+            public string? Observacoes { get; set; }
+
+            public decimal ValorTotal { get; set; }
         }
     }
 }

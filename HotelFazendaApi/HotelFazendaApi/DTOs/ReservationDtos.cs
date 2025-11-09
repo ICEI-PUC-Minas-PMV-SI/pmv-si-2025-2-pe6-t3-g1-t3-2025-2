@@ -1,3 +1,5 @@
+using System.ComponentModel.DataAnnotations;
+
 namespace HotelFazendaApi.DTOs
 {
     public class ReservationCreateDto
@@ -9,6 +11,9 @@ namespace HotelFazendaApi.DTOs
         public DateTime DataEntrada { get; set; }
         public DateTime DataSaida { get; set; }
         public int? QuartoId { get; set; }
+
+        [Required]
+        public decimal ValorTotal { get; set; }
     }
 
     public class ReservationDto
