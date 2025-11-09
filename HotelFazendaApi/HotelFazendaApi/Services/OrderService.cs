@@ -40,10 +40,6 @@ namespace HotelFazendaApi.Services
 
         public async Task<OrderReadDto?> CreateAsync(OrderCreateDto dto)
         {
-            var reservation = await _db.Reservations.FindAsync(dto.ReservationId);
-            if (reservation == null)
-                return null;
-
             var orderItems = new List<OrderItem>();
             decimal totalOrder = 0M;
 
