@@ -1,136 +1,184 @@
 // src/services/conta.js
 import { api } from "./api";
 
-/* util p/ número seguro */
-const n = (v, def = 0) => {
-  const x = Number(v);
-  return Number.isFinite(x) ? x : def;
-};
+/* Helpers -------------------------------------------------- */
 
-/* ------------ Normalizador da resposta do checkout ------------ */
-function normalizeCheckout(raw = {}) {
-  const dataEntrada = raw.dataEntrada ?? raw.DataEntrada ?? null;
-  const dataSaidaPrevista = raw.dataSaidaPrevista ?? raw.DataSaidaPrevista ?? null;
-  const dataSaidaReal = raw.dataSaidaReal ?? raw.DataSaidaReal ?? null;
+const is404 = (e) => e?.response?.status === 404;
 
-  const quarto = raw.quarto ?? raw.Quarto ?? {};
-  const hospede = raw.hospede ?? raw.Hospede ?? {};
+// tenta pegar propriedade em camelCase ou PascalCase
+function pick(obj, camel, pascal) {
+  if (!obj) return undefined;
+  if (obj[camel] !== undefined) return obj[camel];
+  if (obj[pascal] !== undefined) return obj[pascal];
+  return undefined;
+}
 
-  const tarifaDiaria = n(raw.tarifaDiaria ?? raw.TarifaDiaria ?? hospede.tarifaDiaria ?? hospede.TarifaDiaria);
-  const noites       = n(raw.noites ?? raw.Noites);
-  const totalDiarias = n(raw.totalDiarias ?? raw.TotalDiarias ?? tarifaDiaria * noites);
+// calcula quantidade de noites entre duas datas (>= 1)
+function calcularNoites(dataEntradaIso, dataSaidaIso) {
+  if (!dataEntradaIso) return 1;
+  const dIn = new Date(dataEntradaIso);
+  const dOut = dataSaidaIso ? new Date(dataSaidaIso) : new Date();
+  if (Number.isNaN(+dIn) || Number.isNaN(+dOut)) return 1;
 
-  const itensRaw = raw.itensPedidos ?? raw.ItensPedidos ?? raw.pedidos ?? raw.Pedidos ?? [];
-  const itens = Array.isArray(itensRaw)
-    ? itensRaw.map((p, i) => {
-        const qtd  = n(p.quantidade ?? p.Quantidade);
-        const unit = n(p.precoUnitario ?? p.PrecoUnitario ?? p.preco ?? p.Preco);
-        return {
-          id: p.id ?? p.Id ?? i,
-          produto: p.produto ?? p.Produto ?? p.nome ?? p.Nome ?? "Item",
-          quantidade: qtd,
-          precoUnitario: unit,
-          subtotal: n(p.subtotal ?? p.Subtotal ?? qtd * unit),
-        };
-      })
-    : [];
+  const ms = dOut.getTime() - dIn.getTime();
+  const dias = ms / (1000 * 60 * 60 * 24);
+  const arred = Math.max(1, Math.round(dias || 1));
+  return arred;
+}
 
-  const totalPedidos = n(raw.totalPedidos ?? raw.TotalPedidos ?? itens.reduce((acc, it) => acc + n(it.subtotal), 0));
-  const totalGeral   = n(raw.totalGeral ?? raw.TotalGeral ?? (totalDiarias + totalPedidos));
+/* Normalização do payload da API para o formato da tela ----- */
+
+function montarDadosConta(reservaRaw, checkoutRaw) {
+  const r = reservaRaw || {};
+  const c = checkoutRaw || {};
+
+  const reservaId =
+    pick(c, "reservationId", "ReservationId") ??
+    pick(r, "id", "Id") ??
+    null;
+
+  const nomeHospede =
+    (pick(c, "customerName", "CustomerName") ??
+      pick(r, "hospedeNome", "HospedeNome") ??
+      "").trim() || "—";
+
+  const dataEntrada =
+    pick(r, "dataEntrada", "DataEntrada") ?? null;
+
+  const dataSaida =
+    pick(r, "dataSaida", "DataSaida") ?? null;
+
+  const totalHospedagem =
+    pick(c, "totalHospedagem", "TotalHospedagem") ?? 0;
+
+  const totalConsumo =
+    pick(c, "totalConsumoRestaurante", "TotalConsumoRestaurante") ?? 0;
+
+  const totalGeral =
+    pick(c, "valorFinalDaConta", "ValorFinalDaConta") ??
+    (Number(totalHospedagem) + Number(totalConsumo));
+
+  const noites = calcularNoites(dataEntrada, dataSaida);
+  const tarifaDiaria =
+    noites > 0 ? Number(totalHospedagem) / noites : Number(totalHospedagem);
+
+  // Flatten dos itens de pedidos
+  const detalhesPedidos =
+    pick(c, "detalhesDosPedidos", "DetalhesDosPedidos") ?? [];
+
+  const itens = [];
+  if (Array.isArray(detalhesPedidos)) {
+    detalhesPedidos.forEach((ped) => {
+      const itensPed = ped.items ?? ped.Itens ?? ped.Items ?? [];
+      if (Array.isArray(itensPed)) {
+        itensPed.forEach((it) => {
+          const precoUnitario =
+            pick(it, "precoUnitario", "PrecoUnitario") ?? 0;
+          const quantidade =
+            pick(it, "quantidade", "Quantidade") ?? 1;
+          const subtotal =
+            pick(it, "subtotal", "Subtotal") ??
+            Number(precoUnitario) * Number(quantidade);
+
+          itens.push({
+            id:
+              pick(it, "produtoId", "ProdutoId") ??
+              pick(it, "id", "Id") ??
+              null,
+            produto:
+              pick(it, "nomeProduto", "NomeProduto") ??
+              pick(it, "produto", "Produto") ??
+              "—",
+            quantidade,
+            precoUnitario,
+            subtotal,
+          });
+        });
+      }
+    });
+  }
 
   return {
-    reservaId: raw.reservaId ?? raw.ReservaId ?? raw.id ?? raw.Id ?? null,
+    reservaId,
     quarto: {
-      id: quarto.id ?? quarto.Id ?? null,
-      numero: quarto.numero ?? quarto.Numero ?? quarto.nome ?? quarto.Nome ?? "-",
-      capacidade: quarto.capacidade ?? quarto.Capacidade ?? null,
-      tipo: quarto.tipo ?? quarto.Tipo ?? "Padrão",
+      // ReservationDto.Quarto (string label) → numero
+      numero: pick(r, "quarto", "Quarto") ?? "-",
+      // o layout já tem fallback: "Padrão · 2 hóspedes"
+      tipo: undefined,
+      capacidade: undefined,
     },
     hospede: {
-      id: hospede.id ?? hospede.Id ?? null,
-      nome: hospede.nome ?? hospede.Nome ?? "Hóspede",
-      documento: hospede.documento ?? hospede.Documento ?? null,
-      telefone: hospede.telefone ?? hospede.Telefone ?? null,
+      nome: nomeHospede,
+      documento:
+        pick(r, "hospedeDocumento", "HospedeDocumento") ?? null,
+      telefone: pick(r, "telefone", "Telefone") ?? null,
     },
-    datas: { dataEntrada, dataSaidaPrevista, dataSaidaReal },
-    valores: { tarifaDiaria, noites, totalDiarias, totalPedidos, totalGeral },
+    datas: {
+      dataEntrada,
+      // como não temos previsão separada, usamos a dataSaida da reserva (se houver)
+      dataSaidaPrevista: dataSaida,
+      dataSaidaReal: dataSaida,
+    },
+    valores: {
+      tarifaDiaria,
+      noites,
+      totalDiarias: Number(totalHospedagem),
+      totalPedidos: Number(totalConsumo),
+      totalGeral: Number(totalGeral),
+    },
     itens,
   };
 }
 
-/* ------------ Fallbacks para achar reserva ativa do quarto ------------ */
+/* Services exportados para a tela --------------------------- */
+
+/**
+ * Resolve a reserva ativa para um quarto.
+ * Usado quando a tela é acessada com ?roomId=123.
+ */
 export async function resolverReservaAtiva(roomId) {
-  // 1) endpoint “oficial”
+  if (!roomId) return null;
   try {
-    const { data } = await api.get(`/api/Reservations/ativa-por-quarto/${roomId}`);
-    const id = data?.id ?? data?.reservaId ?? data?.ReservaId;
-    if (id) return id;
+    const { data } = await api.get(
+      `/api/Reservations/ativa-por-quarto/${roomId}`
+    );
+    // API pode devolver { id, ... } ou { reservaId, ... }
+    return (
+      pick(data, "id", "Id") ??
+      pick(data, "reservaId", "ReservaId") ??
+      null
+    );
   } catch (e) {
-    if (![404].includes(e?.response?.status)) throw e; // 401/403/500 sobem
+    if (is404(e)) return null;
+    throw e;
   }
-
-  // 2) alternativa
-  try {
-    const { data } = await api.get(`/api/Reservations/atual-por-quarto/${roomId}`);
-    const id = data?.id ?? data?.reservaId ?? data?.ReservaId;
-    if (id) return id;
-  } catch (e) {
-    if (![404].includes(e?.response?.status)) throw e;
-  }
-
-  // 3) fallback no recurso do quarto
-  try {
-    const { data } = await api.get(`/api/Rooms/${roomId}/reserva-ativa`);
-    const id = data?.id ?? data?.reservaId ?? data?.ReservaId;
-    if (id) return id;
-  } catch (e) {
-    if (![404].includes(e?.response?.status)) throw e;
-  }
-
-  return null;
 }
 
-/* ------------ Checkout (aceita reservaId OU roomId) ------------ */
-export async function obterCheckout(reservaOuRoomId) {
-  // tenta como reservaId direto
-  try {
-    const { data } = await api.get(`/api/Reservations/${reservaOuRoomId}/checkout`);
-    return normalizeCheckout(data ?? {});
-  } catch (e) {
-    if (![404].includes(e?.response?.status)) throw e;
-  }
+/**
+ * Obtém os dados da conta (reserva + checkout) já normalizados
+ * para o formato que ContaHospedagem.jsx espera.
+ */
+export async function obterCheckout(reservaId) {
+  if (!reservaId) return null;
 
-  // tenta como roomId (derivados)
-  const roomId = reservaOuRoomId;
   try {
-    const { data } = await api.get(`/api/Reservations/ativa-por-quarto/${roomId}/checkout`);
-    return normalizeCheckout(data ?? {});
-  } catch (e) {
-    if (![404].includes(e?.response?.status)) throw e;
-  }
-  try {
-    const { data } = await api.get(`/api/Rooms/${roomId}/checkout`);
-    return normalizeCheckout(data ?? {});
-  } catch (e) {
-    if (![404].includes(e?.response?.status)) throw e;
-  }
+    const [reservaResp, checkoutResp] = await Promise.all([
+      api.get(`/api/Reservations/${reservaId}`),
+      api.get(`/api/Reservations/${reservaId}/checkout`),
+    ]);
 
-  // último recurso: resolve reserva e refaz
-  const rid = await resolverReservaAtiva(roomId);
-  if (rid) {
-    const { data } = await api.get(`/api/Reservations/${rid}/checkout`);
-    return normalizeCheckout(data ?? {});
+    return montarDadosConta(reservaResp.data, checkoutResp.data);
+  } catch (e) {
+    if (is404(e)) return null;
+    throw e;
   }
-
-  return normalizeCheckout({});
 }
 
-/* ------------ Encerrar ------------ */
+/**
+ * Encerrar a conta: POST /api/Reservations/{id}/checkout
+ */
 export async function encerrarConta(reservaId, payload = {}) {
-  const body = {
-    formaPagamento: payload.formaPagamento ?? null,
-    observacao: payload.observacao ?? null,
-  };
-  const { data } = await api.post(`/api/Reservations/${reservaId}/encerrar`, body);
-  return data;
+  if (!reservaId) throw new Error("reservaId é obrigatório.");
+  await api.post(`/api/Reservations/${reservaId}/checkout`, payload);
+  return true;
 }

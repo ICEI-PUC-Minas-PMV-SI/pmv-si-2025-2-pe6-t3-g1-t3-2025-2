@@ -1,13 +1,9 @@
 using HotelFazendaApi.Data;
 using HotelFazendaApi.Entities;
 using HotelFazendaApi.DTOs;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using System.Security.Claims;
-using Microsoft.AspNetCore.Authorization;
-using System.Collections.Generic;
-using System.Threading.Tasks;
-using System.Linq;
 
 namespace HotelFazendaApi.Controllers
 {
@@ -23,136 +19,170 @@ namespace HotelFazendaApi.Controllers
             _db = db;
         }
 
+        // ============================================================
+        // GET → Lista todas as reservas (com filtros)
+        // ============================================================
+
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<ReservationListItemDto>>> GetAll(
+        public async Task<ActionResult<IEnumerable<ReservationDto>>> GetAll(
             [FromQuery] string? q,
             [FromQuery] string? status)
         {
             var now = DateTime.UtcNow;
-            var qry = _db.Reservations.AsNoTracking().AsQueryable();
+            var qry = _db.Reservations
+                .AsNoTracking()
+                .Include(r => r.Quarto)
+                .AsQueryable();
 
             if (!string.IsNullOrWhiteSpace(q))
             {
-                var t = q.Trim();
+                var t = q.Trim().ToLower();
                 qry = qry.Where(x =>
-                    (x.HospedeNome ?? "").ToLower().Contains(t.ToLower()) ||
-                    (x.HospedeDocumento ?? "").ToLower().Contains(t.ToLower()) ||
-                    (x.QuartoId.HasValue && x.QuartoId.Value.ToString() == t)
+                       (x.HospedeNome ?? "").ToLower().Contains(t)
+                    || (x.HospedeDocumento ?? "").ToLower().Contains(t)
+                    || (x.QuartoId != null && x.QuartoId.ToString() == t)
                 );
             }
 
             switch ((status ?? "").Trim().ToLowerInvariant())
             {
                 case "ativas":
-                    qry = qry.Where(x => x.DataSaida == default || x.DataSaida > now);
+                    qry = qry.Where(x =>
+                        x.DataEntrada <= now &&
+                        (x.DataSaida == default || x.DataSaida > now)
+                    );
                     break;
+
                 case "encerradas":
-                    qry = qry.Where(x => x.DataSaida != default && x.DataSaida <= now);
+                    qry = qry.Where(x =>
+                        x.DataSaida != default && x.DataSaida <= now
+                    );
                     break;
             }
 
             var lista = await qry
                 .OrderByDescending(x => x.DataEntrada)
-                .Select(x => new ReservationListItemDto(
-                    x.Id,
-                    x.QuartoId.GetValueOrDefault(),
-                    x.DataEntrada,
-                    x.DataSaida == default ? (DateTime?)null : x.DataSaida,
-                    x.HospedeNome
-                ))
+                .Select(x => new ReservationDto
+                {
+                    Id = x.Id,
+                    HospedeNome = x.HospedeNome,
+                    Quarto = x.Quarto != null ? x.Quarto.Numero : "—",
+                    Status = x.DataSaida == default ? "Ativa" : "Encerrada",
+                    DataEntrada = x.DataEntrada,
+                    DataSaida = x.DataSaida
+                })
                 .ToListAsync();
 
             return Ok(lista);
         }
 
-        [HttpPost]
-        public async Task<ActionResult<object>> Create([FromBody] CreateReservationDto body)
+        // ============================================================
+        // GET → Detalhe por ID
+        // ============================================================
+
+        [HttpGet("{id:int}")]
+        public async Task<ActionResult<ReservationDto>> GetById(int id)
         {
-            if (body is null) return BadRequest(new { message = "Corpo da requisição é obrigatório." });
-            if (body.QuartoId <= 0) return BadRequest(new { message = "QuartoId inválido." });
+            var r = await _db.Reservations
+                .AsNoTracking()
+                .Include(x => x.Quarto)
+                .FirstOrDefaultAsync(x => x.Id == id);
+
+            if (r == null) return NotFound();
+
+            return Ok(new ReservationDto
+            {
+                Id = r.Id,
+                HospedeNome = r.HospedeNome,
+                Quarto = r.Quarto?.Numero ?? "—",
+                Status = r.DataSaida == default ? "Ativa" : "Encerrada",
+                DataEntrada = r.DataEntrada,
+                DataSaida = r.DataSaida
+            });
+        }
+
+        // ============================================================
+        // POST → Criar reserva
+        // ============================================================
+
+        [HttpPost]
+        public async Task<ActionResult> Create([FromBody] ReservationCreateDto dto)
+        {
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            if (dto.QuartoId == null || dto.QuartoId <= 0)
+                return BadRequest(new { message = "QuartoId inválido." });
 
             var now = DateTime.UtcNow;
-            var jaAtiva = await _db.Reservations.AsNoTracking().AnyAsync(x =>
-                (x.QuartoId ?? 0) == body.QuartoId &&
-                (x.DataSaida == default || x.DataSaida > now)
-            );
-            if (jaAtiva)
-                return Conflict(new { message = "Já existe uma reserva ativa/vigente para este quarto." });
+
+            var existeAtiva = await _db.Reservations.AsNoTracking()
+                .AnyAsync(x =>
+                    x.QuartoId == dto.QuartoId &&
+                    x.DataEntrada <= now &&
+                    (x.DataSaida == default || x.DataSaida > now)
+                );
+
+            if (existeAtiva)
+                return Conflict(new { message = "Este quarto já possui reserva ativa." });
 
             var r = new Reservation
             {
-                QuartoId = body.QuartoId,
-                HospedeNome = body.HospedeNome,
-                HospedeDocumento = body.HospedeDocumento,
-                Telefone = body.Telefone,
-                DataEntrada = body.DataEntrada == null || body.DataEntrada == default
-                    ? DateTime.UtcNow
-                    : body.DataEntrada.Value,
-
-                ValorTotal = body.ValorTotal
+                HospedeNome = dto.HospedeNome,
+                HospedeDocumento = dto.HospedeDocumento,
+                Telefone = dto.Telefone,
+                QuartoId = dto.QuartoId,
+                DataEntrada = dto.DataEntrada,
+                DataSaida = dto.DataSaida,
+                ValorTotal = dto.ValorTotal,
+                QtdeHospedes = dto.QtdeHospedes
             };
 
             _db.Reservations.Add(r);
             await _db.SaveChangesAsync();
 
-            return CreatedAtAction(nameof(GetById), new { id = r.Id }, new
-            {
-                id = r.Id,
-                quartoId = r.QuartoId.GetValueOrDefault(),
-                dataEntrada = r.DataEntrada,
-                dataSaida = (DateTime?)null,
-                hospedeNome = r.HospedeNome
-            });
+            return CreatedAtAction(nameof(GetById), new { id = r.Id }, new { r.Id });
         }
 
-        [HttpGet("{id:int}")]
-        public async Task<ActionResult<object>> GetById(int id)
-        {
-            var r = await _db.Reservations.AsNoTracking().FirstOrDefaultAsync(x => x.Id == id);
-            if (r is null) return NotFound();
-
-            return Ok(new
-            {
-                id = r.Id,
-                quartoId = r.QuartoId.GetValueOrDefault(),
-                dataEntrada = r.DataEntrada,
-                dataSaida = r.DataSaida == default ? (DateTime?)null : r.DataSaida,
-                hospedeNome = r.HospedeNome,
-                hospedeDocumento = r.HospedeDocumento,
-                telefone = r.Telefone
-            });
-        }
+        // ============================================================
+        // GET → HOSPEDAGEM ATIVA POR QUARTO
+        // ============================================================
 
         [HttpGet("ativa-por-quarto/{quartoId:int}")]
         public async Task<ActionResult<object>> GetAtivaPorQuarto(int quartoId)
         {
+            var now = DateTime.UtcNow;
+
             var r = await _db.Reservations
                 .AsNoTracking()
-                .Where(x => (x.QuartoId ?? 0) == quartoId && x.DataSaida == default)
+                .Where(x => x.QuartoId == quartoId)
+                .Where(x =>
+                    x.DataEntrada <= now &&
+                    (x.DataSaida == default || x.DataSaida > now)
+                )
                 .OrderByDescending(x => x.DataEntrada)
                 .FirstOrDefaultAsync();
-
-            if (r == null)
-            {
-                var now = DateTime.UtcNow;
-                r = await _db.Reservations
-                    .AsNoTracking()
-                    .Where(x => (x.QuartoId ?? 0) == quartoId && x.DataSaida > now)
-                    .OrderByDescending(x => x.DataEntrada)
-                    .FirstOrDefaultAsync();
-            }
 
             if (r == null) return NotFound();
 
             return Ok(new
             {
                 id = r.Id,
-                quartoId = r.QuartoId.GetValueOrDefault(),
+                quartoId = r.QuartoId,
                 dataEntrada = r.DataEntrada,
                 dataSaida = r.DataSaida == default ? (DateTime?)null : r.DataSaida,
                 hospedeNome = r.HospedeNome
             });
         }
+
+        // fallback com query string
+        [HttpGet("ativa-por-quarto")]
+        public Task<ActionResult<object>> GetAtivaPorQuartoQuery([FromQuery] int quartoId)
+            => GetAtivaPorQuarto(quartoId);
+
+        // ============================================================
+        // GET → Todas as reservas ativas agora
+        // ============================================================
 
         [HttpGet("ativas-agora")]
         public async Task<ActionResult<IEnumerable<object>>> GetAtivasAgora()
@@ -162,22 +192,28 @@ namespace HotelFazendaApi.Controllers
             var lista = await _db.Reservations
                 .AsNoTracking()
                 .Where(x =>
-                    (x.DataSaida == default && x.DataEntrada <= now) ||
-                    (x.DataSaida != default && x.DataEntrada <= now && x.DataSaida > now)
+                    x.DataEntrada <= now &&
+                    (x.DataSaida == default || x.DataSaida > now)
                 )
                 .OrderByDescending(x => x.DataEntrada)
                 .Select(x => new
                 {
-                    id = x.Id,
-                    quartoId = x.QuartoId.GetValueOrDefault(),
-                    dataEntrada = x.DataEntrada,
-                    dataSaida = x.DataSaida == default ? (DateTime?)null : x.DataSaida,
-                    hospedeNome = x.HospedeNome
+                    Id = x.Id,
+                    QuartoId = x.QuartoId,
+                    HospedeNome = x.HospedeNome,
+                    DataEntrada = x.DataEntrada,
+                    DataSaida = x.DataSaida == default ? (DateTime?)null : x.DataSaida
                 })
                 .ToListAsync();
 
             return Ok(lista);
         }
+
+        // ============================================================
+        // GET → CHECKOUT (DETALHES DA CONTA)
+        // Usado pela tela /conta/:id
+        // Mantendo o formato antigo do CheckoutDto
+        // ============================================================
 
         [HttpGet("{id:int}/checkout")]
         [HttpGet("/api/Rooms/{id:int}/checkout")]
@@ -185,7 +221,10 @@ namespace HotelFazendaApi.Controllers
         [ProducesResponseType(404)]
         public async Task<ActionResult<CheckoutDto>> GetCheckout(int id)
         {
-            var reserva = await _db.Reservations.AsNoTracking().FirstOrDefaultAsync(r => r.Id == id);
+            var reserva = await _db.Reservations
+                .AsNoTracking()
+                .FirstOrDefaultAsync(r => r.Id == id);
+
             if (reserva == null) return NotFound();
 
             var pedidos = await _db.Orders
@@ -195,7 +234,6 @@ namespace HotelFazendaApi.Controllers
                 .ToListAsync();
 
             decimal totalConsumo = pedidos.Sum(o => o.Total);
-
             decimal valorHospedagem = reserva.ValorTotal;
 
             var detalhesPedidos = pedidos.Select(o => new OrderReadDto
@@ -232,18 +270,27 @@ namespace HotelFazendaApi.Controllers
             public string? Observacao { get; set; }
         }
 
+        // ============================================================
+        // POST → Finalizar checkout (encerrar + faturar pedidos)
+        // ============================================================
+
         [HttpPost("{id:int}/checkout")]
         [Authorize(Roles = "Admin,Gerente,Recepcao")]
         public async Task<IActionResult> PostCheckout(int id, [FromBody] CheckoutRequest? _)
         {
             var r = await _db.Reservations.FindAsync(id);
             if (r == null) return NotFound(new { message = "Reserva não encontrada." });
-            if (r.Status == "Encerrada" || r.DataSaida != default) return Conflict(new { message = "Reserva já encerrada." });
+
+            if (r.Status == "Encerrada" || r.DataSaida != default)
+                return Conflict(new { message = "Reserva já encerrada." });
 
             r.DataSaida = DateTime.UtcNow;
             r.Status = "Encerrada";
 
-            var pedidos = await _db.Orders.Where(o => o.ReservationId == id && o.Status.ToString() != "Canceled").ToListAsync();
+            var pedidos = await _db.Orders
+                .Where(o => o.ReservationId == id && o.Status.ToString() != "Canceled")
+                .ToListAsync();
+
             foreach (var pedido in pedidos)
             {
                 pedido.Status = OrderStatus.Billed;
@@ -253,40 +300,24 @@ namespace HotelFazendaApi.Controllers
             return NoContent();
         }
 
+        // ============================================================
+        // POST → Encerrar simples (sem conta detalhada)
+        // ============================================================
+
         [HttpPost("{id:int}/encerrar")]
         public async Task<IActionResult> Encerrar(int id)
         {
             var r = await _db.Reservations.FindAsync(id);
             if (r == null) return NotFound();
-            if (r.DataSaida != default) return Conflict("Reserva já encerrada.");
+
+            if (r.DataSaida != default)
+                return Conflict(new { message = "Reserva já encerrada." });
 
             r.DataSaida = DateTime.UtcNow;
+            r.Status = "Encerrada";
+
             await _db.SaveChangesAsync();
             return NoContent();
-        }
-
-        public record ReservationListItemDto(
-            int Id,
-            int QuartoId,
-            DateTime DataEntrada,
-            DateTime? DataSaida,
-            string? HospedeNome
-        );
-
-        public class CreateReservationDto
-        {
-            public int QuartoId { get; set; }
-            public string? HospedeNome { get; set; }
-            public string? HospedeDocumento { get; set; }
-            public string? Telefone { get; set; }
-            public DateTime? DataEntrada { get; set; }
-            public DateTime? SaidaPrevista { get; set; }
-            public decimal? TarifaDiaria { get; set; }
-            public int? Adultos { get; set; }
-            public int? Criancas { get; set; }
-            public string? Observacoes { get; set; }
-
-            public decimal ValorTotal { get; set; }
         }
     }
 }
