@@ -9,7 +9,9 @@ import {
 import "./quartos.css";
 import quartoIcon from "../assets/quarto.png";
 
-/* ---------- Error Boundary local (evita tela branca) ---------- */
+/* ===========================================================
+   Error Boundary – evita tela branca
+=========================================================== */
 function ErrorBoundary({ children }) {
   const [err, setErr] = useState(null);
   if (err) {
@@ -18,13 +20,14 @@ function ErrorBoundary({ children }) {
         <h3>Falha ao renderizar “Quartos”.</h3>
         <pre style={{ whiteSpace: "pre-wrap" }}>{String(err?.message || err)}</pre>
         <div style={{ marginTop: 8, fontSize: 13, opacity: 0.8 }}>
-          Veja também o Console (F12 → Console) e a aba Network para os /api/...
+          Veja o Console (F12 → Console) e a aba Network.
         </div>
       </div>
     );
   }
   return <ErrorCatcher onError={setErr}>{children}</ErrorCatcher>;
 }
+
 function ErrorCatcher({ onError, children }) {
   try {
     return children;
@@ -34,7 +37,9 @@ function ErrorCatcher({ onError, children }) {
   }
 }
 
-/* ---------- helpers ---------- */
+/* ===========================================================
+   Helpers
+=========================================================== */
 function formatarData(iso) {
   if (!iso) return "-";
   try {
@@ -44,59 +49,66 @@ function formatarData(iso) {
   }
 }
 
+/* ===========================================================
+   TELA DE QUARTOS
+=========================================================== */
 function QuartosInner() {
   const [quartos, setQuartos] = useState([]);
-  const [filtro, setFiltro] = useState("Todos");
+  const [filtroStatus, setFiltroStatus] = useState("Todos");
+  const [filtroCapacidade, setFiltroCapacidade] = useState("Todos");
   const [entrada, setEntrada] = useState("");
   const [saida, setSaida] = useState("");
 
   const [loading, setLoading] = useState(true);
   const [erro, setErro] = useState("");
   const [toast, setToast] = useState("");
+
   const location = useLocation();
   const navigate = useNavigate();
   const timerRef = useRef(null);
 
+  /* ===========================================================
+     Carregar quartos
+  =========================================================== */
   async function carregar() {
     setLoading(true);
     setErro("");
+
     try {
-      // 1) status “AGORA” do backend
       const rooms = await listarQuartos();
       const roomsSafe = Array.isArray(rooms) ? rooms : rooms?.items ?? rooms ?? [];
 
-      // 2) Se houver período, recalcula disponibilidade
+      // Se tiver período → recalcula disponibilidade
       if (entrada && saida) {
         let disp = [];
         try {
-          disp = await buscarQuartosLivres({ entrada, saida, hospedes: undefined });
+          disp = await buscarQuartosLivres({ entrada, saida });
         } catch (e) {
-          console.warn(
-            "[buscarQuartosLivres] falhou (seguindo sem disponibilidade):",
-            e
-          );
+          console.warn("[buscarQuartosLivres] falhou:", e);
           disp = [];
         }
-        const dispIds = new Set((disp || []).map((r) => r.id ?? r.Id));
 
-        const sobrepostos = roomsSafe.map((q) => {
+        const idsLivres = new Set(disp.map(r => r.id ?? r.Id));
+
+        const result = roomsSafe.map(q => {
           const original = q.status ?? q.Status ?? "Livre";
           if (original === "Manutencao")
             return { ...q, status: "Manutencao", hospede: null };
+
           const id = q.id ?? q.Id;
           return {
             ...q,
-            status: dispIds.has(id) ? "Livre" : "Ocupado",
-            hospede: null,
+            status: idsLivres.has(id) ? "Livre" : "Ocupado",
+            hospede: null
           };
         });
 
-        setQuartos(sobrepostos);
+        setQuartos(result);
       } else {
         setQuartos(roomsSafe);
       }
     } catch (e) {
-      console.error("[listarQuartos] falhou:", e);
+      console.error(e);
       setErro("Não foi possível carregar os quartos.");
       setQuartos([]);
     } finally {
@@ -104,16 +116,13 @@ function QuartosInner() {
     }
   }
 
-  // carrega por período (ou “agora” sem período)
+  /* Carrega automaticamente */
   useEffect(() => {
-    if (!entrada && !saida) {
-      carregar();
-    } else if (entrada && saida && new Date(saida) > new Date(entrada)) {
-      carregar();
-    }
+    if (!entrada && !saida) carregar();
+    else if (entrada && saida && new Date(saida) > new Date(entrada)) carregar();
   }, [entrada, saida]);
 
-  // toasts vindos por navigate state
+  /* Toast */
   useEffect(() => {
     if (location.state?.toast) {
       setToast(location.state.toast);
@@ -123,149 +132,167 @@ function QuartosInner() {
     }
   }, [location, navigate]);
 
-  // auto-refresh a cada 15s quando NÃO há período
+  /* Atualização automática */
   useEffect(() => {
     if (entrada || saida) return;
     const id = setInterval(() => carregar(), 15000);
     timerRef.current = id;
-    return () => {
-      if (id) clearInterval(id);
-    };
+    return () => clearInterval(id);
   }, [entrada, saida]);
 
+  /* ===========================================================
+     Ordenações + filtros (status e capacidade)
+  =========================================================== */
   const visiveis = useMemo(() => {
     if (!Array.isArray(quartos)) return [];
-    if (filtro === "Todos") return quartos;
-    if (filtro === "Livre")
-      return quartos.filter((q) => (q.status ?? "Livre") === "Livre");
-    if (filtro === "Ocupado")
-      return quartos.filter((q) => (q.status ?? "") === "Ocupado");
-    return quartos.filter((q) => (q.status ?? "") === "Manutencao");
-  }, [quartos, filtro]);
 
+    /* 🔢 Ordenação multi-critério:
+       1) Número (402, 403...)
+       2) Capacidade (2, 4, 5...)
+    */
+    const ordenados = [...quartos].sort((a, b) => {
+      const na = Number(a?.numero ?? a?.Numero ?? 0);
+      const nb = Number(b?.numero ?? b?.Numero ?? 0);
+      if (na !== nb) return na - nb;
+
+      const capA = Number(a?.capacidade ?? a?.Capacidade ?? 0);
+      const capB = Number(b?.capacidade ?? b?.Capacidade ?? 0);
+      return capA - capB;
+    });
+
+    /* Filtro por status */
+    let filtrados = ordenados;
+    if (filtroStatus !== "Todos") {
+      filtrados = filtrados.filter(q =>
+        (q.status ?? "").toLowerCase() === filtroStatus.toLowerCase()
+      );
+    }
+
+    /* Filtro por capacidade */
+    if (filtroCapacidade !== "Todos") {
+      const cap = Number(filtroCapacidade);
+      filtrados = filtrados.filter(q =>
+        Number(q.capacidade ?? q.Capacidade ?? 0) === cap
+      );
+    }
+
+    return filtrados;
+  }, [quartos, filtroStatus, filtroCapacidade]);
+
+  /* ===========================================================
+     Badges
+  =========================================================== */
   function classePill(status) {
     if (status === "Ocupado") return "qr-pill qr-pill--ocupado";
     if (status === "Manutencao") return "qr-pill qr-pill--manutencao";
     return "qr-pill qr-pill--livre";
   }
 
-  // Navega para a página de conta/encerramento:
-  // - Se o card já traz hospede.hospedagemId -> navega direto
-  // - Senão, consulta a hospedagem ativa pelo quarto; 404 vira null (sem quebrar)
+  /* ===========================================================
+     Encerrar hospedagem
+  =========================================================== */
   async function irParaEncerramento(q) {
     const quartoId = q?.id ?? q?.Id;
     if (!quartoId) return;
 
-    // 1) já veio no payload
-    const direta = q?.hospede?.hospedagemId;
-    if (direta) {
-      navigate(`/conta/${direta}`);
+    if (q?.hospede?.hospedagemId) {
+      navigate(`/conta/${q.hospede.hospedagemId}`);
       return;
     }
 
-    // 2) buscar ativa por quarto (tolerante a 404)
     try {
       const ativa = await obterHospedagemAtivaPorQuarto(quartoId);
-      if (ativa?.id ?? ativa?.Id) {
-        const id = ativa.id ?? ativa.Id;
-        navigate(`/conta/${id}`);
-      } else {
-        alert("Não há hospedagem ativa para este quarto.");
-      }
+      const id = ativa?.id ?? ativa?.Id;
+      if (id) navigate(`/conta/${id}`);
+      else alert("Não há hospedagem ativa para este quarto.");
     } catch (err) {
-      console.warn(
-        "Não foi possível obter a hospedagem ativa do quarto",
-        quartoId,
-        err
-      );
-      alert("Falha ao buscar a hospedagem ativa. Veja o Console (F12).");
+      console.warn(err);
+      alert("Falha ao buscar a hospedagem ativa.");
     }
   }
 
+  /* ===========================================================
+     RENDER
+  =========================================================== */
   return (
     <div className="qr-root">
       <div className="qr-card">
         <div className="qr-header">
           <h2 className="qr-title">
-            <img
-              src={quartoIcon}
-              alt=""
-              className="qr-icon"
-              width={40}
-              height={40}
-            />
+            <img src={quartoIcon} alt="" className="qr-icon" width={40} height={40} />
             Quartos
           </h2>
-          <div style={{ display: "flex", gap: 10, alignItems: "center" }}>
+          <div style={{ display: "flex", gap: 10 }}>
             <button
-              type="button"
               className="qr-btn qr-btn--ghost"
               onClick={carregar}
               disabled={loading}
             >
               {loading ? "Atualizando..." : "Atualizar"}
             </button>
-            <Link to="/" className="qr-link">
-              ← Voltar
-            </Link>
+            <Link to="/" className="qr-link">← Voltar</Link>
           </div>
         </div>
 
         {toast && <div className="qr-toast qr-toast--ok">{toast}</div>}
         {erro && <div className="qr-toast qr-toast--erro">{erro}</div>}
 
+        {/* ===========================================================
+            Toolbar com filtros
+        =========================================================== */}
         <div className="qr-toolbar" style={{ flexWrap: "wrap", gap: 12 }}>
-          <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
-            <label style={{ fontSize: 14 }}>Entrada:</label>
-            <input
-              type="date"
-              className="qr-input"
-              value={entrada}
-              onChange={(e) => setEntrada(e.target.value)}
-            />
+          <div>
+            <label>Entrada:</label>
+            <input type="date" className="qr-input"
+              value={entrada} onChange={e => setEntrada(e.target.value)} />
           </div>
-          <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
-            <label style={{ fontSize: 14 }}>Saída:</label>
-            <input
-              type="date"
-              className="qr-input"
-              value={saida}
-              onChange={(e) => setSaida(e.target.value)}
-            />
+
+          <div>
+            <label>Saída:</label>
+            <input type="date" className="qr-input"
+              value={saida} onChange={e => setSaida(e.target.value)} />
           </div>
 
           <div style={{ flex: 1 }} />
-          <label style={{ fontSize: 14 }}>Filtrar:</label>
-          <select
-            value={filtro}
-            onChange={(e) => setFiltro(e.target.value)}
-            className="qr-select"
-          >
-            <option>Todos</option>
-            <option>Livre</option>
-            <option>Ocupado</option>
-            <option>Manutencao</option>
+
+          <label>Status:</label>
+          <select className="qr-select"
+            value={filtroStatus} onChange={e => setFiltroStatus(e.target.value)}>
+            <option value="Todos">Todos</option>
+            <option value="Livre">Livre</option>
+            <option value="Ocupado">Ocupado</option>
+            <option value="Manutencao">Manutenção</option>
+          </select>
+
+          <label>Capacidade:</label>
+          <select className="qr-select"
+            value={filtroCapacidade} onChange={e => setFiltroCapacidade(e.target.value)}>
+            <option value="Todos">Todas</option>
+            <option value="2">2 hóspedes</option>
+            <option value="3">3 hóspedes</option>
+            <option value="4">4 hóspedes</option>
+            <option value="5">5 hóspedes</option>
           </select>
         </div>
 
-        <div className="qr-help" style={{ marginBottom: 8 }}>
-          {entrada && saida ? (
-            <>Status calculado para o período informado.</>
-          ) : (
-            <>
-              Sem período: status baseado <strong>agora</strong> (API{" "}
-              <code>/Rooms/with-guest</code>).
-            </>
-          )}
+        {/* Info */}
+        <div className="qr-help">
+          {entrada && saida
+            ? "Status calculado para o período informado."
+            : "🕒 Status atualizado em tempo real"}
         </div>
 
+        {/* ===========================================================
+            GRID DE QUARTOS
+        =========================================================== */}
         {loading ? (
-          <p>Carregando...</p>
+          <p>Carregando…</p>
         ) : (
           <div className="qr-grid">
             {visiveis.map((q, idx) => {
-              const id = q?.id ?? q?.Id ?? idx;
-              const numero = q?.numero ?? q?.Numero ?? id;
+              const id = q.id ?? q.Id ?? idx;
+              const numero = q.numero ?? q.Numero ?? id;
+              const capacidade = q.capacidade ?? q.Capacidade ?? 2;
               const status = q.status ?? "Livre";
               const ocupado = status === "Ocupado";
 
@@ -279,54 +306,42 @@ function QuartosInner() {
                   </div>
 
                   <div className="qr-roomMeta">
-                    {(q.tipo ?? q.Tipo ?? "Padrão")} &middot;{" "}
-                    {(q.capacidade ?? q.Capacidade ?? 2)} hóspedes
+                    {(q.tipo ?? q.Tipo ?? "Padrão")} • {capacidade} hóspedes
                   </div>
 
-                  {!entrada && !saida && ocupado && q.hospede && (
+                  {ocupado && q.hospede && !entrada && !saida && (
                     <div className="qr-roomMeta" style={{ marginTop: 8 }}>
-                      👤 {q.hospede?.nome}
+                      👤 {q.hospede.nome}
                       <br />
-                      🗓️ Entrada: {formatarData(q.hospede?.dataEntrada)}
+                      🗓️ Entrada: {formatarData(q.hospede.dataEntrada)}
                     </div>
                   )}
 
                   <div className="qr-actions">
                     {status === "Livre" ? (
-                      <Link
-                        to={`/quartos/checkin/${id}`}
-                        className="qr-btn qr-btn--primary"
-                      >
+                      <Link to={`/quartos/checkin/${id}`} className="qr-btn qr-btn--primary">
                         🛎️ Acomodar
                       </Link>
                     ) : (
                       <>
                         <button
-                          type="button"
                           className="qr-btn qr-btn--ghost"
-                          disabled
-                          aria-disabled="true"
-                        >
+                          disabled aria-disabled="true">
                           Indisponível
                         </button>
 
-                        {/* Encerrar: link direto se temos o id; senão, busca e navega */}
-                        {q?.hospede?.hospedagemId ? (
+                        {(q.hospede?.hospedagemId) ? (
                           <Link
                             to={`/conta/${q.hospede.hospedagemId}`}
                             className="qr-btn qr-btn--danger"
-                            style={{ marginLeft: 8 }}
-                          >
+                            style={{ marginLeft: 8 }}>
                             💳 Encerrar
                           </Link>
                         ) : (
                           <button
-                            type="button"
                             className="qr-btn qr-btn--danger"
                             style={{ marginLeft: 8 }}
-                            onClick={() => irParaEncerramento(q)}
-                            title="Encerrar conta desta hospedagem"
-                          >
+                            onClick={() => irParaEncerramento(q)}>
                             💳 Encerrar
                           </button>
                         )}
@@ -343,7 +358,9 @@ function QuartosInner() {
   );
 }
 
-/* ---------- exporta com boundary ---------- */
+/* ===========================================================
+   EXPORT COM ERROR BOUNDARY
+=========================================================== */
 export default function Quartos() {
   return (
     <ErrorBoundary>

@@ -14,20 +14,28 @@ namespace HotelFazendaApi.Controllers
         public RoomsController(AppDbContext db) => _db = db;
 
         // ============================================================
+        // Regra de "reserva ativa":
+        //  - QuartoId preenchido
+        //  - Status != Cancelada e != Encerrada
+        //  - DataEntrada <= agora
+        //  - DataSaida default/nula OU > agora
+        // ============================================================
+
+        // ============================================================
         // GET /api/Rooms
         // Lista de quartos com status AGORA (Livre / Ocupado / Manutencao)
         // ============================================================
-
         [HttpGet]
         public async Task<ActionResult<IEnumerable<object>>> Listar()
         {
             var agora = DateTime.UtcNow;
 
-            // Regra unificada de hospedagem ativa
             var ocupadosIds = await _db.Reservations
                 .AsNoTracking()
                 .Where(r =>
                     r.QuartoId != null &&
+                    r.Status != "Cancelada" &&
+                    r.Status != "Encerrada" &&
                     r.DataEntrada <= agora &&
                     (r.DataSaida == default || r.DataSaida > agora)
                 )
@@ -39,7 +47,7 @@ namespace HotelFazendaApi.Controllers
 
             var quartos = await _db.Rooms
                 .AsNoTracking()
-                .OrderBy(q => q.Numero)
+                .OrderBy(q => q.Numero)   // ex.: 402, 403, 405...
                 .Select(q => new
                 {
                     id = q.Id,
@@ -66,16 +74,17 @@ namespace HotelFazendaApi.Controllers
 
         // ============================================================
         // GET /api/Rooms/{id}
-        // Detalhe com status AGORA
+        // Detalhe de um quarto com status AGORA
         // ============================================================
-
         [HttpGet("{id:int}")]
         public async Task<ActionResult<object>> ObterPorId(int id)
         {
-            var room = await _db.Rooms.AsNoTracking()
+            var room = await _db.Rooms
+                .AsNoTracking()
                 .FirstOrDefaultAsync(x => x.Id == id);
 
-            if (room == null) return NotFound();
+            if (room == null)
+                return NotFound();
 
             var agora = DateTime.UtcNow;
 
@@ -83,6 +92,8 @@ namespace HotelFazendaApi.Controllers
                 .AsNoTracking()
                 .AnyAsync(r =>
                     r.QuartoId == id &&
+                    r.Status != "Cancelada" &&
+                    r.Status != "Encerrada" &&
                     r.DataEntrada <= agora &&
                     (r.DataSaida == default || r.DataSaida > agora)
                 );
@@ -103,9 +114,8 @@ namespace HotelFazendaApi.Controllers
 
         // ============================================================
         // GET /api/Rooms/available
-        // Quartos disponíveis para um período
+        // Quartos disponíveis para um período (consulta de reserva)
         // ============================================================
-
         [HttpGet("available")]
         [AllowAnonymous]
         public async Task<ActionResult<IEnumerable<object>>> ListarDisponiveis(
@@ -115,25 +125,31 @@ namespace HotelFazendaApi.Controllers
         {
             if (!DateTime.TryParse(entrada, out var ini) ||
                 !DateTime.TryParse(saida, out var fim))
-                return BadRequest("Datas inválidas. Use ISO.");
+            {
+                return BadRequest("Datas inválidas. Use formato válido (ex.: 2025-11-20).");
+            }
 
             if (fim <= ini)
-                return BadRequest("Saída deve ser após a entrada.");
+                return BadRequest("A data de saída deve ser após a data de entrada.");
 
             ini = ini.ToUniversalTime();
             fim = fim.ToUniversalTime();
 
-            var quartosElegiveis = _db.Rooms.AsNoTracking()
+            var quartosElegiveis = _db.Rooms
+                .AsNoTracking()
                 .Where(q => q.Status != "Manutencao");
 
             if (hospedes.HasValue && hospedes.Value > 0)
                 quartosElegiveis = quartosElegiveis.Where(q => q.Capacidade >= hospedes.Value);
 
-            // Regra de overlap corrigida
+            // Reservas que bloqueiam o período (overlap),
+            // desconsiderando Cancelada/Encerrada
             var idsIndisponiveis = await _db.Reservations
                 .AsNoTracking()
                 .Where(r =>
                     r.QuartoId != null &&
+                    r.Status != "Cancelada" &&
+                    r.Status != "Encerrada" &&
                     !(r.DataSaida <= ini || r.DataEntrada >= fim)
                 )
                 .Select(r => r.QuartoId!.Value)
@@ -160,8 +176,8 @@ namespace HotelFazendaApi.Controllers
         // ============================================================
         // GET /api/Rooms/with-guest
         // Lista com hóspede ativo + status unificado
+        // Usada na tela de Quartos (/Rooms/with-guest)
         // ============================================================
-
         [HttpGet("with-guest")]
         public async Task<ActionResult<IEnumerable<object>>> ListarComHospede()
         {
@@ -171,6 +187,8 @@ namespace HotelFazendaApi.Controllers
                 .AsNoTracking()
                 .Where(r =>
                     r.QuartoId != null &&
+                    r.Status != "Cancelada" &&
+                    r.Status != "Encerrada" &&
                     r.DataEntrada <= agora &&
                     (r.DataSaida == default || r.DataSaida > agora)
                 )
@@ -182,6 +200,7 @@ namespace HotelFazendaApi.Controllers
                 })
                 .ToListAsync();
 
+            // última reserva ativa por quarto
             var ultimaPorQuarto = reservasAtivas
                 .GroupBy(x => x.QuartoId)
                 .ToDictionary(
