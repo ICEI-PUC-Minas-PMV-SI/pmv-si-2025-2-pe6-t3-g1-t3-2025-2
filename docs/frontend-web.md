@@ -86,14 +86,14 @@ A aplicação adota práticas recomendadas para segurança de sistemas distribu�
 Para a implantação o grupo utilizou basicamente os recursos abaixos:
 
 1. **Requisitos de Software**
-   -Banco de dados: PostgreSQL
-   -Linguagem: C# 
+   -**Banco de dados: PostgreSQL**
+   -**Linguagem:.NET9** 
    
 2. **Requisitos de Hardware**
-   -CPU: 2 vCPUs ou superior
-   -Memória RAM: 4 GB (mínimo)
-   -8 GB (recomendado)
-   -Armazenamento: 40 GB de SSD
+   -**CPU: 2 vCPUs ou superior**
+   -**Memória RAM: 4 GB (mínimo)**
+   -**8 GB (recomendado)**
+   -**Armazenamento: 40 GB de SSD**
    
 [Instruções para implantar a aplicação distribuída em um ambiente de produção.]
 
