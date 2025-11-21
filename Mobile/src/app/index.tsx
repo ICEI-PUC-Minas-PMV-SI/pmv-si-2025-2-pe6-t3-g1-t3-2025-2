@@ -1,6 +1,8 @@
 import { Entypo, FontAwesome5, MaterialIcons } from "@expo/vector-icons";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
+import api from "../api/index"
+import { createMMKV  } from 'react-native-mmkv';
 
 // ===== TIPOS =====
 type IconType = React.ComponentType<{ size?: number; color?: string }>;
@@ -27,11 +29,6 @@ const COLORS = {
   card: "#FFFFFF",
 };
 
-// Simula usuário logado
-const getUsuario = (): Usuario => {
-  return { nome: "Usuário Exemplo" };
-};
-
 // CARD COMPONENT
 function CustomLink({ title, subtitle, Icon, onPress }: CustomLinkProps) {
   return (
@@ -53,7 +50,26 @@ function CustomLink({ title, subtitle, Icon, onPress }: CustomLinkProps) {
 }
 
 export default function App() {
-  const [usuario, setUsuario] = useState<Usuario | null>(getUsuario());
+  const [usuario, setUsuario] = useState<Usuario | null>(null);
+
+  useEffect(() => {
+    const storage = createMMKV();
+
+    api.auth.isLoggedIn(storage).then(loggedIn => {
+      console.log("Usuário logado?", loggedIn);
+    });
+
+    api.auth.login(storage, {
+      email: "andre@teste.com",
+      password: "123456"
+    }).then(userInfo => {
+      console.log("Informações do usuário:", userInfo);
+      setUsuario({ nome: api.getUserInfo()?.user.unique_name || 'Usuário' });
+    }).catch(error => {
+      console.log("Erro ao logar:", error);
+    })
+
+  }, []);
 
   const handleLogout = () => {
     setUsuario(null);
