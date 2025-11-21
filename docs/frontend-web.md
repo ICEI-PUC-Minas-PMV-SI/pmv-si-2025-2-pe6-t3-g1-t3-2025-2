@@ -110,19 +110,39 @@ Os testes iniciaram-se com as primeiras entregas de cada módulo.
   
 A estratégia adotada inicialmente para o módulo de Login foi preencher os campos com os dados de um usuário já existente e verificar de o sistema apresenta o resultado esperado, neste caso permissão para o uso do software normalmente. Posteriormente testamos com dados de um usuário qualquer o comportamento do sistema que apresentou o resultado esperado de negação ao uso do software.
 
+![WhatsApp Image 2025-11-21 at 19 14 53](https://github.com/user-attachments/assets/9d39f948-29f4-4bf9-a115-9587b0beaff1)
+
+![WhatsApp Image 2025-11-21 at 19 15 18](https://github.com/user-attachments/assets/ce9e4f25-d14d-4948-b3d4-71a96dacc3bf)
+
 - **Módulo Pedidos**.
 
 O módulo de pedidos possue diversos atributos, inicialmente, testamos o cadastro dos dados e se havia persistência no banco de dados. Depois de alguns erros enfrentados o grupo conseguiu resolver e atestar a persistência dos dados, nesta fase, fizemos o teste de exclusão de dados e, posterior, cadastro novo de um pedido de forma a verificar se a persistência criava um novo registro com novo número de índice. 
+
+![WhatsApp Image 2025-11-21 at 19 15 59](https://github.com/user-attachments/assets/47bb3722-7a72-431d-8096-0c7bf2f4c419)
+
+![WhatsApp Image 2025-11-21 at 19 16 15](https://github.com/user-attachments/assets/abf90986-6f3c-4098-b903-7fdf3e3a96dc)
 
 - **Módulo Hospedagem**.
 
 A estratégia adotada para este módulo de hospedagem consistiu e testar o cadastro inicial de um hóspede e observar o comprtamento sistema e a mudança de status do quarto, assim como a correção dos dados no banco de dados, depois testamos o atributo data da hospedagem que apresentou comportamento correto, ou seja, o hóspede na data cadastrada para o fim da estadia teve o status do quarto modificado de "ocupado" para "livre". Simulamos também a possibilidade de hospedagem num quarto não existente e o comportamento do sistema neste cenário.
 
+![WhatsApp Image 2025-11-21 at 19 17 48](https://github.com/user-attachments/assets/9030fbde-130b-49ff-abc4-73ef41885f58)
+
+![WhatsApp Image 2025-11-21 at 19 18 18](https://github.com/user-attachments/assets/8d35112f-bf6c-47ea-89bb-bf32a14c45b9)
+
+![WhatsApp Image 2025-11-21 at 19 18 38](https://github.com/user-attachments/assets/895f6412-15f4-4119-8929-24b3a40ce881)
+
+![WhatsApp Image 2025-11-21 at 19 18 50](https://github.com/user-attachments/assets/3483e2bc-50c2-4fdf-aa02-f5f588bcd6ff)
+
 - **Módulo Produtos**.
 
 Este módulo de produto é um dos mais importantes pois diversos módulos consomem os dados de produtos, por essa razão, o foco do teste foi verificar o cadastro, exclusão e edição dos dados. Posteriormente, testamos a integração dos dados com os demais módulos do sistema, enfrentamos alguns erros na recuperação dessas informações mas que foram sanadas no decorrer do desenvolvimento e testes.
 
+![WhatsApp Image 2025-11-21 at 19 16 46](https://github.com/user-attachments/assets/dc56f5a5-2d7c-4a49-80fb-a358a3a8ed41)
 
+![WhatsApp Image 2025-11-21 at 19 17 08](https://github.com/user-attachments/assets/aee2626d-1904-42b0-bc6b-620ab39354e1)
+
+![WhatsApp Image 2025-11-21 at 19 17 24](https://github.com/user-attachments/assets/b1bad90e-0a07-4ed9-a359-6ef6e7e4c92b)
 
 # Referências
 
