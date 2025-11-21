@@ -160,11 +160,11 @@ Atualizado em: 06/10/2025
 
 | Responsável   | Tarefa/Requisito | Iniciado em    | Prazo      | Status | Terminado em    |
 | :----         |    :----         |      :----:    | :----:     | :----: | :----:          |
-| Carlos       | Desenvolvimento módulo Login | 06/10/2025     | 17/10/2025 | ✔️    | 05/02/2024      |
-| Raphael        | Testes    | 06/10/2025     | 17/10/2025 | ✔️    |                 |
-| Déborah        | Desenvolvimento módulo Hospeddagem  | 06/10/2025     | 17/10/2025 | ✔️     |                 |
-| Junio firmino        | Testes  |    06/10/2025        | 17/10/2025 | ✔️    |       |
-| André        | Desenvolvimento módulo pedido  |    06/10/2025        | 17/10/2025 | ✔️    |       |
+| Carlos       | Desenvolvimento módulo Login | 06/10/2025     | 17/10/2025 | ✔️    | 17/10/2025    |
+| Raphael        | Testes    | 06/10/2025     | 17/10/2025 | ✔️    |          17/10/2025       |
+| Déborah        | Desenvolvimento módulo Hospeddagem  | 06/10/2025     | 17/10/2025 | ✔️     |     17/10/2025            |
+| Junio firmino        | Testes  |    06/10/2025        | 17/10/2025 | ✔️    |  17/10/2025     |
+| André        | Desenvolvimento módulo pedido  |    06/10/2025        | 17/10/2025 | ✔️    |  17/10/2025     |
 
 
 #### Semana 2
@@ -173,11 +173,11 @@ Atualizado em: 20/10/2025
 
 | Responsável   | Tarefa/Requisito | Iniciado em    | Prazo      | Status | Terminado em    |
 | :----         |    :----         |      :----:    | :----:     | :----: | :----:          |
-| Carlos        | Desenvolvimento módulo Login   | 20/10/2025     | 30/10/2025 | ✔️    | 05/02/2024      |
-| Raphael        | Testes    | 20/10/2025     | 30/10/2025 | ✔️    |                 |
-| Déborah        | Desenvolvimento módulo Hospeddagem  | 20/10/2025     | 30/10/2025| ✔️    |                 |
-| Junio Firmino        | Testes   |  22/10/2025    | 30/10/2025 | ✔️    |       |
-| André        | Desenvolvimento módulo pedido  |  20/10/2025    | 30/10/2025 | ✔️    |       |
+| Carlos        | Desenvolvimento módulo Login   | 20/10/2025     | 30/10/2025 | ✔️    | 28/10/2025      |
+| Raphael        | Testes    | 20/10/2025     | 30/10/2025 | ✔️    |     30/10/2025            |
+| Déborah        | Desenvolvimento módulo Hospeddagem  | 20/10/2025     | 30/10/2025| ✔️    |   28/10/2025        |
+| Junio Firmino        | Testes   |  22/10/2025    | 30/10/2025 | ✔️    |   30/10/2025|    |
+| André        | Desenvolvimento módulo pedido  |  20/10/2025    | 30/10/2025 | ✔️    |    25/10/2025|   |
 
 Legenda:
 - ✔️: terminado
