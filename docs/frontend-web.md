@@ -106,10 +106,13 @@ Para a implantação o grupo utilizou basicamente os recursos abaixos:
 
 Os testes iniciaram-se com as primeiras entregas de cada módulo.
 
-- ** Módulo Login**.
+- **Módulo Login**.
+  
 A estratégia adotada inicialmente para o módulo de Login foi preencher os campos com os dados de um usuário já existente e verificar de o sistema apresenta o resultado esperado, neste caso permissão para o uso do software normalmente. Posteriormente testamos com dados de um usuário qualquer o comportamento do sistema que apresentou o resultado esperado de negação ao uso do software.
 
-- ** Módulo Pedidos**.
+- **Módulo Pedidos**.
+
+O módulo de pedidos possue diversos atributos, inicialmente, testamos o cadastro dos dados e se havia persistência no banco de dados. Depois de alguns erros enfrentados o grupo conseguiu resolver e atestar a persistência dos dados, nesta fase, fizemos o teste de exclusão de dados e, posterior, cadastro novo de forma a verificar se a persistência criava um novo registro com novo número de índice. 
 
 
 
