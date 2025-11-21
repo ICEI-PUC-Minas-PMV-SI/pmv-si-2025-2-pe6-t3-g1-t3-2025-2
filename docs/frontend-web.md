@@ -112,11 +112,15 @@ A estratégia adotada inicialmente para o módulo de Login foi preencher os camp
 
 - **Módulo Pedidos**.
 
-O módulo de pedidos possue diversos atributos, inicialmente, testamos o cadastro dos dados e se havia persistência no banco de dados. Depois de alguns erros enfrentados o grupo conseguiu resolver e atestar a persistência dos dados, nesta fase, fizemos o teste de exclusão de dados e, posterior, cadastro novo de forma a verificar se a persistência criava um novo registro com novo número de índice. 
+O módulo de pedidos possue diversos atributos, inicialmente, testamos o cadastro dos dados e se havia persistência no banco de dados. Depois de alguns erros enfrentados o grupo conseguiu resolver e atestar a persistência dos dados, nesta fase, fizemos o teste de exclusão de dados e, posterior, cadastro novo de um pedido de forma a verificar se a persistência criava um novo registro com novo número de índice. 
 
 - **Módulo Hospedagem**.
 
 A estratégia adotada para este módulo de hospedagem consistiu e testar o cadastro inicial de um hóspede e observar o comprtamento sistema e a mudança de status do quarto, assim como a correção dos dados no banco de dados, depois testamos o atributo data da hospedagem que apresentou comportamento correto, ou seja, o hóspede na data cadastrada para o fim da estadia teve o status do quarto modificado de "ocupado" para "livre". Simulamos também a possibilidade de hospedagem num quarto não existente e o comportamento do sistema neste cenário.
+
+- **Módulo Produtos**.
+
+Este módulo de produto é um dos mais importantes pois diversos módulos consomem os dados de produtos, por essa razão, o foco do teste foi verificar o cadastro, exclusão e edição dos dados. Posteriormente, testamos a integração dos dados com os demais módulos do sistema, enfrentamos alguns erros na recuperação dessas informações mas que foram sanadas no decorrer do desenvolvimento e testes.
 
 
 
