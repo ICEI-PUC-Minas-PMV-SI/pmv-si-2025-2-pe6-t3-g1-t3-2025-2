@@ -103,7 +103,7 @@ A aplicação adota práticas recomendadas para segurança de sistemas distribu�
 
 # Referências
 
-O grupo utilizou como referência principal os conteúdos disponibilizados no microfundamento do período.
+O grupo utilizou como referência principal os conteúdos disponibilizados no microfundamento de desenvolvimento Web.
 
 # Planejamento
 
@@ -117,11 +117,11 @@ Atualizado em: 06/10/2025
 
 | Responsável   | Tarefa/Requisito | Iniciado em    | Prazo      | Status | Terminado em    |
 | :----         |    :----         |      :----:    | :----:     | :----: | :----:          |
-| Carlos       | Introdução | 01/02/2024     | 06/10/2025 | ✔️    | 05/02/2024      |
-| Raphael        | Objetivos    | 03/02/2024     | 06/10/2025 | ✔️    |                 |
-| Déborah        | Histórias de usuário  | 01/01/2024     | 06/10/2025 | ✔️     |                 |
-| Junio firmino        | Testes  |    01/01/2024        | 17/10/2025 | ✔️    |       |
-| André        | Personas 1  |    01/01/2024        | 06/10/2025 | ✔️    |       |
+| Carlos       | Desenvolvimento módulo Login | 06/10/2025     | 17/10/2025 | ✔️    | 05/02/2024      |
+| Raphael        | Testes    | 06/10/2025     | 17/10/2025 | ✔️    |                 |
+| Déborah        | Desenvolvimento módulo Hospeddagem  | 06/10/2025     | 17/10/2025 | ✔️     |                 |
+| Junio firmino        | Testes  |    06/10/2025        | 17/10/2025 | ✔️    |       |
+| André        | Desenvolvimento módulo pedido  |    06/10/2025        | 17/10/2025 | ✔️    |       |
 
 
 #### Semana 2
@@ -130,11 +130,11 @@ Atualizado em: 20/10/2025
 
 | Responsável   | Tarefa/Requisito | Iniciado em    | Prazo      | Status | Terminado em    |
 | :----         |    :----         |      :----:    | :----:     | :----: | :----:          |
-| Carlos        | Página inicial   | 01/02/2024     | 20/10/2025 | ✔️    | 05/02/2024      |
-| Raphael        | Testes    | 22/04/2024     | 20/10/2025 | ✔️    |                 |
-| Déborah        | Página de login  | 22/04/2024     | 20/10/2025 | ✔️    |                 |
+| Carlos        | Desenvolvimento módulo Login   | 20/10/2025     | 30/10/2025 | ✔️    | 05/02/2024      |
+| Raphael        | Testes    | 20/10/2025     | 30/10/2025 | ✔️    |                 |
+| Déborah        | Desenvolvimento módulo Hospeddagem  | 20/10/2025     | 30/10/2025| ✔️    |                 |
 | Junio Firmino        | Testes   |  22/10/2025    | 30/10/2025 | ✔️    |       |
-| André        | Script de login  |  01/01/2024    | 20/10/2025 | ✔️    |       |
+| André        | Desenvolvimento módulo pedido  |  20/10/2025    | 30/10/2025 | ✔️    |       |
 
 Legenda:
 - ✔️: terminado
