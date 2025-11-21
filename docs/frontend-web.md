@@ -160,11 +160,11 @@ Atualizado em: 06/10/2025
 
 | Responsável   | Tarefa/Requisito | Iniciado em    | Prazo      | Status | Terminado em    |
 | :----         |    :----         |      :----:    | :----:     | :----: | :----:          |
-| Carlos       | Desenvolvimento módulo Login | 06/10/2025     | 17/10/2025 | ✔️    | 05/02/2024      |
-| Raphael        | Testes    | 06/10/2025     | 17/10/2025 | ✔️    |                 |
-| Déborah        | Desenvolvimento módulo Hospeddagem  | 06/10/2025     | 17/10/2025 | ✔️     |                 |
-| Junio firmino        | Testes  |    06/10/2025        | 17/10/2025 | ✔️    |       |
-| André        | Desenvolvimento módulo pedido  |    06/10/2025        | 17/10/2025 | ✔️    |       |
+| Carlos       | Desenvolvimento módulo Login | 06/10/2025     | 17/10/2025 | ✔️    | 17/10/2025    |
+| Raphael        | Testes    | 06/10/2025     | 17/10/2025 | ✔️    |          17/10/2025       |
+| Déborah        | Desenvolvimento módulo Hospeddagem  | 06/10/2025     | 17/10/2025 | ✔️     |     17/10/2025            |
+| Junio firmino        | Testes  |    06/10/2025        | 17/10/2025 | ✔️    |  17/10/2025     |
+| André        | Desenvolvimento módulo pedido  |    06/10/2025        | 17/10/2025 | ✔️    |  17/10/2025     |
 
 
 #### Semana 2
