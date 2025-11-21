@@ -85,11 +85,11 @@ A aplicação adota práticas recomendadas para segurança de sistemas distribu�
 
 Para a implantação o grupo utilizou basicamente os recursos abaixos:
 
-1. Requisitos de Software
+1. **Requisitos de Software**
    -Banco de dados: PostgreSQL
    -Linguagem: C# 
    
-3. Requisitos de Hardware
+2. **Requisitos de Hardware**
    -CPU: 2 vCPUs ou superior
    -Memória RAM: 4 GB (mínimo)
    -8 GB (recomendado)
