@@ -91,7 +91,7 @@ Para a implantação o grupo utilizou basicamente os recursos abaixos:
    
 3. **Requisitos de Hardware**.
    -**CPU:** 2 vCPUs ou superior.
-   -**Memória RAM:** 4 GB (mínimo), 8 GB (recomendado).
+   -**Memória RAM:** 4 GB (mínimo), 8 GB (recomendado).   
    -**Armazenamento:** 40 GB de SSD.
    
 [Instruções para implantar a aplicação distribuída em um ambiente de produção.]
