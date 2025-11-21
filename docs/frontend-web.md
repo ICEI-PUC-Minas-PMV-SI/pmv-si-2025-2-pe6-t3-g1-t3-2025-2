@@ -83,6 +83,18 @@ A aplicação adota práticas recomendadas para segurança de sistemas distribu�
 
 ## Implantação
 
+Para a implantação o grupo utilizou basicamente os recursos abaixos:
+
+1. Requisitos de Software
+   -Banco de dados: PostgreSQL
+   -Linguagem: C# 
+   
+3. Requisitos de Hardware
+   -CPU: 2 vCPUs ou superior
+   -Memória RAM: 4 GB (mínimo)
+   -8 GB (recomendado)
+   -Armazenamento: 40 GB de SSD
+   
 [Instruções para implantar a aplicação distribuída em um ambiente de produção.]
 
 1. Defina os requisitos de hardware e software necessários para implantar a aplicação em um ambiente de produção.
