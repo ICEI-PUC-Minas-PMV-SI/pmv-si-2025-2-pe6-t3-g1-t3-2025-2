@@ -104,13 +104,14 @@ Para a implantação o grupo utilizou basicamente os recursos abaixos:
 
 ## Testes
 
-[Descreva a estratégia de teste, incluindo os tipos de teste a serem realizados (unitários, integração, carga, etc.) e as ferramentas a serem utilizadas.]
+Os testes iniciaram-se com as primeiras entregas de cada módulo.
 
-1. Crie casos de teste para cobrir todos os requisitos funcionais e não funcionais da aplicação.
-2. Implemente testes unitários para testar unidades individuais de código, como funções e classes.
-3. Realize testes de integração para verificar a interação correta entre os componentes da aplicação.
-4. Execute testes de carga para avaliar o desempenho da aplicação sob carga significativa.
-5. Utilize ferramentas de teste adequadas, como frameworks de teste e ferramentas de automação de teste, para agilizar o processo de teste.
+- ** Módulo Login**.
+A estratégia adotada inicialmente para o módulo de Login foi preencher os campos com os dados de um usuário já existente e verificar de o sistema apresenta o resultado esperado, neste caso permissão para o uso do software normalmente. Posteriormente testamos com dados de um usuário qualquer o comportamento do sistema que apresentou o resultado esperado de negação ao uso do software.
+
+- ** Módulo Pedidos**.
+
+
 
 # Referências
 
