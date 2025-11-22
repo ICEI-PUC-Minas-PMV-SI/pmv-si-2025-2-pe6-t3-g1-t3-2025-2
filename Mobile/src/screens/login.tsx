@@ -1,4 +1,4 @@
-import { View, Text, TextInput, Button, StyleSheet, SafeAreaView } from "react-native";
+import { View, Text, TextInput, Image, StyleSheet, TouchableOpacity } from "react-native";
 import Toast from "react-native-toast-message";
 import api from "../api";
 import { createMMKV  } from 'react-native-mmkv';
@@ -12,9 +12,10 @@ export default function Login() {
     const [email, setEmail] = useState("");
     const [senha, setSenha] = useState("");
 
+    async function handleLogin() {
+        console.log("Email:", email, "Senha:", senha);
 
-    async function doLogin() {
-        if(!email || !senha) {
+        if (!email || !senha) {
             Toast.show({
                 type: "error",
                 text1: "Erro ao fazer login",
@@ -23,7 +24,7 @@ export default function Login() {
             return;
         }
 
-        if(!email.trim().includes("@")) {
+        if (!email.trim().includes("@")) {
             Toast.show({
                 type: "error",
                 text1: "Erro ao fazer login",
@@ -32,7 +33,7 @@ export default function Login() {
             return;
         }
 
-        if(senha.trim().length < 6) {
+        if (senha.trim().length < 6) {
             Toast.show({
                 type: "error",
                 text1: "Erro ao fazer login",
@@ -57,7 +58,7 @@ export default function Login() {
         }
         catch (error) {
             console.error("Erro ao fazer login:", error);
-            
+
             Toast.show({
                 type: "error",
                 text1: "Erro ao fazer login",
@@ -66,75 +67,120 @@ export default function Login() {
         }
     }
 
-
-
-    return (
-        <View style={styles.box}>
-            <Text style={styles.title}>Login</Text>
-
-            <TextInput
-                placeholder="Email"
-                style={styles.input}
-                keyboardType="email-address"
-                autoCapitalize="none"
-                autoCorrect={false}
-                value={email}
-                onChangeText={setEmail}
-            />
-
-            <TextInput
-                placeholder="Senha"
-                secureTextEntry
-                style={styles.input}
-                value={senha}
-                onChangeText={setSenha}
-                autoCapitalize="none"
-                autoCorrect={false}
-            />
-
-            <View style={styles.buttonWrapper}>
-                <Button title="Entrar" onPress={doLogin} /> 
-            </View>
+  return (
+    <View style={styles.container}>
+      <View style={styles.box}>
+        {/* Header com logo */}
+        <View style={styles.header}>
+          <Image
+            source={require("../../assets/images/logoHF.png")} // substitua pelo seu logo
+            style={styles.logo}
+            resizeMode="contain"
+          />
         </View>
-    );
+
+        {/* Título */}
+        <Text style={styles.title}>Acessar o sistema</Text>
+        <Text style={styles.subtitle}>Hotel Fazenda</Text>
+
+        {/* Inputs */}
+        <TextInput
+          placeholder="E-mail"
+          value={email}
+          onChangeText={setEmail}
+          style={styles.input}
+          keyboardType="email-address"
+        />
+        <TextInput
+          placeholder="Senha"
+          value={senha}
+          onChangeText={setSenha}
+          style={styles.input}
+          secureTextEntry
+        />
+
+        {/* Botão Entrar */}
+        <TouchableOpacity style={styles.button} onPress={handleLogin}>
+          <Text style={styles.buttonText}>Entrar</Text>
+        </TouchableOpacity>
+
+        {/* Link esqueci senha */}
+        <TouchableOpacity>
+          <Text style={styles.forgot}>Esqueci minha senha</Text>
+        </TouchableOpacity>
+      </View>
+    </View>
+  );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     justifyContent: "center",
-    padding: 24,
-    backgroundColor: "#f5f5f5",
+    alignItems: "center",
+    backgroundColor: "#f6f2eb", // fundo da tela
   },
-
   box: {
+    width: "85%",
     backgroundColor: "#fff",
     borderRadius: 12,
     padding: 24,
-    elevation: 4,         // sombra Android
-    shadowColor: "#000",  // sombra iOS
+    shadowColor: "#000",
     shadowOpacity: 0.1,
-    shadowRadius: 6,
+    shadowRadius: 10,
     shadowOffset: { width: 0, height: 4 },
+    elevation: 4,
   },
-
-  title: {
-    fontSize: 28,
+  header: {
+    backgroundColor: "#3b5a3c", // verde do topo
+    borderTopLeftRadius: 12,
+    borderTopRightRadius: 12,
+    padding: 20,
+    alignItems: "center",
     marginBottom: 20,
-    fontWeight: "600",
+  },
+  logo: {
+    width: 80,
+    height: 80,
+  },
+  title: {
+    fontSize: 22,
+    fontWeight: "bold",
+    color: "#5d4433",
     textAlign: "center",
   },
-
+  subtitle: {
+    fontSize: 14,
+    color: "#3b5a3c",
+    textAlign: "center",
+    marginBottom: 20,
+  },
   input: {
-    backgroundColor: "#eee",
+    borderWidth: 1,
+    borderColor: "#ddd",
     borderRadius: 8,
     paddingHorizontal: 12,
     paddingVertical: 10,
-    marginBottom: 14,
+    marginBottom: 12,
+    fontSize: 16,
+    backgroundColor: "#f9f9f9",
+  },
+  button: {
+    backgroundColor: "#3b5a3c",
+    borderRadius: 8,
+    paddingVertical: 12,
+    marginTop: 8,
+    alignItems: "center",
+  },
+  buttonText: {
+    color: "#fff",
+    fontWeight: "bold",
     fontSize: 16,
   },
-
-  buttonWrapper: {
-    marginTop: 10,
+  forgot: {
+    color: "#1a73e8",
+    textAlign: "center",
+    marginTop: 12,
+    textDecorationLine: "underline",
   },
 });
