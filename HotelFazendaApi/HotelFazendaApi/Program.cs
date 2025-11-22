@@ -24,6 +24,12 @@ builder.Services.AddControllers()
         );
     });
 
+
+builder.WebHost.ConfigureKestrel(options =>
+{
+    options.ListenAnyIP(5210);
+});
+
 // ======================================================
 // 🔹 Swagger + Autenticação JWT
 // ======================================================
