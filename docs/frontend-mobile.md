@@ -1,6 +1,6 @@
 # Front-end Móvel
 
-[Inclua uma breve descrição do projeto e seus objetivos.]
+Visando oferecer uma experiência mais completa para clientes e colaboradores do hotel fazenda Capitólio, foi desenvolvido uma versão mobile do sistema tendo como guia as características de interface da versão web, entretanto, as funcionalidades oferecida pela versão mobile tem como diferencial para os usuários maior flexibilidade, mobilidade e utilidade, mesmo diante das limitações que essa opção impõe.
 
 ## Projeto da Interface
 [Descreva o projeto da interface móvel da aplicação, incluindo o design visual, layout das páginas, interações do usuário e outros aspectos relevantes.]
