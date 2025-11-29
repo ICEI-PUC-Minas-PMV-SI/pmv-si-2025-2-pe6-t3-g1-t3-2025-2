@@ -5,6 +5,7 @@ import LoadingComponent from './src/components/Loading';
 import { LoadingProvider } from './src/context/loadingContext';
 import HomeScreen from "./src/screens/home";
 import LoginScreen from "./src/screens/login";
+import NewReservationScreen from './src/screens/newReservation';
 import NewUserScreen from './src/screens/newUser';
 import ProductsScreen from './src/screens/products';
 import ReservationsScreen from './src/screens/reservations';
@@ -22,6 +23,7 @@ export default function App() {
           <Stack.Screen name="Home" component={HomeScreen} />
           <Stack.Screen name="Rooms" component={RoomsScreen} />
           <Stack.Screen name="Reservations" component={ReservationsScreen} />
+          <Stack.Screen name="NewReservation" component={NewReservationScreen} />
           <Stack.Screen name="NewUser" component={NewUserScreen} />
           <Stack.Screen name="Products" component={ProductsScreen} />
         </Stack.Navigator>

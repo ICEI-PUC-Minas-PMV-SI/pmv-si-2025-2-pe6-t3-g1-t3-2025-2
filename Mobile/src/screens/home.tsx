@@ -3,6 +3,7 @@ import { useNavigation } from "@react-navigation/native";
 import React, { useEffect, useState } from "react";
 import { Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
 import { createMMKV } from 'react-native-mmkv';
+import Toast from "react-native-toast-message";
 import api from "../api/index";
 
 // ===== TIPOS =====
@@ -73,6 +74,12 @@ export default function Home() {
     setUsuario(null);
     api.auth.logout(storage);
     navigation.navigate("Login" as never);
+    
+    Toast.show({
+      type: "success",
+      text1: "Logout realizado",
+      text2: "Você saiu do sistema com sucesso.",
+    });
   };
 
   return (
