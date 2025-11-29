@@ -1,6 +1,8 @@
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import Toast from "react-native-toast-message";
+import LoadingComponent from './src/components/Loading';
+import { LoadingProvider } from './src/context/loadingContext';
 import HomeScreen from "./src/screens/home";
 import LoginScreen from "./src/screens/login";
 import NewUserScreen from './src/screens/newUser';
@@ -13,16 +15,19 @@ const Stack = createStackNavigator();
 export default function App() {
   return (
     <>
-    <NavigationContainer>
-      <Stack.Navigator initialRouteName="Login" screenOptions={{ headerShown: false }}>
-        <Stack.Screen name="Login" component={LoginScreen} />
-        <Stack.Screen name="Home" component={HomeScreen} />
-        <Stack.Screen name="Rooms" component={RoomsScreen} />
-        <Stack.Screen name="Reservations" component={ReservationsScreen} />
-        <Stack.Screen name="NewUser" component={NewUserScreen} />
-        <Stack.Screen name="Products" component={ProductsScreen} />
-      </Stack.Navigator>
-    </NavigationContainer>
+    <LoadingProvider>
+      <NavigationContainer>
+        <Stack.Navigator initialRouteName="Login" screenOptions={{ headerShown: false }}>
+          <Stack.Screen name="Login" component={LoginScreen} />
+          <Stack.Screen name="Home" component={HomeScreen} />
+          <Stack.Screen name="Rooms" component={RoomsScreen} />
+          <Stack.Screen name="Reservations" component={ReservationsScreen} />
+          <Stack.Screen name="NewUser" component={NewUserScreen} />
+          <Stack.Screen name="Products" component={ProductsScreen} />
+        </Stack.Navigator>
+      </NavigationContainer>
+      <LoadingComponent />
+    </LoadingProvider>
     <Toast />
     </>
   );

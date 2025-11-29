@@ -1,14 +1,16 @@
-import { View, Text, TextInput, Image, StyleSheet, TouchableOpacity } from "react-native";
+import { useNavigation } from "@react-navigation/native";
+import { useEffect, useState } from "react";
+import { Image, StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
+import { createMMKV } from 'react-native-mmkv';
 import Toast from "react-native-toast-message";
 import api from "../api";
-import { createMMKV } from 'react-native-mmkv';
-import { useEffect, useState } from "react";
-import { useNavigation } from "@react-navigation/native";
+import { useLoading } from "../context/loadingContext";
 
 const storage = createMMKV();
 
 export default function Login() {
     const navigation = useNavigation();
+    const { withLoading, isLoading } = useLoading();
     const [email, setEmail] = useState("");
     const [senha, setSenha] = useState("");
 
@@ -41,10 +43,12 @@ export default function Login() {
         }
 
         try {
-            await api.auth.login(storage, {
-                email,
-                password: senha
-            })
+            await withLoading(async () => {
+                await api.auth.login(storage, {
+                    email,
+                    password: senha
+                });
+            });
 
             Toast.show({
                 type: "success",
