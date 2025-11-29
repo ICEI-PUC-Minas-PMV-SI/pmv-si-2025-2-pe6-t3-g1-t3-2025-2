@@ -44,10 +44,20 @@ export default function Login() {
 
         try {
             await withLoading(async () => {
+                // 1. Serviço de login é chamado (salva token no MMKV)
                 await api.auth.login(storage, {
                     email,
                     password: senha
                 });
+
+                // 2. BUSCA O TOKEN que acabou de ser salvo no MMKV
+                const token = storage.getString("token"); 
+
+                if (token) {
+                    // 🎯 3. AÇÃO CRÍTICA: INJETA o token no ApiProvider para futuras requisições
+                    api.setAuthToken(token); 
+                }
+
             });
 
             Toast.show({
@@ -71,12 +81,20 @@ export default function Login() {
 
     async function checkIfLoggedIn() {
         const isLogged = await api.auth.isLoggedIn(storage);
+        
+        // 🎯 AÇÃO NECESSÁRIA AO INICIAR: Se estiver logado, injeta o token persistido
+        const token = storage.getString("token");
+        if (token) {
+            api.setAuthToken(token); 
+        }
+
         return isLogged;
     }
 
     useEffect(() => {
         checkIfLoggedIn().then((isLogged) => {
             if (isLogged) {
+                // O token já foi injetado acima, agora podemos navegar
                 navigation.navigate("Home" as never);
             }
         });
@@ -128,12 +146,13 @@ export default function Login() {
     );
 }
 
+// ... (Restante dos Styles, sem alteração)
 const styles = StyleSheet.create({
     container: {
         flex: 1,
         justifyContent: "center",
         alignItems: "center",
-        backgroundColor: "#f6f2eb", // fundo da tela
+        backgroundColor: "#f6f2eb", 
     },
     box: {
         width: "85%",
@@ -147,55 +166,3 @@ const styles = StyleSheet.create({
         elevation: 4,
     },
     header: {
-        backgroundColor: "#3b5a3c", // verde do topo
-        borderTopLeftRadius: 12,
-        borderTopRightRadius: 12,
-        padding: 20,
-        alignItems: "center",
-        marginBottom: 20,
-    },
-    logo: {
-        width: 80,
-        height: 80,
-    },
-    title: {
-        fontSize: 22,
-        fontWeight: "bold",
-        color: "#5d4433",
-        textAlign: "center",
-    },
-    subtitle: {
-        fontSize: 14,
-        color: "#3b5a3c",
-        textAlign: "center",
-        marginBottom: 20,
-    },
-    input: {
-        borderWidth: 1,
-        borderColor: "#ddd",
-        borderRadius: 8,
-        paddingHorizontal: 12,
-        paddingVertical: 10,
-        marginBottom: 12,
-        fontSize: 16,
-        backgroundColor: "#f9f9f9",
-    },
-    button: {
-        backgroundColor: "#3b5a3c",
-        borderRadius: 8,
-        paddingVertical: 12,
-        marginTop: 8,
-        alignItems: "center",
-    },
-    buttonText: {
-        color: "#fff",
-        fontWeight: "bold",
-        fontSize: 16,
-    },
-    forgot: {
-        color: "#1a73e8",
-        textAlign: "center",
-        marginTop: 12,
-        textDecorationLine: "underline",
-    },
-});

@@ -1,6 +1,17 @@
 {
   "ExpandedNodes": [
-    ""
+    "",
+    "\\HotelFazendaApi",
+    "\\HotelFazendaApi\\HotelFazendaApi",
+    "\\HotelFazendaApi\\HotelFazendaApi\\DTOs",
+    "\\Mobile",
+    "\\Mobile\\assets",
+    "\\Mobile\\assets\\fonts",
+    "\\Mobile\\assets\\images",
+    "\\Mobile\\constants",
+    "\\Mobile\\src",
+    "\\Mobile\\src\\api"
   ],
+  "SelectedNode": "\\Mobile\\src\\screens\\login.tsx",
   "PreviewInSolutionExplorer": false
 }
