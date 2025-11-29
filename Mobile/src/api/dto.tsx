@@ -3,6 +3,13 @@ export interface UserLoginRequestDTO {
     password: string;
 }
 
+export interface UserCreateRequestDTO {
+    name: string;
+    email: string;
+    password: string;
+    role: string;
+}
+
 export interface UserLoginResponseDTO {
     token: string;
     user: {

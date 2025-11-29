@@ -1,7 +1,7 @@
 import { MMKV } from 'react-native-mmkv';
 import { decodeJWT } from '../utils/jwt';
 import ApiProvider from "./apiProvider";
-import { UserLoginRequestDTO, UserLoginResponseDTO } from "./dto";
+import { UserCreateRequestDTO, UserLoginRequestDTO, UserLoginResponseDTO } from "./dto";
 
 class Auth {
     static userInfo: UserLoginResponseDTO | null = null;
@@ -50,6 +50,10 @@ class Auth {
         mmkv.set('authToken', result.token);
         this.provider.setToken(result.token);
         return Promise.resolve(result);
+    }
+
+    async createUser(user: UserCreateRequestDTO): Promise<void> {
+        await this.provider.httpRequest('Users', 'POST', user);
     }
 
     async logout(mmkv: MMKV): Promise<void> {

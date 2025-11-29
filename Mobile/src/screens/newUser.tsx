@@ -9,17 +9,72 @@ import {
   TouchableOpacity,
   View
 } from "react-native";
+import Toast from "react-native-toast-message";
+import api from "../api";
+import { UserCreateRequestDTO } from "../api/dto";
+import { useLoading } from "../context/loadingContext";
 
 export default function NewUserScreen() {
   const navigation = useNavigation();
+  const {withLoading, isLoading} = useLoading();
   const [nome, setNome] = useState("");
   const [email, setEmail] = useState("");
   const [senha, setSenha] = useState("");
   const [confirmarSenha, setConfirmarSenha] = useState("");
   const [perfil, setPerfil] = useState("Gerente");
 
-  function handleSave() {
-    // Lógica para salvar o novo usuário
+  async function handleSave() {
+    await withLoading(async () => {
+      try {
+        if(!nome || !email || !senha || !confirmarSenha) {
+          Toast.show({
+            type: 'error',
+            text1: 'Por favor, preencha todos os campos!'
+          });
+          return;
+        }
+
+        if (senha !== confirmarSenha) {
+          Toast.show({
+            type: 'error',
+            text1: 'As senhas não coincidem!'
+          });
+
+          return;
+        }
+
+        if(senha.length < 6 || confirmarSenha.length < 6) {
+          Toast.show({
+            type: 'error',
+            text1: 'A senha deve ter pelo menos 6 caracteres!'
+          });
+
+          return;
+        }
+
+        const newUser: UserCreateRequestDTO = {
+          name: nome,
+          email,
+          password: senha,
+          role: perfil
+        };
+
+        await api.auth.createUser(newUser);
+  
+        Toast.show({
+          type: 'success',
+          text1: 'Usuário criado com sucesso!'
+        });
+        navigation.goBack();
+      }
+      catch (error) {
+        console.error("Erro ao criar usuário:", error);
+        Toast.show({
+          type: 'error',
+          text1: 'Erro ao criar usuário. Verifique os dados e tente novamente.'
+        });
+      }
+    });
   }
 
   return (
@@ -87,9 +142,11 @@ export default function NewUserScreen() {
               style={styles.picker}
               mode="dropdown"
             >
-              <Picker.Item label="Administrador" value="Administrador" />
+              <Picker.Item label="Administrador" value="Admin" />
               <Picker.Item label="Gerente" value="Gerente" />
-              <Picker.Item label="Garcom" value="Garçom" />
+              <Picker.Item label="Recepcionista" value="Recepcao" />
+              <Picker.Item label="Garcom" value="Garcom" />
+              <Picker.Item label="Hospede" value="Hospede" />
             </Picker>
           </View>
 
