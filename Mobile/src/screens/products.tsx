@@ -1,3 +1,4 @@
+import { useNavigation } from '@react-navigation/native';
 import React, { useEffect } from 'react';
 import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import api from '../api';
@@ -5,6 +6,7 @@ import { ProductResponseDTO } from '../api/dto';
 import { useLoading } from '../context/loadingContext';
 
 const ProductsScreen = () => {
+  const navigation = useNavigation();
   const {withLoading, isLoading} = useLoading();
   const [productsData, setProductsData] = React.useState<ProductResponseDTO[]>([]);
 
@@ -31,7 +33,7 @@ const ProductsScreen = () => {
             <Text style={styles.buttonText}>Atualizar</Text>
           </TouchableOpacity>
           <Text style={styles.buttonSeparator}>–</Text>
-          <TouchableOpacity style={styles.button}>
+          <TouchableOpacity style={styles.button} onPress={() => navigation.goBack()}>
             <Text style={styles.buttonText}>Voltar</Text>
           </TouchableOpacity>
         </View>

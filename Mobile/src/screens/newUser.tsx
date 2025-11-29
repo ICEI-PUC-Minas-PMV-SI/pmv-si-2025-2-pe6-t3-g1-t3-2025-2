@@ -1,15 +1,17 @@
 import { Picker } from "@react-native-picker/picker";
+import { useNavigation } from "@react-navigation/native";
 import React, { useState } from "react";
 import {
-    ScrollView,
-    StyleSheet,
-    Text,
-    TextInput,
-    TouchableOpacity,
-    View
+  ScrollView,
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View
 } from "react-native";
 
 export default function NewUserScreen() {
+  const navigation = useNavigation();
   const [nome, setNome] = useState("");
   const [email, setEmail] = useState("");
   const [senha, setSenha] = useState("");
@@ -31,7 +33,7 @@ export default function NewUserScreen() {
         <View style={styles.header}>
           <Text style={styles.title}>👤 Novo Usuário</Text>
 
-          <TouchableOpacity onPress={() => console.log("Voltar")}>
+          <TouchableOpacity onPress={() => navigation.goBack()}>
             <Text style={styles.backText}>← Voltar</Text>
           </TouchableOpacity>
         </View>

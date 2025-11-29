@@ -1,3 +1,4 @@
+import { useNavigation } from "@react-navigation/native";
 import React, { useEffect, useState } from "react";
 import {
   FlatList,
@@ -13,6 +14,7 @@ import ReservationCard from "../components/ReservationCard";
 import { useLoading } from "../context/loadingContext";
 
 export default function ReservationsScreen() {
+  const navigation = useNavigation();
   const { withLoading, isLoading } = useLoading();
   const [search, setSearch] = useState("");
   const [filter, setFilter] = useState("Todas");
@@ -55,7 +57,7 @@ export default function ReservationsScreen() {
 
       {/* Actions */}
       <View style={styles.actionsRow}>
-        <TouchableOpacity onPress={() => console.log("Voltar")}>
+        <TouchableOpacity onPress={() => navigation.goBack()}>
           <Text style={styles.backText}>← Voltar</Text>
         </TouchableOpacity>
 
