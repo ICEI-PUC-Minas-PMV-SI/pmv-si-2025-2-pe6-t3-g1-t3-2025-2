@@ -47,7 +47,7 @@ Visando oferecer uma experiência mais completa para clientes e colaboradores do
 
 # Referências
 
-O grupo utilizou como referência as aulas do microfundamento "Desenvolvimento de Aplicações Móveis" que ofereceu um amplo aprendizado do framework REACT NATIVE no qual, tem o objetivo de oferecer um conjunto de ferramentas para a criação de soluções móveis tanto para sistemas Android como para IOS.
+O grupo utilizou como referência as aulas do microfundamento "Desenvolvimento de Aplicações Móveis" que ofereceu um amplo aprendizado do framework REACT NATIVE, no qual, tem como foco oferecer um conjunto de ferramentas que facilitem a criação de soluções móveis tanto para sistemas Android como para IOS.
 
 # Planejamento
 
