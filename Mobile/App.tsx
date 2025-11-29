@@ -1,10 +1,12 @@
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
+import React from 'react';
 import Toast from "react-native-toast-message";
 import LoadingComponent from './src/components/Loading';
 import { LoadingProvider } from './src/context/loadingContext';
 import HomeScreen from "./src/screens/home";
 import LoginScreen from "./src/screens/login";
+import NewProductScreen from './src/screens/newProduct';
 import NewReservationScreen from './src/screens/newReservation';
 import NewUserScreen from './src/screens/newUser';
 import ProductsScreen from './src/screens/products';
@@ -26,6 +28,7 @@ export default function App() {
           <Stack.Screen name="NewReservation" component={NewReservationScreen} />
           <Stack.Screen name="NewUser" component={NewUserScreen} />
           <Stack.Screen name="Products" component={ProductsScreen} />
+          <Stack.Screen name="NewProduct" component={NewProductScreen} />
         </Stack.Navigator>
       </NavigationContainer>
       <LoadingComponent />
