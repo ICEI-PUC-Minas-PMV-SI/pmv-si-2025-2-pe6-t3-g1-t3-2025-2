@@ -3,17 +3,25 @@ import { ScrollView, StyleSheet, Text, TextInput, View } from "react-native";
 import api from "../api";
 import { RoomResponseWithGuestDTO } from "../api/dto";
 import RoomCard from "../components/RoomCard";
+import { useLoading } from "../context/loadingContext";
 
 export default function Rooms() {
+  const {withLoading, isLoading} = useLoading();
   const [entrada, setEntrada] = useState("");
   const [saida, setSaida] = useState("");
   const [rooms, setRooms] = useState<RoomResponseWithGuestDTO[]>([]);
 
-  useEffect(() => { 
-    api.rooms.getRoomsWithGuests().then(data => {
-      setRooms(data);
-      console.log(data);
+  async function fetchRooms() {
+    withLoading(async () => {
+      await api.rooms.getRoomsWithGuests().then(data => {
+        setRooms(data);
+        console.log(data);
+      });
     });
+  }
+
+  useEffect(() => {
+    fetchRooms();
   }, []);
 
   return (

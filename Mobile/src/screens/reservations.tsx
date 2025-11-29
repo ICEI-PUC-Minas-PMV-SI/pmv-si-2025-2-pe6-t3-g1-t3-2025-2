@@ -1,26 +1,34 @@
 import React, { useEffect, useState } from "react";
 import {
-    FlatList,
-    StyleSheet,
-    Text,
-    TextInput,
-    TouchableOpacity,
-    View,
+  FlatList,
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
 } from "react-native";
 import api from "../api";
 import { ReservationResponseDTO } from "../api/dto";
 import ReservationCard from "../components/ReservationCard";
+import { useLoading } from "../context/loadingContext";
 
 export default function ReservationsScreen() {
+  const { withLoading, isLoading } = useLoading();
   const [search, setSearch] = useState("");
   const [filter, setFilter] = useState("Todas");
   const [reservationsData, setReservationsData] = useState<ReservationResponseDTO[]>([]);
 
-  useEffect(() => {
-    api.reservations.getAllReservations().then((data) => {
-        setReservationsData(data);
-        console.log(data);
+
+  async function fetchReservations() {
+    await withLoading(async () => {
+      const data = await api.reservations.getAllReservations();
+      setReservationsData(data);
+      console.log(data);
     });
+  }
+
+  useEffect(() => {
+    fetchReservations();
   }, []); 
 
   return (

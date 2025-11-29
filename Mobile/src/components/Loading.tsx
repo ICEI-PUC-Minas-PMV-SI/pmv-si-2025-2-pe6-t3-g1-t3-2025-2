@@ -1,43 +1,36 @@
 import React, { useEffect, useRef } from 'react';
 import {
-    Animated,
-    Dimensions,
-    Easing,
-    Modal,
-    StyleSheet,
-    Text,
-    View
+  Animated,
+  Easing,
+  Modal,
+  StyleSheet,
+  Text,
+  View,
 } from 'react-native';
 import { useLoading } from '../context/loadingContext';
-
-const { width, height } = Dimensions.get('window');
 
 const LoadingComponent: React.FC = () => {
   const { isLoading, message } = useLoading();
   const spinValue = useRef(new Animated.Value(0)).current;
 
   useEffect(() => {
-    let animation: Animated.CompositeAnimation | null = null;
+    const animation = Animated.loop(
+      Animated.timing(spinValue, {
+        toValue: 1,
+        duration: 1000,
+        easing: Easing.linear,
+        useNativeDriver: true,
+      })
+    );
 
     if (isLoading) {
-      animation = Animated.loop(
-        Animated.timing(spinValue, {
-          toValue: 1,
-          duration: 1000,
-          easing: Easing.linear,
-          useNativeDriver: true,
-        })
-      );
       animation.start();
     } else {
+      animation.stop();
       spinValue.setValue(0);
     }
 
-    return () => {
-      if (animation) {
-        animation.stop();
-      }
-    };
+    return () => animation.stop();
   }, [isLoading, spinValue]);
 
   const spin = spinValue.interpolate({
@@ -45,21 +38,18 @@ const LoadingComponent: React.FC = () => {
     outputRange: ['0deg', '360deg'],
   });
 
-  if (!isLoading) return null;
-
   return (
-    <Modal 
-      transparent 
-      animationType="fade" 
+    <Modal
+      transparent
       visible={isLoading}
       statusBarTranslucent
     >
-      <View style={styles.overlay}>
-        <View style={styles.container}>
-          <Animated.View 
-            style={[styles.spinner, { transform: [{ rotate: spin }] }]} 
+      <View style={styles.centeredView}>
+        <View style={styles.modalView}>
+          <Animated.View
+            style={[styles.spinner, { transform: [{ rotate: spin }] }]}
           />
-          <Text style={styles.text}>{message}</Text>
+          <Text style={styles.modalText}>{message}</Text>
         </View>
       </View>
     </Modal>
@@ -67,44 +57,42 @@ const LoadingComponent: React.FC = () => {
 };
 
 const styles = StyleSheet.create({
-  overlay: {
-    position: 'absolute',
-    width,
-    height,
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+  centeredView: {
+    flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    zIndex: 9999,
+    backgroundColor: 'rgba(0, 0, 0, 0.4)',
   },
-  container: {
+  modalView: {
+    margin: 20,
     backgroundColor: 'white',
-    padding: 24,
-    borderRadius: 12,
+    borderRadius: 20,
+    padding: 35,
     alignItems: 'center',
-    minWidth: 160,
     shadowColor: '#000',
     shadowOffset: {
       width: 0,
       height: 2,
     },
     shadowOpacity: 0.25,
-    shadowRadius: 3.84,
+    shadowRadius: 4,
     elevation: 5,
+    minWidth: 200,
   },
   spinner: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
+    width: 50,
+    height: 50,
+    borderRadius: 25,
     borderWidth: 4,
     borderColor: '#f3f3f3',
     borderTopColor: '#3498db',
+    marginBottom: 15,
   },
-  text: {
-    marginTop: 12,
-    fontSize: 14,
-    color: '#333',
-    fontWeight: '500',
+  modalText: {
+    marginBottom: 15,
     textAlign: 'center',
+    fontSize: 16,
+    fontWeight: '600',
   },
 });
 

@@ -1,17 +1,25 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import api from '../api';
+import { ProductResponseDTO } from '../api/dto';
+import { useLoading } from '../context/loadingContext';
 
 const ProductsScreen = () => {
-  // Dados dos produtos
-  const products = [
-    { id: 1, name: 'Suco Laranja', price: 'R$ 12,50', category: '-' },
-    { id: 2, name: 'Pizza 6 pedaços', price: 'R$ 45,00', category: '-' },
-    { id: 3, name: 'Pão de Queijo', price: 'R$ 5,00', category: '-' },
-    { id: 4, name: 'Sonho de Valsa', price: 'R$ 5,00', category: '-' },
-    { id: 5, name: 'Caipirinha Limão', price: 'R$ 22,00', category: '-' },
-    { id: 6, name: 'Coca Cola', price: 'R$ 12,00', category: '-' },
-    { id: 7, name: 'Bombom', price: 'R$ 2,50', category: '-' },
-  ];
+  const {withLoading, isLoading} = useLoading();
+  const [productsData, setProductsData] = React.useState<ProductResponseDTO[]>([]);
+
+  async function fetchProducts() {
+    withLoading(async () => {
+      await api.products.getAllProducts().then(data => {
+        console.log(data);
+        setProductsData(data);
+      });
+    });
+  }
+
+  useEffect(() => {
+    fetchProducts();
+  }, []);
 
   return (
     <View style={styles.container}>
@@ -19,7 +27,7 @@ const ProductsScreen = () => {
       <View style={styles.header}>
         <Text style={styles.title}>Produtos</Text>
         <View style={styles.headerButtons}>
-          <TouchableOpacity style={styles.button}>
+          <TouchableOpacity style={styles.button} onPress={fetchProducts}>
             <Text style={styles.buttonText}>Atualizar</Text>
           </TouchableOpacity>
           <Text style={styles.buttonSeparator}>–</Text>
@@ -38,11 +46,11 @@ const ProductsScreen = () => {
 
       {/* Lista de produtos */}
       <ScrollView style={styles.productsList}>
-        {products.map((product) => (
+        {productsData.map((product) => (
           <View key={product.id} style={styles.productRow}>
-            <Text style={[styles.productCell, styles.nameColumn]}>{product.name}</Text>
-            <Text style={[styles.productCell, styles.priceColumn]}>{product.price}</Text>
-            <Text style={[styles.productCell, styles.categoryColumn]}>{product.category}</Text>
+            <Text style={[styles.productCell, styles.nameColumn]}>{product.nome}</Text>
+            <Text style={[styles.productCell, styles.priceColumn]}>R$ {product.preco}</Text>
+            <Text style={[styles.productCell, styles.categoryColumn]}>-</Text>
           </View>
         ))}
       </ScrollView>
