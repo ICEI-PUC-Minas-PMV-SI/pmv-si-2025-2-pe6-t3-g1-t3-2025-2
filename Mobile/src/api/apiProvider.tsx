@@ -19,8 +19,8 @@ class ApiProvider {
         const options: RequestInit = {
             method,
             headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${this.token}`,
+                'Content-Type': 'application/json; charset=utf-8',
+                'Authorization': `Bearer ${this.token}`
             },
         };
         
@@ -35,9 +35,8 @@ class ApiProvider {
         if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);
         }
-    
-        const responseData = await response.json();
-        return responseData;
+
+        return await response.json();
     }
 }
 

@@ -1,6 +1,6 @@
+import { MMKV } from 'react-native-mmkv';
 import ApiProvider from "./apiProvider";
 import { UserLoginRequestDTO, UserLoginResponseDTO } from "./dto";
-import { MMKV  } from 'react-native-mmkv';
 
 class Auth {
     static userInfo: UserLoginResponseDTO | null = null;
@@ -44,8 +44,8 @@ class Auth {
         }
 
         Auth.userInfo = this.decodeToken(result.token);
-        console.log("Token recebido:", result.token);
-        console.log("Dados do usuário:", Auth.userInfo);
+        // console.log("Token recebido:", result.token);
+        // console.log("Dados do usuário:", Auth.userInfo);
         mmkv.set('authToken', result.token);
         this.provider.setToken(result.token);
         return Promise.resolve(result);

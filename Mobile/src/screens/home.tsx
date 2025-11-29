@@ -1,9 +1,9 @@
 import { Entypo, FontAwesome5, MaterialIcons } from "@expo/vector-icons";
+import { useNavigation } from "@react-navigation/native";
 import React, { useEffect, useState } from "react";
 import { Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
-import api from "../api/index"
-import { useNavigation } from "@react-navigation/native";
-import { createMMKV  } from 'react-native-mmkv';
+import { createMMKV } from 'react-native-mmkv';
+import api from "../api/index";
 
 // ===== TIPOS =====
 type IconType = React.ComponentType<{ size?: number; color?: string }>;
@@ -109,28 +109,28 @@ export default function Home() {
             title="Quartos"
             subtitle="Acomodar hóspedes e visualizar status"
             Icon={(props) => <FontAwesome5 name="bed" {...props} />}
-            onPress={() => console.log("Ir para /quartos")}
+            onPress={() => navigation.navigate("Rooms" as never)}
           />
 
           <CustomLink
             title="Reservas"
             subtitle="Criar, consultar e confirmar hospedagens"
             Icon={(props) => <Entypo name="calendar" {...props} />}
-            onPress={() => console.log("Ir para /reservas")}
+            onPress={() => navigation.navigate("Reservations" as never)}
           />
 
           <CustomLink
             title="Cadastrar usuário"
             subtitle="Criar acesso para a equipe"
             Icon={(props) => <Entypo name="add-user" {...props} />}
-            onPress={() => console.log("Ir para /usuarios")}
+            onPress={() => navigation.navigate("NewUser" as never)}
           />
 
           <CustomLink
             title="Produtos"
             subtitle="Gerenciar cardápio e itens do restaurante"
             Icon={(props) => <MaterialIcons name="inventory" {...props} />}
-            onPress={() => console.log("Ir para /produtos")}
+            onPress={() => navigation.navigate("Products" as never)}
           />
 
           <CustomLink
