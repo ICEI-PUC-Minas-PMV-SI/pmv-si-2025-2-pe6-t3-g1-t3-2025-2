@@ -68,7 +68,7 @@ import { useLoading } from '../context/loadingContext';
         </TouchableOpacity>
 
         {/* Mudei para NewOrder - assume-se que essa rota existe */}
-        <TouchableOpacity style={styles.newBtn} onPress={() => navigation.navigate("NewOrder" as never)}> 
+        <TouchableOpacity style={styles.newBtn} onPress={() => navigation.navigate("NewOrders" as never)}> 
           <Text style={styles.newText}>+ Novo Pedido</Text>
         </TouchableOpacity>
       </View>
