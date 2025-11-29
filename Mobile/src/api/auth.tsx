@@ -1,4 +1,5 @@
 import { MMKV } from 'react-native-mmkv';
+import { decodeJWT } from '../utils/jwt';
 import ApiProvider from "./apiProvider";
 import { UserLoginRequestDTO, UserLoginResponseDTO } from "./dto";
 
@@ -11,7 +12,7 @@ class Auth {
     }
 
     decodeToken(token: string): UserLoginResponseDTO {
-        const JWTDecoded = JSON.parse(atob(token.split('.')[1]));
+        const JWTDecoded = decodeJWT(token);
         return {
             token: token,
             user: {
