@@ -99,3 +99,9 @@ export interface ProductResponseDTO {
     preco: number;
     estoque: number;
 }
+
+export interface ProductCreateRequestDTO {
+    nome: string;
+    preco: number;
+    estoque: number;
+}
