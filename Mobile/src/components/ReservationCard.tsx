@@ -5,7 +5,7 @@ import { ReservationResponseDTO } from "../api/dto";
 export default function ReservationCard({ data }: { data: ReservationResponseDTO }) {
   return (
     <View style={styles.card}>
-      <Text style={styles.room}>Quarto - — {data.hospedeNome}</Text>
+      <Text style={styles.room}>Quarto {data.quarto} — {data.hospedeNome}</Text>
 
       <Text style={styles.info}>
         Entrada {new Date(data.dataEntrada).toLocaleDateString()} · Saída {new Date(data.dataSaida).toLocaleDateString()} · {1} hóspede(s)

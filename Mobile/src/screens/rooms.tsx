@@ -17,7 +17,6 @@ export default function Rooms() {
     withLoading(async () => {
       await api.rooms.getRoomsWithGuests().then(data => {
         setRooms(data);
-        console.log(data);
       });
     });
   }

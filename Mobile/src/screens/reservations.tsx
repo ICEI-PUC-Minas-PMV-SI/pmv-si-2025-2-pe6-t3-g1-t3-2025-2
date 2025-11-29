@@ -17,7 +17,6 @@ export default function ReservationsScreen() {
   const navigation = useNavigation();
   const { withLoading, isLoading } = useLoading();
   const [search, setSearch] = useState("");
-  const [filter, setFilter] = useState("Todas");
   const [reservationsData, setReservationsData] = useState<ReservationResponseDTO[]>([]);
 
 
@@ -25,7 +24,6 @@ export default function ReservationsScreen() {
     await withLoading(async () => {
       const data = await api.reservations.getAllReservations();
       setReservationsData(data);
-      console.log(data);
     });
   }
 
@@ -46,11 +44,7 @@ export default function ReservationsScreen() {
           style={styles.search}
         />
 
-        <TouchableOpacity style={styles.filterBox}>
-          <Text>{filter}</Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity style={styles.updateBtn}>
+        <TouchableOpacity style={styles.updateBtn} onPress={fetchReservations}>
           <Text style={styles.updateText}>Atualizar</Text>
         </TouchableOpacity>
       </View>
@@ -72,7 +66,19 @@ export default function ReservationsScreen() {
         keyExtractor={(item) => String(item.id)}
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{ paddingBottom: 60 }}
-        renderItem={({ item }) => <ReservationCard data={item} />}
+        renderItem={({ item }) => {
+          if(search) {
+            const guestName = item.hospedeNome?.toLowerCase() || "";
+            const roomNumber = item.quarto?.toString() || "";
+            const searchLower = search.toLowerCase();
+
+            if (!guestName.includes(searchLower) && !roomNumber.includes(searchLower)) {
+              return null;
+            }
+          }
+
+          return <ReservationCard data={item} />;
+        }}
       />
     </View>
   );

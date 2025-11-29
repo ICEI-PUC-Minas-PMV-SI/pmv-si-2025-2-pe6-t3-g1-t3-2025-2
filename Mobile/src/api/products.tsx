@@ -1,5 +1,5 @@
 import ApiProvider from "./apiProvider";
-import { ProductResponseDTO } from "./dto";
+import { ProductCreateRequestDTO, ProductResponseDTO } from "./dto";
 
 class Products {
     private provider: ApiProvider;
@@ -20,6 +20,11 @@ class Products {
 
     async deleteProduct(id: number): Promise<void> {
         const result = await this.provider.httpRequest(`Produto/${id}`, 'DELETE');
+        return result;
+    }
+
+    async createProdut(data: ProductCreateRequestDTO): Promise<void> {
+        const result = await this.provider.httpRequest('Produto', 'POST', data);
         return result;
     }
 }

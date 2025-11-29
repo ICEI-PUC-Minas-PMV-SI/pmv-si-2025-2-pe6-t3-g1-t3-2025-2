@@ -32,7 +32,9 @@ export default function NewUserScreen() {
         {/* Título */}
         <View style={styles.header}>
           <Text style={styles.title}>👤 Novo Usuário</Text>
+        </View>
 
+        <View>
           <TouchableOpacity onPress={() => navigation.goBack()}>
             <Text style={styles.backText}>← Voltar</Text>
           </TouchableOpacity>
@@ -152,12 +154,12 @@ const styles = StyleSheet.create({
   pickerWrapper: {
     borderWidth: 1,
     borderColor: "#ddd",
-    borderRadius: 10,
+    borderRadius: 5,
     marginBottom: 20,
-    overflow: "hidden",
+    // overflow: "hidden",
   },
   picker: {
-    height: 48,
+    height: 60,
     width: "100%",
   },
   saveButton: {
