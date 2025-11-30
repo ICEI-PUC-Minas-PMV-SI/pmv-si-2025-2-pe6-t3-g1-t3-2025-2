@@ -118,6 +118,7 @@ Período: **09/11 a 16/11**
 |--------------------|-------------------------------|-------------|-----------|--------|--------------|
 | André Raphael      | Desenvolvimento mobile        | 09/11/2025  | 16/11/2025 | ✔️     | 16/11/2025   |
 | Carlos Eduardo     | Desenvolvimento mobile        | 09/11/2025  | 16/11/2025 | ✔️     | 16/11/2025   |
+| Raphael            | Desenvolvimento mobile        | 09/11/2025  | 16/11/2025 | ✔️     | 16/11/2025   |
 
 ### Semana 2 — Testes e Documentação Mobile
 
