@@ -55,9 +55,9 @@ export default function ReservationsScreen() {
           <Text style={styles.backText}>← Voltar</Text>
         </TouchableOpacity>
 
-        <TouchableOpacity style={styles.newBtn} onPress={() => navigation.navigate("NewReservation" as never)}>
+        {/* <TouchableOpacity style={styles.newBtn} onPress={() => navigation.navigate("NewReservation" as never)}>
           <Text style={styles.newText}>+ Nova reserva</Text>
-        </TouchableOpacity>
+        </TouchableOpacity> */}
       </View>
 
       {/* List */}

@@ -1,14 +1,13 @@
 import { useNavigation } from '@react-navigation/native';
 import React, { useState } from 'react';
 import {
-    SafeAreaView,
-    ScrollView,
-    StatusBar,
-    StyleSheet,
-    Text,
-    TextInput,
-    TouchableOpacity,
-    View
+  ScrollView,
+  StatusBar,
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View
 } from 'react-native';
 
 const NewReservationScreen = () => {
@@ -35,7 +34,7 @@ const NewReservationScreen = () => {
   };
 
   return (
-    <SafeAreaView style={styles.container}>
+    <View style={styles.container}>
       <StatusBar barStyle="dark-content" />
       <ScrollView style={styles.scrollView}>
         
@@ -44,7 +43,7 @@ const NewReservationScreen = () => {
 
         {/* Botão Voltar */}
         <TouchableOpacity style={styles.botaoVoltar} onPress={handleVoltar}>
-          <Text style={styles.botaoVoltarTexto}>Voltar</Text>
+          <Text style={styles.botaoVoltarTexto}>← Voltar</Text>
         </TouchableOpacity>
 
         {/* Seção Hóspede */}
@@ -154,7 +153,7 @@ const NewReservationScreen = () => {
         </View>
 
       </ScrollView>
-    </SafeAreaView>
+    </View>
   );
 };
 
