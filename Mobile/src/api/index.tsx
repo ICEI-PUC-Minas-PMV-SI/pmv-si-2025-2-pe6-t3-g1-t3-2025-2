@@ -1,9 +1,10 @@
-﻿import Auth from './auth';
-import Rooms from './rooms';
-import Reservations from './reservations';
-import Products from './products';
+﻿import ApiProvider from './apiProvider';
+import Auth from './auth';
+import Checkout from './checkout';
 import Orders from './orders'; // 1. Importa a classe Orders
-import ApiProvider from './apiProvider';
+import Products from './products';
+import Reservations from './reservations';
+import Rooms from './rooms';
 
 const provider = new ApiProvider("http://localhost:5210/api");
 
@@ -12,6 +13,7 @@ class Api {
     static rooms = new Rooms(provider);
     static reservations = new Reservations(provider);
     static products = new Products(provider);
+    static checkout = new Checkout(provider);
     
     // 2. Adiciona o serviço de Pedidos (Orders)
     static orders = new Orders(provider); 
