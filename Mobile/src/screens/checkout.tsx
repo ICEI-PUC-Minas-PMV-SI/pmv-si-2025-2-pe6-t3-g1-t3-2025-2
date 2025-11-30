@@ -197,21 +197,21 @@ export default function CheckoutScreen() {
                     <View style={styles.rowInfo}>
                         <View style={styles.col}>
                             <Text style={styles.label}>Quarto</Text>
-                            <Text style={styles.value}>{dados?.quarto.numero} - {dados?.quarto.tipo}</Text>
+                            <Text style={styles.value}>{dados?.quarto?.numero} - {dados?.quarto?.tipo}</Text>
                         </View>
                         <View style={styles.col}>
                             <Text style={styles.label}>Hóspede</Text>
-                            <Text style={styles.value}>{dados?.hospede.nome}</Text>
+                            <Text style={styles.value}>{dados?.hospede?.nome}</Text>
                         </View>
                     </View>
                     <View style={[styles.rowInfo, { marginTop: 10 }]}>
                         <View style={styles.col}>
                             <Text style={styles.label}>Entrada</Text>
-                            <Text style={styles.value}>{fmtData(dados?.datas.dataEntrada)}</Text>
+                            <Text style={styles.value}>{fmtData(dados?.datas?.dataEntrada)}</Text>
                         </View>
                         <View style={styles.col}>
                             <Text style={styles.label}>Saída Prevista</Text>
-                            <Text style={styles.value}>{fmtData(dados?.datas.dataSaidaPrevista)}</Text>
+                            <Text style={styles.value}>{fmtData(dados?.datas?.dataSaidaPrevista)}</Text>
                         </View>
                     </View>
                 </View>
@@ -249,16 +249,16 @@ export default function CheckoutScreen() {
                 <View style={styles.section}>
                     <Text style={styles.sectionTitle}>Totais</Text>
                     <View style={styles.resumeRow}>
-                        <Text style={styles.resumeLabel}>Total Diárias ({dados?.valores.noites} noites)</Text>
-                        <Text style={styles.resumeValue}>{fmtBRL(dados?.valores.totalDiarias)}</Text>
+                        <Text style={styles.resumeLabel}>Total Diárias ({dados?.valores?.noites} noites)</Text>
+                        <Text style={styles.resumeValue}>{fmtBRL(dados?.valores?.totalDiarias)}</Text>
                     </View>
                     <View style={styles.resumeRow}>
                         <Text style={styles.resumeLabel}>Total Consumo</Text>
-                        <Text style={styles.resumeValue}>{fmtBRL(dados?.valores.totalPedidos)}</Text>
+                        <Text style={styles.resumeValue}>{fmtBRL(dados?.valores?.totalPedidos)}</Text>
                     </View>
                     <View style={[styles.resumeRow, styles.totalRow]}>
                         <Text style={styles.totalLabel}>Total Geral</Text>
-                        <Text style={styles.totalValue}>{fmtBRL(dados?.valores.totalGeral)}</Text>
+                        <Text style={styles.totalValue}>{fmtBRL(dados?.valores?.totalGeral)}</Text>
                     </View>
                 </View>
 

@@ -8,10 +8,16 @@ export default function RoomCard({ room }: { room: RoomResponseWithGuestDTO }) {
   const navigation = useNavigation<any>();
 
   const handleAcomodar = () => {
-        navigation.navigate("CheckinRoom", {
-            quartoId: room.id,
-        });
-    };
+    navigation.navigate("CheckinRoom", {
+      quartoId: room.id,
+    });
+  };
+
+  const handleEncerrar = () => {
+    navigation.navigate("Checkout", {
+      quartoId: room.id,
+    });
+  };
 
   return (
     <View style={[styles.card, !free && styles.cardOccupied]}>
@@ -43,7 +49,7 @@ export default function RoomCard({ room }: { room: RoomResponseWithGuestDTO }) {
                 <Text style={styles.disabledText}>Indisponível</Text>
             </TouchableOpacity>
 
-            <TouchableOpacity style={styles.endButton}>
+            <TouchableOpacity style={styles.endButton} onPress={handleEncerrar}>
                 <Text style={styles.endButtonText}>Encerrar</Text>
             </TouchableOpacity>
         </>
