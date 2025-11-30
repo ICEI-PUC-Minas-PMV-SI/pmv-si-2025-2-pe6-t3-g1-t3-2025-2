@@ -3,6 +3,7 @@ import React, { useEffect, useState } from "react";
 import {
     ActivityIndicator,
     Alert,
+    Platform,
     ScrollView,
     StyleSheet,
     Text,
@@ -36,29 +37,29 @@ interface CheckoutItemDTO {
 
 interface CheckoutDataDTO {
     reservaId: number;
-    quarto: {
+    quarto?: {
         numero: string;
         tipo: string;
         capacidade: number;
     };
-    hospede: {
+    hospede?: {
         nome: string;
         documento: string;
         telefone: string;
     };
-    datas: {
+    datas?: {
         dataEntrada: string;
         dataSaidaPrevista: string;
         dataSaidaReal: string | null;
     };
-    valores: {
+    valores?: {
         tarifaDiaria: number;
         noites: number;
         totalDiarias: number;
         totalPedidos: number;
         totalGeral: number;
     };
-    itens: CheckoutItemDTO[];
+    itens?: CheckoutItemDTO[];
 }
 
 type CheckoutRouteProp = RouteProp<{ Checkout: { quartoId: number } }, 'Checkout'>;
@@ -75,6 +76,60 @@ function fmtData(iso: string | null | undefined) {
     } catch {
         return iso;
     }
+}
+
+function normalizarDados(data: any, infoQuarto?: any): CheckoutDataDTO {
+    if (!data) return data;
+
+    const numeroQuarto = infoQuarto?.numero || data.Quarto?.Numero || String(infoQuarto?.id || "");
+    const capacidadeQuarto = infoQuarto?.capacidade || data.Quarto?.Capacidade || 0;
+
+    let todosOsItens: any[] = [];
+    const listaPedidos = data.detalhesDosPedidos || data.DetalhesDosPedidos;
+
+    if (Array.isArray(listaPedidos)) {
+        listaPedidos.forEach((pedido: any) => {
+            const itensDoPedido = pedido.items || pedido.Items || [];
+            if (Array.isArray(itensDoPedido)) {
+                todosOsItens = [...todosOsItens, ...itensDoPedido];
+            }
+        });
+    } else if (Array.isArray(data.itens) || Array.isArray(data.Itens)) {
+        todosOsItens = data.itens || data.Itens;
+    }
+
+    return {
+        reservaId: data.reservationId || data.ReservationId,
+        quarto: {
+            numero: numeroQuarto || "Verificar",
+            tipo: "Padrão", 
+            capacidade: capacidadeQuarto
+        },
+        hospede: {
+            nome: data.customerName || data.CustomerName || data.Hospede?.Nome || "Hóspede",
+            documento: data.Hospede?.Documento || "",
+            telefone: data.Hospede?.Telefone || ""
+        },
+        datas: {
+            dataEntrada: data.Datas?.DataEntrada || "", 
+            dataSaidaPrevista: data.Datas?.DataSaidaPrevista || "",
+            dataSaidaReal: data.Datas?.DataSaidaReal || null
+        },
+        valores: {
+            tarifaDiaria: data.Valores?.TarifaDiaria || 0,
+            noites: data.Valores?.Noites || 0,
+            totalDiarias: data.totalHospedagem || data.TotalHospedagem || 0,
+            totalPedidos: data.totalConsumoRestaurante || data.TotalConsumoRestaurante || 0,
+            totalGeral: data.valorFinalDaConta || data.ValorFinalDaConta || 0
+        },
+        itens: todosOsItens.map((i: any) => ({
+            id: i.produtoId || i.ProdutoId || i.Id || 0,
+            produto: i.nomeProduto || i.NomeProduto || i.Produto || "Item sem nome",
+            quantidade: i.quantidade || i.Quantidade || 0,
+            precoUnitario: i.precoUnitario || i.PrecoUnitario || 0,
+            subtotal: i.subtotal || i.Subtotal || 0
+        }))
+    };
 }
 
 export default function CheckoutScreen() {
@@ -104,15 +159,26 @@ export default function CheckoutScreen() {
                 setCarregando(true);
                 setErro("");
 
-                const response = await api.checkout.getByRoomId(quartoId);
+                const reservaAtiva = await api.reservations.getActiveByRoomId(quartoId);
+                
+                if (!reservaAtiva || !reservaAtiva.id) {
+                    throw new Error("Não há reserva ativa neste quarto.");
+                }
+
+                const [checkoutResponse, quartoResponse] = await Promise.all([
+                    api.reservations.getCheckout(reservaAtiva.id),
+                    api.rooms.getById(quartoId).catch(() => null)
+                ]);
 
                 if (active) {
-                    if (!response) throw new Error("Dados de checkout não encontrados.");
-                    setDados(response);
+                    if (!checkoutResponse) throw new Error("Dados de checkout vazios.");
+                    
+                    const dadosFinais = normalizarDados(checkoutResponse, quartoResponse);
+                    setDados(dadosFinais);
                 }
             } catch (err: any) {
                 if (active) {
-                    const msg = err?.response?.data?.message || "Não foi possível carregar a conta.";
+                    const msg = err?.response?.data?.message || err?.message || "Erro ao carregar conta.";
                     setErro(msg);
                     Toast.show({ type: "error", text1: "Erro", text2: msg });
                 }
@@ -124,6 +190,41 @@ export default function CheckoutScreen() {
         return () => { active = false; };
     }, [quartoId]);
 
+    async function executarEncerramento() {
+        if (!dados?.reservaId) return;
+        
+        try {
+            console.log("Iniciando checkout da reserva:", dados.reservaId);
+            await withLoading(async () => {
+                await api.reservations.checkout(dados.reservaId, {
+                    formaPagamento: pagamento,
+                    observacao: observacao.trim(),
+                });
+            });
+
+            Toast.show({ type: "success", text1: "Sucesso", text2: "Conta encerrada com sucesso!" });
+            navigation.reset({
+                index: 0,
+                routes: [{ name: "Home" }], 
+            });
+        } catch (err: any) {
+            console.error("Erro ao encerrar:", err);
+            
+            const errorString = String(err);
+            if (errorString.includes("JSON") || errorString.includes("SyntaxError")) {
+                 Toast.show({ type: "success", text1: "Sucesso", text2: "Conta encerrada com sucesso!" });
+                 navigation.reset({
+                    index: 0,
+                    routes: [{ name: "Home" }], 
+                });
+                return;
+            }
+
+            const msg = err?.response?.data?.message || "Falha ao encerrar a conta.";
+            Toast.show({ type: "error", text1: "Erro", text2: msg });
+        }
+    }
+
     async function aoEncerrar() {
         if (!dados?.reservaId) return;
         if (!pagamento) {
@@ -131,35 +232,22 @@ export default function CheckoutScreen() {
             return;
         }
 
-        Alert.alert(
-            "Confirmar Encerramento",
-            `Deseja encerrar a conta no valor de ${fmtBRL(dados.valores.totalGeral)}?`,
-            [
-                { text: "Cancelar", style: "cancel" },
-                {
-                    text: "Confirmar",
-                    onPress: async () => {
-                        try {
-                            await withLoading(async () => {
-                                await api.checkout.closeAccount(dados.reservaId, {
-                                    formaPagamento: pagamento,
-                                    observacao: observacao.trim() || null,
-                                });
-                            });
+        const msgConfirmacao = `Deseja encerrar a conta no valor de ${fmtBRL(dados.valores?.totalGeral)}?`;
 
-                            Toast.show({ type: "success", text1: "Sucesso", text2: "Conta encerrada com sucesso!" });
-                            navigation.reset({
-                                index: 0,
-                                routes: [{ name: "Home" }],
-                            });
-                        } catch (err: any) {
-                            const msg = err?.response?.data?.message || "Falha ao encerrar a conta.";
-                            Toast.show({ type: "error", text1: "Erro", text2: msg });
-                        }
-                    }
-                }
-            ]
-        );
+        if (Platform.OS === 'web') {
+            if (window.confirm(msgConfirmacao)) {
+                await executarEncerramento();
+            }
+        } else {
+            Alert.alert(
+                "Confirmar Encerramento",
+                msgConfirmacao,
+                [
+                    { text: "Cancelar", style: "cancel" },
+                    { text: "Confirmar", onPress: executarEncerramento }
+                ]
+            );
+        }
     }
 
     if (carregando) {
@@ -183,7 +271,10 @@ export default function CheckoutScreen() {
     }
 
     return (
-        <ScrollView style={styles.container}>
+        <ScrollView 
+            style={styles.container} 
+            contentContainerStyle={styles.contentContainer}
+        >
             <View style={styles.header}>
                 <Text style={styles.title}>Encerramento de Conta</Text>
                 <TouchableOpacity onPress={() => navigation.goBack()}>
@@ -197,21 +288,28 @@ export default function CheckoutScreen() {
                     <View style={styles.rowInfo}>
                         <View style={styles.col}>
                             <Text style={styles.label}>Quarto</Text>
-                            <Text style={styles.value}>{dados?.quarto?.numero} - {dados?.quarto?.tipo}</Text>
+                            <Text style={styles.value}>
+                                {dados?.quarto?.numero ?? "-"} - {dados?.quarto?.tipo ?? "Padrão"}
+                            </Text>
                         </View>
                         <View style={styles.col}>
                             <Text style={styles.label}>Hóspede</Text>
-                            <Text style={styles.value}>{dados?.hospede?.nome}</Text>
+                            <Text style={styles.value}>{dados?.hospede?.nome ?? "—"}</Text>
                         </View>
                     </View>
+                    
                     <View style={[styles.rowInfo, { marginTop: 10 }]}>
                         <View style={styles.col}>
                             <Text style={styles.label}>Entrada</Text>
-                            <Text style={styles.value}>{fmtData(dados?.datas?.dataEntrada)}</Text>
+                            <Text style={styles.value}>
+                                {dados?.datas?.dataEntrada ? fmtData(dados.datas.dataEntrada) : "-"}
+                            </Text>
                         </View>
                         <View style={styles.col}>
                             <Text style={styles.label}>Saída Prevista</Text>
-                            <Text style={styles.value}>{fmtData(dados?.datas?.dataSaidaPrevista)}</Text>
+                            <Text style={styles.value}>
+                                {dados?.datas?.dataSaidaPrevista ? fmtData(dados.datas.dataSaidaPrevista) : "-"}
+                            </Text>
                         </View>
                     </View>
                 </View>
@@ -236,7 +334,7 @@ export default function CheckoutScreen() {
                             ))}
                             <View style={styles.tableFooter}>
                                 <Text style={styles.footerLabel}>Total Pedidos</Text>
-                                <Text style={styles.footerValue}>{fmtBRL(dados?.valores.totalPedidos)}</Text>
+                                <Text style={styles.footerValue}>{fmtBRL(dados?.valores?.totalPedidos)}</Text>
                             </View>
                         </View>
                     ) : (
@@ -249,7 +347,7 @@ export default function CheckoutScreen() {
                 <View style={styles.section}>
                     <Text style={styles.sectionTitle}>Totais</Text>
                     <View style={styles.resumeRow}>
-                        <Text style={styles.resumeLabel}>Total Diárias ({dados?.valores?.noites} noites)</Text>
+                        <Text style={styles.resumeLabel}>Total Diárias ({dados?.valores?.noites ?? 0} noites)</Text>
                         <Text style={styles.resumeValue}>{fmtBRL(dados?.valores?.totalDiarias)}</Text>
                     </View>
                     <View style={styles.resumeRow}>
@@ -309,11 +407,15 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         backgroundColor: COLORS.BG_BEGE,
+    },
+    contentContainer: {
         padding: 16,
+        paddingBottom: 50,
     },
     center: {
         justifyContent: "center",
         alignItems: "center",
+        flex: 1,
     },
     header: {
         flexDirection: "row",
@@ -334,7 +436,7 @@ const styles = StyleSheet.create({
         backgroundColor: COLORS.CARD,
         borderRadius: 16,
         padding: 20,
-        marginBottom: 40,
+        marginBottom: 20,
         shadowColor: "#000",
         shadowOpacity: 0.1,
         shadowRadius: 10,

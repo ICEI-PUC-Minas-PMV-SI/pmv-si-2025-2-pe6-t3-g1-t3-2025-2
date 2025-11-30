@@ -359,7 +359,7 @@ namespace HotelFazendaApi.Controllers
             }
 
             await _db.SaveChangesAsync();
-            return NoContent();
+            return Ok();
         }
 
         // ============================================================
