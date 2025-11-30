@@ -1,42 +1,67 @@
 # Front-end Móvel
 
-Com o objetivo de proporcionar uma experiência moderna, prática e acessível para hóspedes e colaboradores do Hotel Fazenda Capitólio, foi desenvolvida uma versão móvel do sistema institucional. A aplicação mobile mantém a identidade visual e os princípios de usabilidade da versão web, porém, é otimizada para uso em dispositivos portáteis, oferecendo maior mobilidade, flexibilidade e utilidade no dia a dia, mesmo considerando as limitações naturais impostas por telas menores e interações sensíveis ao toque.
+Com o objetivo de ampliar a acessibilidade e a mobilidade do sistema do Hotel Fazenda Capitólio, foi desenvolvida uma versão mobile utilizando **React Native com Expo**. A aplicação móvel segue as diretrizes visuais da versão web, porém foi planejada para proporcionar uma experiência fluida, prática e otimizada para dispositivos móveis, garantindo agilidade operacional e maior flexibilidade tanto para clientes quanto para colaboradores.
+
+A estrutura visual e arquitetural do projeto pode ser observada na organização das pastas conforme apresentado no print, contendo diretórios como `.expo`, `assets`, `constants`, `src`, além dos arquivos principais como `App.tsx`, `app.json` e `tsconfig.json`, que compõem a base do aplicativo.
 
 ## Projeto da Interface
 
-A interface móvel foi projetada para ser leve, intuitiva e responsiva, priorizando a navegação simplificada e a facilidade de uso. Todos os elementos foram organizados considerando o fluxo natural do usuário e as interações padrão de aplicativos mobile, garantindo consistência com o ecossistema Android e iOS.
+A interface foi construída priorizando usabilidade, simplicidade e consistência visual com o front-end web. O desenvolvimento seguiu princípios modernos de UI/UX e utilizou componentes reutilizáveis, garantindo um fluxo de navegação claro e intuitivo para o usuário.
+
+Entre os aspectos principais da interface:
+
+- Navegação estruturada e acessível.
+- Layout responsivo para diferentes tamanhos de tela.
+- Feedback visual imediato ao usuário.
+- Componentes reaproveitáveis, garantindo padronização.
+- Estilo visual alinhado à identidade visual estabelecida.
 
 ### Wireframes
 [Inclua os wireframes das páginas principais da interface, mostrando a disposição dos elementos na página.]
 
 ### Design Visual
 
-O design visual segue a identidade do sistema web, incluindo:
-- **Paleta de cores** alinhada ao tema institucional.
-- **Tipografia** legível e otimizada para telas móveis.
-- **Ícones** representativos para facilitar o reconhecimento de funcionalidades.
-- **Componentes reutilizáveis** para padronização da experiência visual.
+O design visual da aplicação segue os princípios aplicados na versão web, garantindo:
+
+- **Paleta de cores institucional** do hotel.
+- **Tipografia legível** e adaptada a telas móveis.
+- **Ícones representativos** com uso de `react-native-vector-icons`.
+- **Componentes reutilizáveis** como botões, inputs, cabeçalhos e cards.
+- Hierarquia visual clara entre títulos, textos e elementos interativos.
 
 ## Fluxo de Dados
 
-[Explique como o aplicativo se comunica com a API do sistema: fluxo de autenticação, consumo de endpoints, tratamento de estados, armazenamento local, etc. Inclua, se possível, um diagrama resumindo a comunicação entre o app e o back-end.]
+A comunicação entre o aplicativo e o back-end ocorre por meio de requisições HTTP enviadas à API .NET criada na etapa anterior. O fluxo segue os seguintes passos:
 
+1. O usuário interage com o aplicativo.
+2. O aplicativo envia requisições HTTP via serviços localizados em `src/services`.
+3. A API processa as requisições e acessa o banco PostgreSQL.
+4. O aplicativo recebe a resposta, atualiza estados internos e exibe informações ao usuário.
+   
 ## Tecnologias Utilizadas
 
-[Lista das tecnologias principais que serão utilizadas no projeto.]
+As tecnologias que compõem a solução móvel incluem:
+
+- **React Native** — Desenvolvimento de interfaces nativas
+- **Expo** — Execução, testes e empacotamento da aplicação
+- **TypeScript** — Tipagem estática e manutenção mais segura
+- **React Navigation** — Sistema de rotas e navegação
+- **Axios / Fetch API** — Comunicação com o back-end
+- **Jest** — Base para testes unitários
+- **Vector Icons** — Biblioteca de ícones personalizáveis
 
 ## Considerações de Segurança
 
-A aplicação móvel implementa medidas essenciais de segurança, incluindo:
-- Autenticação via API com controle de acesso.
-- Validação de entradas e respostas.
-- Comunicação via HTTP/HTTPS com tratamento de erros.
-- Armazenamento seguro de dados sensíveis no dispositivo (quando aplicável).
-- Práticas recomendadas de segurança do Expo e React Native.
+A aplicação segue boas práticas de segurança, incluindo:
+
+- Autenticação via API com controle adequado de sessão.
+- Validação de dados enviados e recebidos.
+- Comunicação segura utilizando HTTPS.
+- Armazenamento seguro dos dados essenciais no dispositivo.
+- Tratamento de erros e exceções.
+- Aplicação das recomendações de segurança do Expo e React Native.
 
 ## Implantação
-
-[Instruções para implantar a aplicação distribuída em um ambiente de produção.]
 
 1. Defina os requisitos de hardware e software necessários para implantar a aplicação em um ambiente de produção.
 2. Escolha uma plataforma de hospedagem adequada, como um provedor de nuvem ou um servidor dedicado.
@@ -56,7 +81,12 @@ A aplicação móvel implementa medidas essenciais de segurança, incluindo:
 
 # Referências
 
-O desenvolvimento do front-end móvel foi apoiado pelas aulas do microfundamento **“Desenvolvimento de Aplicações Móveis”**, que forneceram embasamento técnico para utilização do framework **React Native** e suas ferramentas, possibilitando a criação de soluções multiplataforma para Android e iOS.
+O desenvolvimento do front-end móvel foi apoiado pelas aulas do microfundamento **“Desenvolvimento de Aplicações Móveis”**, que embasaram tecnicamente o uso do framework **React Native** e suas ferramentas para criação de soluções multiplataforma.
+
+Documentações complementares:
+
+- React Native: https://reactnative.dev  
+- Expo: https://docs.expo.dev
 
 # Planejamento
 
