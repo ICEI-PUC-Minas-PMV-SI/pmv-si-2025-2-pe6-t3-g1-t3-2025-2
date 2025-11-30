@@ -1,9 +1,17 @@
+import { useNavigation } from "@react-navigation/native";
 import React from "react";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { RoomResponseWithGuestDTO } from "../api/dto";
 
 export default function RoomCard({ room }: { room: RoomResponseWithGuestDTO }) {
   const free = room.status === "Livre";
+  const navigation = useNavigation<any>();
+
+  const handleAcomodar = () => {
+        navigation.navigate("CheckinRoom", {
+            quartoId: room.id,
+        });
+    };
 
   return (
     <View style={[styles.card, !free && styles.cardOccupied]}>
@@ -24,23 +32,23 @@ export default function RoomCard({ room }: { room: RoomResponseWithGuestDTO }) {
         </View>
       )}
 
-      <View style={styles.actions}>
-        {free ? (
-          <TouchableOpacity style={styles.button}>
+<View style={styles.actions}>
+    {free ? (
+        <TouchableOpacity style={styles.button} onPress={handleAcomodar}>
             <Text style={styles.buttonText}>Acomodar</Text>
-          </TouchableOpacity>
-        ) : (
-          <>
+        </TouchableOpacity>
+    ) : (
+        <>
             <TouchableOpacity style={styles.disabledBtn} disabled>
-              <Text style={styles.disabledText}>Indisponível</Text>
+                <Text style={styles.disabledText}>Indisponível</Text>
             </TouchableOpacity>
 
             <TouchableOpacity style={styles.endButton}>
-              <Text style={styles.endButtonText}>Encerrar</Text>
+                <Text style={styles.endButtonText}>Encerrar</Text>
             </TouchableOpacity>
-          </>
-        )}
-      </View>
+        </>
+    )}
+</View>
     </View>
   );
 }

@@ -10,6 +10,7 @@ import NewProductScreen from './src/screens/newProduct';
 import NewReservationScreen from './src/screens/newReservation';
 import NewUserScreen from './src/screens/newUser';
 import ProductsScreen from './src/screens/products';
+import QuartosCheckin from './src/screens/QuartosCheckin';
 import ReservationsScreen from './src/screens/reservations';
 import RoomsScreen from "./src/screens/rooms";
 
@@ -29,6 +30,7 @@ export default function App() {
           <Stack.Screen name="NewUser" component={NewUserScreen} />
           <Stack.Screen name="Products" component={ProductsScreen} />
           <Stack.Screen name="NewProduct" component={NewProductScreen} />
+          <Stack.Screen name="CheckinRoom" component={QuartosCheckin} />
         </Stack.Navigator>
       </NavigationContainer>
       <LoadingComponent />

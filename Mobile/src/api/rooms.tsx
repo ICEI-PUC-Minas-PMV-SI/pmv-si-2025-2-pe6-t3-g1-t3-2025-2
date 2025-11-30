@@ -34,6 +34,21 @@ class Rooms {
         const result = await this.provider.httpRequest('Rooms/with-guest', 'GET');
         return result;
     }
+
+    async checkInGuest(params: any): Promise<any> {
+        const dto = {
+            HospedeNome: params.nomeHospede,
+            HospedeDocumento: params.documento || null,
+            Telefone: null,
+            QtdeHospedes: Number(params.adultos || 0) + Number(params.criancas || 0),
+            DataEntrada: params.dataEntrada,
+            DataSaida: params.dataSaidaPrevista,
+            QuartoId: Number(params.quartoId),
+        };
+        console.log("Tentando POST para /api/reservations com DTO:", dto);
+        const result = await this.provider.httpRequest('Reservations', 'POST', dto);
+        return result;
+    }
 }
 
 export default Rooms;
