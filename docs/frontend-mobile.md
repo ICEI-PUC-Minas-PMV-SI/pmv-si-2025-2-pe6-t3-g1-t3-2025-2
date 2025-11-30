@@ -1,21 +1,25 @@
 # Front-end Móvel
 
-Visando oferecer uma experiência mais completa para clientes e colaboradores do hotel fazenda Capitólio, foi desenvolvido uma versão mobile do sistema tendo como guia as características de interface da versão web, entretanto, as funcionalidades oferecida pela versão mobile tem como diferencial para os usuários maior flexibilidade, mobilidade e utilidade, mesmo diante das limitações que essa opção impõe.
+Com o objetivo de proporcionar uma experiência moderna, prática e acessível para hóspedes e colaboradores do Hotel Fazenda Capitólio, foi desenvolvida uma versão móvel do sistema institucional. A aplicação mobile mantém a identidade visual e os princípios de usabilidade da versão web, porém, é otimizada para uso em dispositivos portáteis, oferecendo maior mobilidade, flexibilidade e utilidade no dia a dia, mesmo considerando as limitações naturais impostas por telas menores e interações sensíveis ao toque.
 
 ## Projeto da Interface
-[Descreva o projeto da interface móvel da aplicação, incluindo o design visual, layout das páginas, interações do usuário e outros aspectos relevantes.]
+
+A interface móvel foi projetada para ser leve, intuitiva e responsiva, priorizando a navegação simplificada e a facilidade de uso. Todos os elementos foram organizados considerando o fluxo natural do usuário e as interações padrão de aplicativos mobile, garantindo consistência com o ecossistema Android e iOS.
 
 ### Wireframes
-
 [Inclua os wireframes das páginas principais da interface, mostrando a disposição dos elementos na página.]
 
 ### Design Visual
 
-[Descreva o estilo visual da interface, incluindo paleta de cores, tipografia, ícones e outros elementos gráficos.]
+O design visual segue a identidade do sistema web, incluindo:
+- **Paleta de cores** alinhada ao tema institucional.
+- **Tipografia** legível e otimizada para telas móveis.
+- **Ícones** representativos para facilitar o reconhecimento de funcionalidades.
+- **Componentes reutilizáveis** para padronização da experiência visual.
 
 ## Fluxo de Dados
 
-[Diagrama ou descrição do fluxo de dados na aplicação.]
+[Explique como o aplicativo se comunica com a API do sistema: fluxo de autenticação, consumo de endpoints, tratamento de estados, armazenamento local, etc. Inclua, se possível, um diagrama resumindo a comunicação entre o app e o back-end.]
 
 ## Tecnologias Utilizadas
 
@@ -23,7 +27,12 @@ Visando oferecer uma experiência mais completa para clientes e colaboradores do
 
 ## Considerações de Segurança
 
-[Discuta as considerações de segurança relevantes para a aplicação distribuída, como autenticação, autorização, proteção contra ataques, etc.]
+A aplicação móvel implementa medidas essenciais de segurança, incluindo:
+- Autenticação via API com controle de acesso.
+- Validação de entradas e respostas.
+- Comunicação via HTTP/HTTPS com tratamento de erros.
+- Armazenamento seguro de dados sensíveis no dispositivo (quando aplicável).
+- Práticas recomendadas de segurança do Expo e React Native.
 
 ## Implantação
 
@@ -47,7 +56,7 @@ Visando oferecer uma experiência mais completa para clientes e colaboradores do
 
 # Referências
 
-O grupo utilizou como referência as aulas do microfundamento "Desenvolvimento de Aplicações Móveis" que ofereceu um amplo aprendizado do framework REACT NATIVE, no qual, tem como foco oferecer um conjunto de ferramentas que facilitem a criação de soluções móveis tanto para sistemas Android como para IOS.
+O desenvolvimento do front-end móvel foi apoiado pelas aulas do microfundamento **“Desenvolvimento de Aplicações Móveis”**, que forneceram embasamento técnico para utilização do framework **React Native** e suas ferramentas, possibilitando a criação de soluções multiplataforma para Android e iOS.
 
 # Planejamento
 
