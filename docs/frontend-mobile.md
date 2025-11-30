@@ -63,11 +63,27 @@ A aplicação segue boas práticas de segurança, incluindo:
 
 ## Implantação
 
-1. Defina os requisitos de hardware e software necessários para implantar a aplicação em um ambiente de produção.
-2. Escolha uma plataforma de hospedagem adequada, como um provedor de nuvem ou um servidor dedicado.
-3. Configure o ambiente de implantação, incluindo a instalação de dependências e configuração de variáveis de ambiente.
-4. Faça o deploy da aplicação no ambiente escolhido, seguindo as instruções específicas da plataforma de hospedagem.
-5. Realize testes para garantir que a aplicação esteja funcionando corretamente no ambiente de produção.
+Para a implantação do aplicativo móvel em um ambiente de produção, foram definidos os seguintes passos:
+
+1. **Definir requisitos de hardware e software**  
+   - Especificar versões mínimas de sistema operacional (Android/iOS), espaço em disco, memória e conexão de rede necessários para o uso adequado do aplicativo.  
+   - Garantir que o ambiente de desenvolvimento e build possua Node.js, Expo CLI e demais dependências instaladas.
+
+2. **Escolher a plataforma de distribuição**  
+   - Selecionar as lojas oficiais para publicação (Google Play Store e/ou Apple App Store).  
+   - Configurar contas de desenvolvedor e aceitar os termos de uso das plataformas escolhidas.
+
+3. **Configurar o ambiente de build e variáveis de ambiente**  
+   - Ajustar o arquivo `app.json` com nome do app, ícone, versão e identificadores dos pacotes.  
+   - Configurar variáveis de ambiente para URLs da API, chaves de acesso e demais parâmetros sensíveis, evitando expor dados diretamente no código-fonte.
+
+4. **Gerar a build e realizar o deploy**  
+   - Executar o processo de build com o Expo (`npx expo build` ou serviço equivalente).  
+   - Enviar os artefatos gerados (`.apk`, `.aab` ou `.ipa`) para as lojas selecionadas, seguindo as instruções específicas de cada plataforma.
+
+5. **Realizar testes em produção monitorada**  
+   - Validar o funcionamento do aplicativo em dispositivos reais, verificando login, consumo de API, navegação e desempenho.  
+   - Monitorar logs, métricas e feedback dos usuários, aplicando correções quando necessário e planejando novas versões.
 
 ## Testes
 
