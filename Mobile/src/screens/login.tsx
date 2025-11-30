@@ -44,10 +44,20 @@ export default function Login() {
 
         try {
             await withLoading(async () => {
+                // 1. Serviço de login é chamado (salva token no MMKV)
                 await api.auth.login(storage, {
                     email,
                     password: senha
                 });
+
+                // 2. BUSCA O TOKEN que acabou de ser salvo no MMKV
+                const token = storage.getString("token"); 
+
+                if (token) {
+                    // 🎯 3. AÇÃO CRÍTICA: INJETA o token no ApiProvider para futuras requisições
+                    api.setAuthToken(token); 
+                }
+
             });
 
             Toast.show({
@@ -71,12 +81,20 @@ export default function Login() {
 
     async function checkIfLoggedIn() {
         const isLogged = await api.auth.isLoggedIn(storage);
+        
+        // 🎯 AÇÃO NECESSÁRIA AO INICIAR: Se estiver logado, injeta o token persistido
+        const token = storage.getString("token");
+        if (token) {
+            api.setAuthToken(token); 
+        }
+
         return isLogged;
     }
 
     useEffect(() => {
         checkIfLoggedIn().then((isLogged) => {
             if (isLogged) {
+                // O token já foi injetado acima, agora podemos navegar
                 navigation.navigate("Home" as never);
             }
         });
@@ -128,12 +146,13 @@ export default function Login() {
     );
 }
 
+// ... (Restante dos Styles, sem alteração)
 const styles = StyleSheet.create({
     container: {
         flex: 1,
         justifyContent: "center",
         alignItems: "center",
-        backgroundColor: "#f6f2eb", // fundo da tela
+        backgroundColor: "#f6f2eb", 
     },
     box: {
         width: "85%",
@@ -147,7 +166,7 @@ const styles = StyleSheet.create({
         elevation: 4,
     },
     header: {
-        backgroundColor: "#3b5a3c", // verde do topo
+        backgroundColor: "#3b5a3c", 
         borderTopLeftRadius: 12,
         borderTopRightRadius: 12,
         padding: 20,

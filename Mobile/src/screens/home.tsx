@@ -144,7 +144,7 @@ export default function Home() {
             title="Pedidos"
             subtitle="Registrar consumos e entregas"
             Icon={(props) => <MaterialIcons name="receipt" {...props} />}
-            onPress={() => console.log("Ir para /pedidos")}
+            onPress={() => navigation.navigate("Pedidos" as never)}
           />
         </View>
 
