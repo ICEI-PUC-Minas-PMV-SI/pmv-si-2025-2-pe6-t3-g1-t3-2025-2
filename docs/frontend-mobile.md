@@ -87,6 +87,12 @@ Para a implantação do aplicativo móvel em um ambiente de produção, foram de
 
 ## Testes
 
+A estratégia de testes para a versão mobile seguiu a mesma adotada para a versão web, ou seja, a cada módulo testou-se as funcionalidades e os resultados esperados.
+
+- **Módulo Login**
+  
+Toda versão mobile seguiu os layout, cores e funcionalidades da versão web, com isso no módulo de login iniciamos os testes verificando o comportamento do sistema com um usuário já existente e com permissão de acesso, posteriormente, testamos o sistemas com um usuário fictício e sem acesso ao sistema, neste teste buscamos verificar os alertas previstos que a negação do acesso disparava.
+
 [Descreva a estratégia de teste, incluindo os tipos de teste a serem realizados (unitários, integração, carga, etc.) e as ferramentas a serem utilizadas.]
 
 1. Crie casos de teste para cobrir todos os requisitos funcionais e não funcionais da aplicação.
