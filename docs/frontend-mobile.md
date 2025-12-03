@@ -93,6 +93,18 @@ A estratégia de testes para a versão mobile seguiu a mesma adotada para a vers
   
 Toda versão mobile seguiu os layout, cores e funcionalidades da versão web, com isso no módulo de login iniciamos os testes verificando o comportamento do sistema com um usuário já existente e com permissão de acesso, posteriormente, testamos o sistemas com um usuário fictício e sem acesso ao sistema, neste teste buscamos verificar os alertas previstos que a negação do acesso disparava.
 
+- **Módulo Pedidos**
+
+O principal teste realizado no módulo de pedidos teve o objetivo de verificar a correta persistência de dados dos atributos no banco de dados na realização de um pedido novo por exemplo, assim como, a exclusão de dados.
+
+- **Módulo Hospedagem**
+
+O módulo de hospedagem teve uma especial atenção com os testes pois consiste na funcionalidade principal do hotel fazenda, e buscamos o mesmo comportarmento da versão web. Inicialmente testamos as condições de mudança dos status referente aos quartos, um segundo teste foi direcionado para os atributos datas no qual observou-se se com a data fim da estadia o sistema retornava o status do quarto para "livre", também testamos a possibilidade de realizar uma hospedagem num quarto não existente no sistema.
+
+- **Módulo Produtos**
+
+
+
 [Descreva a estratégia de teste, incluindo os tipos de teste a serem realizados (unitários, integração, carga, etc.) e as ferramentas a serem utilizadas.]
 
 1. Crie casos de teste para cobrir todos os requisitos funcionais e não funcionais da aplicação.
