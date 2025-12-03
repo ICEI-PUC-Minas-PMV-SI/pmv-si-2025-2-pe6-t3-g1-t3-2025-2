@@ -116,7 +116,7 @@ O módulo de pedidos possue diversos atributos, inicialmente, testamos o cadastr
 
 - **Módulo Hospedagem**.
 
-A estratégia adotada para este módulo de hospedagem consistiu e testar o cadastro inicial de um hóspede e observar o comportamento sistema e a mudança de status do quarto, assim como a correção dos dados no banco de dados, depois testamos o atributo data da hospedagem que apresentou comportamento correto, ou seja, o hóspede na data cadastrada para o fim da estadia teve o status do quarto modificado de "ocupado" para "livre". Simulamos também a possibilidade de hospedagem num quarto não existente e o comportamento do sistema neste cenário.
+A estratégia adotada para este módulo de hospedagem consistiu e testar o cadastro inicial de um hóspede e observar o comportamento do sistema e a mudança de status do quarto, assim como a correção dos dados no banco de dados, depois testamos o atributo data da hospedagem que apresentou comportamento correto, ou seja, o hóspede na data cadastrada para o fim da estadia teve o status do quarto modificado de "ocupado" para "livre". Simulamos também a possibilidade de hospedagem num quarto não existente e o comportamento do sistema neste cenário.
 
 ![WhatsApp Image 2025-11-21 at 19 17 48](https://github.com/user-attachments/assets/9030fbde-130b-49ff-abc4-73ef41885f58)
 
