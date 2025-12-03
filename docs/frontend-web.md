@@ -94,21 +94,13 @@ Para a implantação o grupo utilizou basicamente os recursos abaixos:
 - **Memória RAM:** 4 GB (mínimo), 8 GB (recomendado).   
 - **Armazenamento:** 40 GB de SSD.
    
-[Instruções para implantar a aplicação distribuída em um ambiente de produção.]
-
-1. Defina os requisitos de hardware e software necessários para implantar a aplicação em um ambiente de produção.
-2. Escolha uma plataforma de hospedagem adequada, como um provedor de nuvem ou um servidor dedicado.
-3. Configure o ambiente de implantação, incluindo a instalação de dependências e configuração de variáveis de ambiente.
-4. Faça o deploy da aplicação no ambiente escolhido, seguindo as instruções específicas da plataforma de hospedagem.
-5. Realize testes para garantir que a aplicação esteja funcionando corretamente no ambiente de produção.
-
 ## Testes
 
 Os testes iniciaram-se com as primeiras entregas de cada módulo.
 
 - **Módulo Login**.
   
-A estratégia adotada inicialmente para o módulo de Login foi preencher os campos com os dados de um usuário já existente e verificar de o sistema apresenta o resultado esperado, neste caso permissão para o uso do software normalmente. Posteriormente testamos com dados de um usuário qualquer o comportamento do sistema que apresentou o resultado esperado de negação ao uso do software.
+A estratégia adotada inicialmente para o módulo de Login foi preencher os campos com os dados de um usuário já existente e verificar se o sistema apresenta o resultado esperado, neste caso, permissão para o uso do software, posteriormente, testamos com dados de um usuário qualquer o comportamento do sistema que apresentou o resultado esperado de negação ao uso do software.
 
 ![WhatsApp Image 2025-11-21 at 19 14 53](https://github.com/user-attachments/assets/9d39f948-29f4-4bf9-a115-9587b0beaff1)
 
@@ -124,7 +116,7 @@ O módulo de pedidos possue diversos atributos, inicialmente, testamos o cadastr
 
 - **Módulo Hospedagem**.
 
-A estratégia adotada para este módulo de hospedagem consistiu e testar o cadastro inicial de um hóspede e observar o comprtamento sistema e a mudança de status do quarto, assim como a correção dos dados no banco de dados, depois testamos o atributo data da hospedagem que apresentou comportamento correto, ou seja, o hóspede na data cadastrada para o fim da estadia teve o status do quarto modificado de "ocupado" para "livre". Simulamos também a possibilidade de hospedagem num quarto não existente e o comportamento do sistema neste cenário.
+A estratégia adotada para este módulo de hospedagem consistiu e testar o cadastro inicial de um hóspede e observar o comportamento sistema e a mudança de status do quarto, assim como a correção dos dados no banco de dados, depois testamos o atributo data da hospedagem que apresentou comportamento correto, ou seja, o hóspede na data cadastrada para o fim da estadia teve o status do quarto modificado de "ocupado" para "livre". Simulamos também a possibilidade de hospedagem num quarto não existente e o comportamento do sistema neste cenário.
 
 ![WhatsApp Image 2025-11-21 at 19 17 48](https://github.com/user-attachments/assets/9030fbde-130b-49ff-abc4-73ef41885f58)
 
