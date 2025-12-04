@@ -1,9 +1,9 @@
 ﻿import { useNavigation } from '@react-navigation/native';
 import React, { useEffect } from 'react';
-import { ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View, ActivityIndicator } from 'react-native';
+import { ActivityIndicator, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import api from '../api';
 // 1. DTO ATUALIZADO: Agora usa OrderResponseDTO
-import { OrderResponseDTO } from '../api/dto'; 
+import { OrderResponseDTO } from '../api/dto';
 import { useLoading } from '../context/loadingContext';
 
   const OrdersScreen = () => { 
@@ -112,7 +112,7 @@ import { useLoading } from '../context/loadingContext';
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
+    backgroundColor: '#F7F5EF',
     padding: 16,
   },
   title: {
@@ -135,13 +135,14 @@ const styles = StyleSheet.create({
   },
   updateBtn: {
     marginLeft: 10,
-    backgroundColor: "#eee",
+    backgroundColor: "#5F7F5F",
     paddingVertical: 10,
     paddingHorizontal: 14,
     borderRadius: 10,
   },
   updateText: {
-    fontWeight: "bold",
+    color: "#fff",
+    fontWeight: "bold"
   },
   actionsRow: {
     flexDirection: "row",

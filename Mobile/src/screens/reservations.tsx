@@ -125,7 +125,8 @@ const styles = StyleSheet.create({
     borderRadius: 10,
   },
   updateText: {
-    color: "#fff"
+    color: "#fff",
+    fontWeight: "bold"
   },
   actionsRow: {
     flexDirection: "row",

@@ -59,7 +59,6 @@ const ProductsScreen = () => {
       <View style={styles.tableHeader}>
         <Text style={[styles.columnHeader, styles.nameColumn]}>Nome</Text>
         <Text style={[styles.columnHeader, styles.priceColumn]}>Preço</Text>
-        <Text style={[styles.columnHeader, styles.categoryColumn]}>Categoria</Text>
       </View>
 
       {/* Lista de produtos */}
@@ -68,7 +67,6 @@ const ProductsScreen = () => {
           <View key={product.id} style={styles.productRow}>
             <Text style={[styles.productCell, styles.nameColumn]}>{product.nome}</Text>
             <Text style={[styles.productCell, styles.priceColumn]}>R$ {product.preco}</Text>
-            <Text style={[styles.productCell, styles.categoryColumn]}>-</Text>
           </View>
         ))}
       </ScrollView>
@@ -79,7 +77,7 @@ const ProductsScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
+    backgroundColor: '#F7F5EF',
     padding: 16,
   },
   header: {
@@ -157,12 +155,13 @@ const styles = StyleSheet.create({
   },
   updateBtn: {
     marginLeft: 10,
-    backgroundColor: "#eee",
+    backgroundColor: "#5B7E5F",
     paddingVertical: 10,
     paddingHorizontal: 14,
     borderRadius: 10,
   },
   updateText: {
+    color: "#fff",
     fontWeight: "bold",
   },
   actionsRow: {

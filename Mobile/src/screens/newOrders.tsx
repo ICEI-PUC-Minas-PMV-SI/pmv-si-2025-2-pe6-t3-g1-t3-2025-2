@@ -1,23 +1,23 @@
 ﻿import { useNavigation } from '@react-navigation/native';
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
+    Platform,
     ScrollView,
     StatusBar,
     StyleSheet,
     Text,
     TextInput,
     TouchableOpacity,
-    View,
-    Platform
+    View
 } from 'react-native';
-import Toast from 'react-native-toast-message'; 
 import RNPickerSelect from 'react-native-picker-select';
+import Toast from 'react-native-toast-message';
 import api from '../api';
-import { 
-    OrderCreateRequestDTO, 
+import {
+    OrderCreateRequestDTO,
     ProductResponseDTO,
     ReservationResponseDTO
-} from "../api/dto"; 
+} from "../api/dto";
 import { useLoading } from '../context/loadingContext';
 
 // Interface para gerenciar o estado local dos itens do pedido
@@ -353,7 +353,7 @@ const pickerSelectStyles = StyleSheet.create({
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: '#f5f5f5',
+        backgroundColor: '#F7F5EF',
     },
     scrollView: {
         flex: 1,
@@ -484,7 +484,7 @@ const styles = StyleSheet.create({
     },
     // FIM NOVOS ESTILOS
     botaoSalvar: {
-        backgroundColor: '#28a745',
+        backgroundColor: '#5F7F5F',
         padding: 18,
         alignItems: 'center',
         justifyContent: 'center',

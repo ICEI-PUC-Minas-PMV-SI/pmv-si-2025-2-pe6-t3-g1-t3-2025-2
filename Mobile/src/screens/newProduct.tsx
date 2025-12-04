@@ -1,14 +1,14 @@
 import { useNavigation } from '@react-navigation/native';
 import React, { useState } from 'react';
 import {
-    ScrollView,
-    StatusBar,
-    StyleSheet,
-    Switch,
-    Text,
-    TextInput,
-    TouchableOpacity,
-    View
+  ScrollView,
+  StatusBar,
+  StyleSheet,
+  Switch,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View
 } from 'react-native';
 import { Toast } from 'react-native-toast-message/lib/src/Toast';
 import api from '../api';
@@ -151,7 +151,7 @@ const NewProductScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
+    backgroundColor: '#F7F5EF',
   },
   scrollView: {
     flex: 1,
@@ -207,7 +207,7 @@ const styles = StyleSheet.create({
     color: '#000',
   },
   botaoSalvar: {
-    backgroundColor: '#007AFF',
+    backgroundColor: '#5B7E5F',
     padding: 16,
     borderRadius: 4,
     alignItems: 'center',
