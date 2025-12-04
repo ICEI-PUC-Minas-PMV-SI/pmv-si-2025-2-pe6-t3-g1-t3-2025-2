@@ -20,12 +20,10 @@ const NewReservationScreen = () => {
   const [telefone, setTelefone] = useState('');
 
   const handleSalvar = () => {
-    // Lógica para salvar a reserva
     console.log('Reserva salva');
   };
 
   const handleCancelar = () => {
-    // Lógica para cancelar
     console.log('Reserva cancelada');
   };
 
@@ -38,15 +36,12 @@ const NewReservationScreen = () => {
       <StatusBar barStyle="dark-content" />
       <ScrollView style={styles.scrollView}>
         
-        {/* Título */}
         <Text style={styles.titulo}>Nova reserva</Text>
 
-        {/* Botão Voltar */}
         <TouchableOpacity style={styles.botaoVoltar} onPress={handleVoltar}>
           <Text style={styles.botaoVoltarTexto}>← Voltar</Text>
         </TouchableOpacity>
 
-        {/* Seção Hóspede */}
         <View style={styles.secao}>
           <Text style={styles.label}>
             <Text style={styles.asterisco}>* </Text>
@@ -61,7 +56,6 @@ const NewReservationScreen = () => {
           />
         </View>
 
-        {/* Seção Documento */}
         <View style={styles.secao}>
           <Text style={styles.subtitulo}>Documento</Text>
           <TextInput
@@ -82,7 +76,6 @@ const NewReservationScreen = () => {
           />
         </View>
 
-        {/* Seção Telefone */}
         <View style={styles.secao}>
           <Text style={styles.subtitulo}>Telefone</Text>
           <TextInput
@@ -95,10 +88,8 @@ const NewReservationScreen = () => {
           />
         </View>
 
-        {/* Linha divisória */}
         <View style={styles.divisor} />
 
-        {/* Seção Datas */}
         <View style={styles.secao}>
           <View style={styles.linha}>
             <View style={styles.coluna}>
@@ -130,7 +121,6 @@ const NewReservationScreen = () => {
           </View>
         </View>
 
-        {/* Seção Quartos */}
         <View style={styles.secao}>
           <Text style={styles.label}>
             <Text style={styles.asterisco}>* </Text>
@@ -141,11 +131,8 @@ const NewReservationScreen = () => {
           </Text>
         </View>
 
-        {/* Linha divisória */}
         <View style={styles.divisor} />
 
-
-        {/* Botões de ação */}
         <View style={styles.botoesAcao}>
           <TouchableOpacity style={styles.botaoSalvar} onPress={handleSalvar}>
             <Text style={styles.botaoSalvarTexto}>Salvar reserva</Text>
@@ -187,7 +174,7 @@ const styles = StyleSheet.create({
   input: {
     borderWidth: 1,
     borderColor: '#ddd',
-    borderRadius: 4,
+    borderRadius: 10,
     padding: 12,
     fontSize: 16,
     backgroundColor: '#fff',
@@ -204,7 +191,7 @@ const styles = StyleSheet.create({
   botaoSecundario: {
     backgroundColor: '#f0f0f0',
     padding: 12,
-    borderRadius: 4,
+    borderRadius: 10,
     alignItems: 'center',
     flex: 1,
     marginRight: 8,
@@ -237,8 +224,8 @@ const styles = StyleSheet.create({
   },
   botaoVoltarTexto: {
     fontSize: 16,
-    color: '#007AFF',
-    fontWeight: '500',
+    color: '#5F7F5F',
+    fontWeight: '600',
   },
   botoesAcao: {
     flexDirection: 'row',
@@ -252,7 +239,7 @@ const styles = StyleSheet.create({
     marginRight: 8,
     borderWidth: 1,
     borderColor: '#ddd',
-    borderRadius: 4,
+    borderRadius: 10,
   },
   botaoCancelarTexto: {
     fontSize: 16,
@@ -263,14 +250,14 @@ const styles = StyleSheet.create({
     flex: 1,
     padding: 16,
     alignItems: 'center',
-    backgroundColor: '#007AFF',
-    borderRadius: 4,
+    backgroundColor: '#5F7F5F',
+    borderRadius: 10,
     marginLeft: 8,
   },
   botaoSalvarTexto: {
     fontSize: 16,
     color: '#fff',
-    fontWeight: '500',
+    fontWeight: '700',
   },
 });
 

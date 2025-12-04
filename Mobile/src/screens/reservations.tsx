@@ -119,13 +119,13 @@ const styles = StyleSheet.create({
   },
   updateBtn: {
     marginLeft: 10,
-    backgroundColor: "#eee",
+    backgroundColor: "#5F7F5F",
     paddingVertical: 10,
     paddingHorizontal: 14,
     borderRadius: 10,
   },
   updateText: {
-    fontWeight: "bold",
+    color: "#fff"
   },
   actionsRow: {
     flexDirection: "row",

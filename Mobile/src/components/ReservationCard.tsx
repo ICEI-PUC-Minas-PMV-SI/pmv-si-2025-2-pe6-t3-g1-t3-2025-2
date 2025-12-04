@@ -50,13 +50,13 @@ const styles = StyleSheet.create({
     borderRadius: 20,
   },
   active: {
-    backgroundColor: "#d9e8ff",
+    backgroundColor: "#5F7F5F",
   },
   closed: {
-    backgroundColor: "#e9edff",
+    backgroundColor: "#5F7F5F",
   },
   statusText: {
-    color: "#4a6fb0",
+    color: "#ffffffff",
     fontWeight: "600",
   },
 });
