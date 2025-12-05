@@ -139,7 +139,7 @@ Período: **23/11 a 30/11**
 | Responsável        | Tarefa/Requisito              | Iniciado em | Prazo     | Status | Terminado em |
 |--------------------|-------------------------------|-------------|-----------|--------|--------------|
 | Déborah Matos      | Testes da aplicação mobile    | 23/11/2025  | 30/11/2025 | ✔️     | 30/11/2025   |
-| Junio Alves        | Documentação da versão mobile | 23/11/2025  | 30/11/2025 | ✔️     | 30/11/2025   |
+| Junio Firmino       | Documentação da versão mobile e apresentação | 23/11/2025  | 30/11/2025 | ✔️     | 30/11/2025   |
 
 Legenda:
 - ✔️: terminado
