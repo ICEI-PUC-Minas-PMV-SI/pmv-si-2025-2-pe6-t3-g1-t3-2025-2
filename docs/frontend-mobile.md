@@ -16,9 +16,6 @@ Entre os aspectos principais da interface:
 - Componentes reaproveitáveis, garantindo padronização.
 - Estilo visual alinhado à identidade visual estabelecida.
 
-### Wireframes
-[Inclua os wireframes das páginas principais da interface, mostrando a disposição dos elementos na página.]
-
 ### Design Visual
 
 O design visual da aplicação segue os princípios aplicados na versão web, garantindo:
