@@ -93,18 +93,41 @@ A estratégia de testes para a versão mobile seguiu a mesma adotada para a vers
   
 Toda versão mobile seguiu os layout, cores e funcionalidades da versão web, com isso no módulo de login iniciamos os testes verificando o comportamento do sistema com um usuário já existente e com permissão de acesso, posteriormente, testamos o sistemas com um usuário fictício e sem acesso ao sistema, neste teste buscamos verificar os alertas previstos que a negação do acesso disparava.
 
+![f8e26aa0-1a59-4ab0-84c5-b411312177b3](https://github.com/user-attachments/assets/afd04fac-6215-4a3c-afe3-c7de90544a9c)
+
+![0b26dd90-7b8f-4288-99a6-4f8605370366](https://github.com/user-attachments/assets/bbbdd62f-6b82-4ab7-afe5-b943004fbc55)
+
+![030faf2d-23cd-4d93-956d-cecab4fb1387](https://github.com/user-attachments/assets/32ab39f4-3896-45f6-b709-1fe507b102cd)
+
+
 - **Módulo Pedidos**
 
-O principal teste realizado no módulo de pedidos teve o objetivo de verificar a correta persistência de dados dos atributos no banco de dados na realização de um pedido novo por exemplo, assim como, a exclusão de dados.
+O principal teste realizado no módulo de pedidos teve o objetivo de verificar a correta persistência de dados dos atributos no banco de dados na realização de um pedido novo por exemplo.
+
+![0e4e49e0-fd45-4efb-885d-989555e71089](https://github.com/user-attachments/assets/ec8563f2-c891-4d8c-992b-7c13125437f0)
+
+![079c971b-9b2e-42f8-ad4f-6e99976237c4](https://github.com/user-attachments/assets/d2fa49a5-6b58-4744-8946-0ee86fedb1a4)
+
 
 - **Módulo Hospedagem**
 
-O módulo de hospedagem teve uma especial atenção com os testes pois consiste na funcionalidade principal do hotel fazenda, e buscamos o mesmo comportarmento da versão web. Inicialmente testamos as condições de mudança dos status referente aos quartos, um segundo teste foi direcionado para os atributos datas no qual observou-se se com a data fim da estadia o sistema retornava o status do quarto para "livre", também testamos a possibilidade de realizar uma hospedagem num quarto não existente no sistema.
+O módulo de hospedagem teve uma especial atenção com os testes pois consiste na funcionalidade principal do hotel fazenda, e buscamos o mesmo comportarmento da versão web. Inicialmente testamos as condições de mudança dos status referente aos quartos, um segundo teste foi direcionado para os atributos datas no qual observou-se se com a data fim da estadia o sistema retornava o status do quarto para "livre", também testamos a possibilidade de realizar uma hospedagem num quarto não 
+existente no sistema.
+
+![b772f763-1eea-4133-bdb0-a96d90112765](https://github.com/user-attachments/assets/a49af9a5-283c-4be2-88e1-b6dd9b67d9b6)
+
+![6ef7be73-9d36-4263-90ec-05fe9bd86310](https://github.com/user-attachments/assets/fd6ae521-24d2-45eb-8bea-4b608c7ecc20)
+
 
 - **Módulo Produtos**
 
-Este módulo de produto é um dos mais importantes pois seus dados são consumidos em outros módulos do sistema, por essa razão, o foco do teste foi verificar o cadastro, exclusão e edição dos dados e, posteriormente, testamos a integração deste módulo com os demais módulos do sistema.
+Este módulo de produto é um dos mais importantes pois seus dados são consumidos em outros módulos do sistema, por essa razão, o foco do teste foi verificar o cadastro e testamos a integração deste módulo com os demais módulos do sistema.
 
+![7d5b3e27-dfbb-4fd9-83d9-cfa35af4c6e5](https://github.com/user-attachments/assets/d7ce4bfa-fb1e-4d0b-8dd8-180a788e4f16)
+
+![35563a04-a38f-42a5-8e09-27e784a61e18](https://github.com/user-attachments/assets/75a20d85-a3bc-4493-93ed-6c1509a0c733)
+
+![56ae780d-0fa3-4dcb-9d47-e6fcfa797aff](https://github.com/user-attachments/assets/455a6ba5-0219-4831-8adb-fe59daa42e55)
 
 
 # Referências
